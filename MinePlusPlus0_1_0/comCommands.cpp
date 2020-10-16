@@ -33,6 +33,8 @@ CommandData CommunicationChannel::Input::parseCommand (String string) {
   commandArgs[partIndex] = currentPart;
   if (commandArgs[0] == "setblock") {
     outputCommand = com.in.setblock.parsePerCommand(commandArgs, numArgs);
+  } else if (commandArgs[0] == "getblock") {
+    outputCommand = com.in.getblock.parsePerCommand(commandArgs, numArgs);
   } else if (commandArgs[0] == "tp") {
     outputCommand = com.in.teleport.parsePerCommand(commandArgs, numArgs);
   } else if (commandArgs[0] == "fill") {
@@ -130,6 +132,10 @@ bool CommunicationChannel::Input::runCommands() {
     com.out.log("Set block at (" + String(parsedCommand.args[0]) + ", " + String(parsedCommand.args[1]) + ") with ID " + String(parsedCommand.args[2]));
     return true;
   }
+  if (parsedCommand.type == CommandType::GetBlock) {
+    com.out.log("Block at (" + String(parsedCommand.args[0]) + ", " + String(parsedCommand.args[1]) + ") has ID " + String(block.get(parsedCommand.args[0], parsedCommand.args[1])));
+    return true;
+  }
   if (parsedCommand.type == CommandType::Teleport) {
     player.move(parsedCommand.args[0], parsedCommand.args[1]);
     com.out.log("Teleported to (" + String(parsedCommand.args[0]) + ", " + String(parsedCommand.args[1]) + ")");
@@ -151,9 +157,14 @@ bool CommunicationChannel::Input::runCommands() {
     return true;
   }
   if (parsedCommand.type == CommandType::Load) {
-    world.load();
-    com.out.log("Loaded World");
-    return true;
+    if (!world.isRunning) {
+      world.load();
+      com.out.log("Loaded World");
+      return true;
+    } else {
+      com.out.log("Load: Cannot load a world while a world is running!");
+      return false;
+    }
   }
 
 }

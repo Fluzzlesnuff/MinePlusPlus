@@ -229,7 +229,9 @@ uint16_t Block::isNear(CoordPair coordPair, id_t id, byte distance, MeasurementT
 void Block::createBlockDB (worldWidth_t width, worldHeight_t height) {
   uint16_t totalSize = width * height;
   blockDB = new id_t[totalSize];
+#ifdef BLOCK_DB_CREATION_LOGGING
   com.out.log("Created blockDB with dimensions: " + String(width) + ", " + String(height));
+#endif
 }
 
 blockDBAddress_t Block::coordsToAddress (xcoord_t x, ycoord_t y) {

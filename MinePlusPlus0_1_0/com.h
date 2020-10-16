@@ -32,6 +32,7 @@ class CommunicationChannel {
             CommandData parsePerCommand (String *args, index_t inputArgsCount);
         };
         Command setblock{CommandType::SetBlock, "Setblock", 3, ArgTypeList{{ArgumentType::XCoord, ArgumentType::YCoord, ArgumentType::ID}}}; //All that is to pass an array to the constructor.
+        Command getblock{CommandType::GetBlock, "Getblock", 2, ArgTypeList{{ArgumentType::XCoord, ArgumentType::YCoord}}};
         Command teleport{CommandType::Teleport, "Teleport", 2, ArgTypeList{{ArgumentType::XCoord, ArgumentType::YCoord}}};
         Command fill{CommandType::Fill, "Fill", 5, ArgTypeList{{ArgumentType::XCoord, ArgumentType::YCoord, ArgumentType::XCoord, ArgumentType::YCoord, ArgumentType::ID}}};
         Command save{CommandType::Save, "Save"};

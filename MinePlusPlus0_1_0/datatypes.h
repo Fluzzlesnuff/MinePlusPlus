@@ -61,6 +61,7 @@ enum CommandType {
   CommandError,
   Fill,
   SetBlock,
+  GetBlock,
   Summon,
   SummonItem,
   Give,

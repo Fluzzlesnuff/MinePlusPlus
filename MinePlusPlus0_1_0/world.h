@@ -10,10 +10,11 @@ extern xcoord_t xLimit; //Inclusive. Make negative to use negative x limit.
 extern ycoord_t yLimit; //Inclusive. Bottom limit is 0.
 
 class World { //One instance only, but used as a proper object.
-  WorldSize size;
-  void setWorldDimensions(WorldSize sizeParam);
-  void start (); //Sets starts the necessary world services *after* a world has been either loaded or generated.
+    WorldSize size;
+    void setWorldDimensions(WorldSize sizeParam);
+    void start (); //Sets starts the necessary world services *after* a world has been either loaded or generated.
   public:
+    bool isRunning = false;
     void update (WorldUpdateType updateType); //Flows water, grows crops, drops gravel, etc.
     void setTickRate (double tickRateParam);
     void generate (WorldSize sizeParam); //Creates a new world in RAM.
