@@ -8,7 +8,7 @@ Of course, support for more Arduinos, then more displays, and perhaps even more 
 ## How to Get Playing
 To play, you'll need the necessary hardware, and you'll have to build the circuit on a breadboard or other prototyping board. Alternatively, you *could* get a custom PCB. Schematics are included to help you on your way.
 You'll also need to get the Arduino IDE on your computer if you don't already have it.
-Once it's all built, you'll need to get the code from the `release` branch. Since it's only one file, you can also copy and paste it into the Arduino IDE.
+Once it's all built, you'll need to get the code from the `main` branch. 
 Once you upload the sketch, you can start playing.
 ## How to Develop
 If you want to contribute to the code, tinker with it, or even just look through it to figure out how it works, you'll need the development version of the code.
