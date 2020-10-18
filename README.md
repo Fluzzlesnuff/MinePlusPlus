@@ -11,8 +11,8 @@ You'll also need to get the Arduino IDE on your computer if you don't already ha
 Once it's all built, you'll need to get the code from the `main` branch. 
 Once you upload the sketch, you can start playing.
 ## How to Develop
-If you want to contribute to the code, tinker with it, or even just look through it to figure out how it works, you'll need the development version of the code.
-You can download the files from the `development` branch.
+If you want to contribute to the code, tinker with it, or even just look through it to figure out how it works, you'll want a development version of the code.
+You can download the files from the `beta` branch if you want to see how new features are being implemented. If you want to contribute, read the developer-README.md and download the files in the `development` branch.
 The easiest thing to do is to build the circuit and upload the sketch. However, if you're working on porting to new hardware, you might have to get creative.
 Once you have the code and it's running, you can look at the code to learn your way around, and then start tinkering. If you want to help the project, feel free to make some changes and submit a pull request.
 ## Plans
