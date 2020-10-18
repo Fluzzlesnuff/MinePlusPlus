@@ -1,6 +1,10 @@
 #include "includes.h"
 
-id_t oldRenderMap[13][7];
+byte animationFrame2;
+byte animationFrame3;
+byte animationFrame4;
+
+const uint16_t animationFramePeriod = 300;
 
 void Screen::renderBitmap (const byte bitmap[], uint8_t rows, uint8_t columns, byte xPixel, byte yPixel) {
   const byte bitMasks[8] {
@@ -52,7 +56,8 @@ void Screen::renderBlock (CoordPair coords, int8_t xPixelOffset = 0, int8_t yPix
   renderBlock(coords.x, coords.y, xPixelOffset, yPixelOffset);
 }
 
-void Screen::renderWorld () {
+void Screen::renderWorld (bool reRenderAnimatedBlocks = false) {
+  static id_t oldRenderMap[13][7];
 #ifdef RENDER_LOGGING
   com.out.log(F("Rendering World"));
 #endif
@@ -71,7 +76,8 @@ void Screen::renderWorld () {
           if (blockIDToRender != oldRenderMap[relX + 6][relY + 3]) {
             renderBlock(blockCoords);
             oldRenderMap[relX + 6][relY + 3] = blockIDToRender;
-          }
+          } else if (reRenderAnimatedBlocks && block.isAnimated(blockIDToRender))
+            renderBlock(blockCoords);
         }
       }
     }
@@ -155,5 +161,20 @@ byte* Screen::idToBitmap (id_t id, byte version = 0) {
     case C_LIGHT6:    return Textures::Blocks::light_6;
     case C_LIGHT7:    return Textures::Blocks::light_7;
     default:          return Textures::Blocks::error;
+  }
+}
+
+void Screen::forceUpdateAnimations () {
+  animationFrame2 = (animationFrame2 + 1) % 2;
+  animationFrame3 = (animationFrame2 + 1) % 3;
+  animationFrame4 = (animationFrame2 + 1) % 4;
+}
+
+void Screen::updateAnimations () {
+  static uint32_t lastUpdateTime;
+  if (millis() - lastUpdateTime >= animationFramePeriod) {
+    forceUpdateAnimations();
+    lastUpdateTime = millis();
+    renderWorld(true);
   }
 }

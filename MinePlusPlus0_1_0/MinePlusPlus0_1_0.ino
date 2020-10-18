@@ -13,7 +13,7 @@ void setup() {
   leftMouseButton.setThreshold(990);
   rightMouseButton.setThreshold(990);
   randomSeed(analogRead(A15));
-  com.out.print("\n\n\n");
+  com.out.print(F("\n\n\n\n"));
   com.out.log(F("Initializing Display"));
   GLCD.Init();
   com.out.log(F("\tComplete"));
@@ -87,4 +87,5 @@ void worldLoop() {
     world.save();
     exit(0);
   }
+  screen.updateAnimations();
 }

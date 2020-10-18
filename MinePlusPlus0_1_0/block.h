@@ -34,6 +34,8 @@ class Block { //Not used in the object sense. Instead, this is just a set of fun
 
     bool dropsItem (id_t id, id_t toolUsed); //Returns true if the block drops items when mined with the given tool.
 
+    bool isAnimated(id_t id);
+
     //These functions return the number of blocks of the given type that are touching the block at the given coordinate pair.
     byte isTouching(xcoord_t x, ycoord_t y, id_t id); //Only counts blocks directly adjacent (max 4).
     byte isTouching(CoordPair coords, id_t id);

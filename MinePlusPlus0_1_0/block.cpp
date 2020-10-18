@@ -84,6 +84,10 @@ bool Block::dropsItem (id_t id, id_t toolUsed) {
   }
 }
 
+bool Block::isAnimated(id_t id) {
+  return id == B_FIRE;
+}
+
 bool Block::place (CoordPair coords, id_t blockType) {
 
 }
