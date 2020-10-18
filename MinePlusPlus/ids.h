@@ -89,7 +89,6 @@
 #define GEN_DIRT      B1010010
 #define GEN_T_DIRT    B1010011
 #define GEN_GRAVEL    B1010100
-#define GEN_T_GRAVEL  B1010101
 #define GEN_SAND      B1010110
 #define GEN_T_SAND    B1010111
 #define GEN_T_COAL    B1011000

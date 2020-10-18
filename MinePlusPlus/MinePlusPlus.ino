@@ -1,3 +1,5 @@
+//VERSION: development version
+
 #include "includes.h"
 
 #define GENERATE_ON_START
@@ -102,5 +104,4 @@ void worldLoop() {
     exit(0);
   }
   screen.updateAnimations();
-  GLCD.SetDot(0, 0, BLACK);
 }

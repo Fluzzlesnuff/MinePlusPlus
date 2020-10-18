@@ -10,46 +10,46 @@
       d. Repeat c multiple times
       ei. Stone touching 7 or 8 GEN_AIR becomes GEN_T_AIR 100%
         ii. GEN_T_AIR becomes GEN_AIR
-    5a. Gravel veins are seeded randomly with GEN_GRAVEL
-      bi. Stone directly touching GEN_GRAVEL has a small chance of becoming GEN_T_GRAVEL
-        ii. GEN_T_GRAVEL becomes GEN_GRAVEL
+    4a. Gravel veins are seeded randomly with B_GRAVEL
+      bi. Stone directly touching B_GRAVEL has a small chance of becoming GEN_GRAVEL
+        ii. GEN_GRAVEL becomes B_GRAVEL
       c. Repeat a few times (calibrate cycles and probabilities so veins are about 8-12 blocks)
-      d. Stone directly touching 3 GEN_GRAVEL becomes GEN_T_GRAVEL
-      e. GEN_GRAVEL and GEN_T_GRAVEL become B_GRAVEL
-    6a. Dirt veins are seeded randomly above 1/4 depth using GEN_DIRT
+      d. Stone directly touching 3 B_GRAVEL becomes GEN_GRAVEL
+      e. GEN_GRAVEL becomes B_GRAVEL
+    5a. Dirt veins are seeded randomly above 1/4 depth using GEN_DIRT
       bi. Stone directly touching GEN_DIRT has a small chance of becoming GEN_T_DIRT
         ii. GEN_T_DIRT becomes GEN_DIRT
       c. Repeat a few times (calibrate cycles and probabilities so veins are about 6-9 blocks)
       d. GEN_DIRT becomes B_DIRT
-    7a. Diamond veins are seeded in the the bottom 4 blocks of the world as B_DIA_ORE (Ores don't need GEN versions), with a better chance near GEN_AIR
+    6a. Diamond veins are seeded in the the bottom 4 blocks of the world as B_DIA_ORE (Ores don't need GEN versions), with a better chance near GEN_AIR
       bi. Stone directly touching (isTouching()) B_DIA_ORE has a large chance of becoming GEN_T_DIA
         ii. GEN_T_DIA becomes B_DIA_ORE
-    8a. Iron veins are seeded in the the bottom 1/3 of the world as B_IRON_ORE (Ores don't need GEN versions), with a better chance near GEN_AIR
+    7a. Iron veins are seeded in the the bottom 1/3 of the world as B_IRON_ORE (Ores don't need GEN versions), with a better chance near GEN_AIR
       bi. Stone touching (isTouchingWide()) B_IRON_ORE has a large chance of becoming GEN_T_IRON
         ii. GEN_T_IRON becomes B_IRON_ORE
-    9a. Gold veins are seeded in the the bottom 1/3 of the world as B_GOLD_ORE (Ores don't need GEN versions), with a better chance near GEN_AIR
+    8a. Gold veins are seeded in the the bottom 1/3 of the world as B_GOLD_ORE (Ores don't need GEN versions), with a better chance near GEN_AIR
       bi. Stone touching (isTouchingWide()) B_GOLD_ORE has a small chance of becoming GEN_T_GOLD
         ii. GEN_T_GOLD becomes B_GOLD_ORE
-    10a. Coal veins are seeded in the the bottom 1/2 of the world as B_COAL_ORE (Ores don't need GEN versions), with a better chance near GEN_AIR
+    9a. Coal veins are seeded in the the bottom 1/2 of the world as B_COAL_ORE (Ores don't need GEN versions), with a better chance near GEN_AIR
       bi. Stone touching (isTouchingWide()) B_COAL_ORE has a large chance of becoming GEN_T_COAL
         ii. GEN_T_IRON becomes B_IRON_ORE
       bi. Stone directly touching (isTouching()) B_COAL_ORE has a small chance of becoming GEN_T_COAL
         ii. GEN_T_IRON becomes B_IRON_ORE
-    11a. GEN_AIR below y=7 has a tiny chance of becoming B_LAVA3
+    10a. GEN_AIR below y=7 has a tiny chance of becoming B_LAVA3
       b. GEN_AIR below y=7 touching B_LAVA3 becomes B_LAVA3
-    12a. GEN_AIR in the bottom 1/3 of the world that has stone below it has a tiny chance of becoming B_WATER7
+    11a. GEN_AIR in the bottom 1/3 of the world that has stone below it has a tiny chance of becoming B_WATER7
       b. GEN_AIR in the bottom 1/3 of the world touching B_WATER7 becomes B_WATER7
-    13. GEN_AIR becomes B_AIR, now that underground generation is done (finally!)
-    14a. Air below (inclusive) (1/2 world + 3 blocks) and above (1/2 world) has a tiny chance of becoming B_WATER7
+    12. GEN_AIR becomes B_AIR, now that underground generation is done (finally!)
+    13a. Air below (inclusive) (1/2 world + 3 blocks) and above (1/2 world) has a tiny chance of becoming B_WATER7
       b. Air in that region touching B_WATER7 becomes B_WATER7
       c. Stone and dirt above (1/2 world - 2) and within 2 blocks (taxicab) of water becomes B_SAND
-    15a. Dirt not within 4 blocks (wide) of water and above (1/2 world - 3) has a tiny chance of becoming GEN_SAND
+    14a. Dirt not within 4 blocks (wide) of water and above (1/2 world - 3) has a tiny chance of becoming GEN_SAND
       bi. Dirt touching (taxicab) GEN_SAND or B_SNDSTN becomes GEN_T_SAND and stone above (1/2 world -5) touching (taxicab) GEN_SAND or B_SNDSTN becomes GEN_T_SNDSTN
         ii. GEN_T_SAND becomes GEN_SAND and GEN_T_SNDSTN becomes B_SNDSTN
       c. Repeat (b) 2 more times
       di. Dirt touching (taxicab) GEN_SAND or B_SNDSTN has a small chance of becoming GEN_T_SAND and stone above (1/2 world -5) touching (taxicab) GEN_SAND or B_SNDSTN has a small chance of beoming GEN_T_SNDSTN
         ii. GEN_T_SAND becomes GEN_SAND and GEN_T_SNDSTN becomes B_SNDSTN
-    16a. Air open to the sky with dirt below has a small chance of becoming B_WOOD
+    15a. Air open to the sky with dirt below has a small chance of becoming B_WOOD
       bi. Air with B_WOOD below and B_DIRT within 2 blocks down turns into GEN_T_WOOD
         ii. GEN_T_WOOD becomes B_WOOD
       ci. Air with B_WOOD below and dirt within 3 blocks down turns into GEN_WOOD
@@ -58,12 +58,12 @@
         ii. GEN_T_WOOD becomes B_WOOD
       ei. Air with B_WOOD below and dirt within 5 blocks down has a small chance of becoming GEN_WOOD
         ii. GEN_T_WOOD becomes B_WOOD
-    17a. Air touching (isTouchingWide) B_WOOD and not touching (isTouchingWide) dirt becomes B_LEAVES
+    16a. Air touching (isTouchingWide) B_WOOD and not touching (isTouchingWide) dirt becomes B_LEAVES
       bi. Air directly touching B_LEAVES and with at least 2 B_WOOD to its left or right becomes GEN_T_LEAVES
         ii. GEN_T_LEAVES becomes B_LEAVES
       ci. Air touching (isTouchingWide) at least 2 B_LEAVES and not touching (isTouchingWide) dirt has a small chance of becoming GEN_T_LEAVES
         ii. GEN_T_LEAVES becomes B_LEAVES
-    18a. Air with dirt below it has a small chance of becoming B_GRASS.
+    17a. Air with dirt below it has a small chance of becoming B_GRASS.
         bi. Air with dirt below it touching (taxicab) B_GRASS has a chance of becoming GEN_T_GRASS
           ii. GEN_T_GRASS becomes B_GRASS
         c. B_GRASS has a small chance of becoming B_FLOWER
