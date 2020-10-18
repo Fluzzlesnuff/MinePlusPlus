@@ -119,20 +119,45 @@ void World::generate (WorldSize sizeParam) {
           block.set(x, y, B_DIRT);
       }
     }
-    player.move(0, safeDivide(yLimit, 2) + 4);
-    start();
+  }
+  { //Caves
+    com.out.log(F("Generation Stage 3: Caves"));
+    com.out.log(F("\tSeeding Caves"));
+    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+      for (ycoord_t y = 0; y <= yLimit; y++)
+        if ((random() % 50) == 0 && block.get(x, y) == B_STONE)
+          block.set(x, y, GEN_AIR);
+    }
+    for (int i = 0; i < 4; i++) {
+      byte chances[4][8] = { 
+        {1, 1, 1, 1, 1, 1, 1, 1}, // An array of chance lists, one for each value of i. 
+        {2, 2, 1, 1, 1, 1, 1, 1}, // Chance list: An array of values of x. 
+        {5, 3, 2, 1, 1, 1, 1, 1}, // For each number of isTouchingWide blocks, there is a value of x,
+        {10, 5, 3, 2, 1, 1, 1, 1} // where the odds of changing the block in question to air are 1/x.
+      }; 
+      com.out.log("\tGrowing Caves: Pass " + String(i + 1));
+      for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+        for (ycoord_t y = 0; y <= yLimit; y++) 
+          if ((random() % chances[i][block.isTouchingWide(x, y, GEN_AIR) == 1]) == 0)
+            block.set(x, y, GEN_T_AIR);
+      }
+      for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+        for (ycoord_t y = 0; y <= yLimit; y++)
+          if (block.get(x, y) == GEN_T_AIR)
+            block.set(x, y, GEN_AIR);
+      }
+    }
+    com.out.log(F("\tCaves: Replacing GEN_AIR with B_AIR"));
+      for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+        for (ycoord_t y = 0; y <= yLimit; y++)
+          if (block.get(x, y) == GEN_AIR)
+            block.set(x, y, B_AIR);
+     }
     com.out.log(F("\tFinished"));
   }
-  /*
-    serialLog(F("Generation Stage 2: Random Iron Ore"));
-    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
-    for (ycoord_t y = 0; y <= yLimit; y++)
-      if (random() % 100 < 10 && block.get(x, y) == B_STONE)
-        block.set(x, y, B_IRON_ORE);
-    }
-    serialLog(F("\tFinished"));
-    serialLog(F("Finished Generating World"));
-    }*/
+  player.move(0, safeDivide(yLimit, 2) + 4);
+  start();
+  com.out.log(F("\tFinished"));
 }
 void World::load () {
   /*for (int j = 0; j < 16; j++) {

@@ -145,13 +145,13 @@ bool Block::isAir(id_t id) {
 byte Block::isTouching(xcoord_t x, ycoord_t y, id_t id) {
   // Scans blocks starting from the top and going clockwise
   id_t count{0};
-  if (get(x, y + 1) == id)
+  if (x >= -xLimit && x <= xLimit && y + 1 >= 0 && y + 1 <= yLimit && get(x, y + 1) == id)
     count++;
-  if (get(x + 1, y) == id)
+  if (x + 1 >= -xLimit && x + 1 <= xLimit && y >= 0 && y <= yLimit && get(x + 1, y) == id)
     count++;
-  if (get(x, y - 1) == id)
+  if (x >= -xLimit && x <= xLimit && y - 1 >= 0 && y - 1 <= yLimit && get(x, y - 1) == id)
     count++;
-  if (get(x - 1, y) == id)
+  if (x - 1 >= -xLimit && x - 1 <= xLimit && y >= 0 && y <= yLimit && get(x - 1, y) == id)
     count++;
   return count;
 }
@@ -161,22 +161,13 @@ byte Block::isTouching(CoordPair coords, id_t id) {
 byte Block::isTouchingWide(xcoord_t x, ycoord_t y, id_t id) {
   // Scans blocks starting from the top and going clockwise
   id_t count{0};
-  if (get(x, y + 1) == id)
-    count++;
-  if (get(x + 1, y + 1) == id)
-    count++;
-  if (get(x + 1, y) == id)
-    count++;
-  if (get(x + 1, y - 1) == id)
-    count++;
-  if (get(x, y - 1) == id)
-    count++;
-  if (get(x - 1, y - 1) == id)
-    count++;
-  if (get(x - 1, y) == id)
-    count++;
-  if (get(x - 1, y + 1) == id)
-    count++;
+  for (int xOffset = -1; xOffset <= 1; xOffset++) {
+    for (int yOffset = -1; yOffset <= 1; yOffset++) {
+      if (x + xOffset >= -xLimit && x + xOffset <= xLimit && y + yOffset >= 0 && y + yOffset <= yLimit)
+        if (get(x + xOffset, y + yOffset) == id)
+          count++;
+    }
+  }
   return count;
 }
 byte Block::isTouchingWide(CoordPair coords, id_t id) {

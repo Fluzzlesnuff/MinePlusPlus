@@ -45,6 +45,7 @@ void loop() {
       if (selectedGenerateButton) {
         world.isRunning = true;
         world.generate(Default);
+        com.out.log("Generated!");
       } else {
         world.isRunning = true;
         world.load();
