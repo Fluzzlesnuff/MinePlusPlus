@@ -4,7 +4,7 @@ byte animationFrame2;
 byte animationFrame3;
 byte animationFrame4;
 
-const uint16_t animationFramePeriod = 300;
+const uint16_t animationFramePeriod = 5000;
 
 void Screen::renderBitmap (const byte bitmap[], uint8_t rows, uint8_t columns, byte xPixel, byte yPixel) {
   const byte bitMasks[8] {

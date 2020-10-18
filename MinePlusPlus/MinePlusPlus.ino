@@ -1,5 +1,9 @@
 #include "includes.h"
 
+#define GENERATE_ON_START
+
+#define PRESET_SEED 189
+
 const int16_t playerSpeed = 200;
 bool selectedGenerateButton = false;
 
@@ -12,7 +16,12 @@ void setup() {
   rightMouseButton.setSampleSize(10);
   leftMouseButton.setThreshold(990);
   rightMouseButton.setThreshold(990);
+#ifdef PRESET_SEED
+  randomSeed(PRESET_SEED);
+#endif
+#ifndef PRESET_SEED
   randomSeed(analogRead(A15));
+#endif
   com.out.print(F("\n\n\n\n"));
   com.out.log(F("Initializing Display"));
   GLCD.Init();
@@ -26,6 +35,11 @@ void loop() {
   if (world.isRunning)
     worldLoop();
   else {
+#ifdef GENERATE_ON_START
+    GLCD.ClearScreen();
+    world.isRunning = true;
+    world.generate(Default);
+#endif
     if (leftButton.read()) {
       selectedGenerateButton = false;
       GLCD.ClearScreen();
@@ -45,7 +59,6 @@ void loop() {
       if (selectedGenerateButton) {
         world.isRunning = true;
         world.generate(Default);
-        com.out.log("Generated!");
       } else {
         world.isRunning = true;
         world.load();
@@ -89,4 +102,5 @@ void worldLoop() {
     exit(0);
   }
   screen.updateAnimations();
+  GLCD.SetDot(0, 0, BLACK);
 }
