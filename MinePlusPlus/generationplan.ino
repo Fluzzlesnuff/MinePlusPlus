@@ -32,9 +32,9 @@
         ii. GEN_T_GOLD becomes B_GOLD_ORE
     9a. Coal veins are seeded in the the bottom 1/2 of the world as B_COAL_ORE (Ores don't need GEN versions), with a better chance near GEN_AIR
       bi. Stone touching (isTouchingWide()) B_COAL_ORE has a large chance of becoming GEN_T_COAL
-        ii. GEN_T_IRON becomes B_IRON_ORE
+        ii. GEN_T_COAL becomes B_COAL_ORE
       bi. Stone directly touching (isTouching()) B_COAL_ORE has a small chance of becoming GEN_T_COAL
-        ii. GEN_T_IRON becomes B_IRON_ORE
+        ii. GEN_T_COAL becomes B_COAL_ORE
     10a. GEN_AIR below y=7 has a tiny chance of becoming B_LAVA3
       b. GEN_AIR below y=7 touching B_LAVA3 becomes B_LAVA3
     11a. GEN_AIR in the bottom 1/3 of the world that has stone below it has a tiny chance of becoming B_WATER7
@@ -44,19 +44,19 @@
       b. Air in that region touching B_WATER7 becomes B_WATER7
       c. Stone and dirt above (1/2 world - 2) and within 2 blocks (taxicab) of water becomes B_SAND
     14a. Dirt not within 4 blocks (wide) of water and above (1/2 world - 3) has a tiny chance of becoming GEN_SAND
-      bi. Dirt touching (taxicab) GEN_SAND or B_SNDSTN becomes GEN_T_SAND and stone above (1/2 world -5) touching (taxicab) GEN_SAND or B_SNDSTN becomes GEN_T_SNDSTN
+      bi. Dirt touching (taxicab) GEN_SAND or B_SNDSTN becomes GEN_T_SAND and stone above (1/2 world - 5) touching (taxicab) GEN_SAND or B_SNDSTN becomes GEN_T_SNDSTN
         ii. GEN_T_SAND becomes GEN_SAND and GEN_T_SNDSTN becomes B_SNDSTN
       c. Repeat (b) 2 more times
-      di. Dirt touching (taxicab) GEN_SAND or B_SNDSTN has a small chance of becoming GEN_T_SAND and stone above (1/2 world -5) touching (taxicab) GEN_SAND or B_SNDSTN has a small chance of beoming GEN_T_SNDSTN
-        ii. GEN_T_SAND becomes GEN_SAND and GEN_T_SNDSTN becomes B_SNDSTN
+      di. Dirt touching (taxicab) GEN_SAND or B_SNDSTN has a small chance of becoming GEN_T_SAND and stone above (1/2 world - 5) touching (taxicab) GEN_SAND or B_SNDSTN has a small chance of beoming GEN_T_SNDSTN
+        ii. GEN_T_SAND and GEN_SAND become B_SAND and GEN_T_SNDSTN and GEN_SNDSTN becomes B_SNDSTN
     15a. Air open to the sky with dirt below has a small chance of becoming B_WOOD
-      bi. Air with B_WOOD below and B_DIRT within 2 blocks down turns into GEN_T_WOOD
+      bi. Air with B_WOOD below turns into GEN_T_WOOD
         ii. GEN_T_WOOD becomes B_WOOD
-      ci. Air with B_WOOD below and dirt within 3 blocks down turns into GEN_WOOD
+      ci. Air with B_WOOD below turns into GEN_WOOD
         ii. GEN_T_WOOD becomes B_WOOD
-      di. Air with B_WOOD below and dirt within 4 blocks down has a large chance of becoming GEN_WOOD
+      di. Air with B_WOOD below has a large chance of becoming GEN_WOOD
         ii. GEN_T_WOOD becomes B_WOOD
-      ei. Air with B_WOOD below and dirt within 5 blocks down has a small chance of becoming GEN_WOOD
+      ei. Air with B_WOOD below has a small chance of becoming GEN_WOOD
         ii. GEN_T_WOOD becomes B_WOOD
     16a. Air touching (isTouchingWide) B_WOOD and not touching (isTouchingWide) dirt becomes B_LEAVES
       bi. Air directly touching B_LEAVES and with at least 2 B_WOOD to its left or right becomes GEN_T_LEAVES
@@ -75,12 +75,12 @@
    the surface dirt  and stone would be eroded down to nothing, because there's air on the surface.
    Instead, caves are made up of GEN_AIR to distinguish between caves and surface air.
    An example of GEN_T: When air is added to caves, it is added as GEN_T_AIR. This is to prevent the
-   line of generation going up the world from adding air on top of air that was already added on the
+   line of generation going up the world from adding air on top of air that was already added in the
    current cycle.
 
    Usage: GEN_T is used for each cycle of generation and becomes the actual block or the GEN version
-   at the ned of said cycle. GEN is used for the entire generation phase, and is converted to the actual
+   at the end of said cycle. GEN is used for the entire generation phase, and is converted to the actual
    block at the end of the phase.
 
-   TL;DR: GEN and GEN_T blocks are temporary, and are used on generation to prevent the worldwide destruction.
+   TL;DR: GEN and GEN_T blocks are temporary, and are used in generation to prevent worldwide destruction.
 */
