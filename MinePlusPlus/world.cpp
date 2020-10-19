@@ -54,17 +54,23 @@ void World::generate (WorldSize sizeParam) {
   com.out.log(F("Beginning World Generation"));
   xLimit = (worldWidth - 1) / 2;
   yLimit = worldHeight - 1;
+  Serial.println(freeMemory());
   block.createBlockDB(worldWidth, worldHeight);
+  Serial.println(freeMemory());
   { //Air
-    com.out.log(F("Generation Stage 0: Air"));
+    com.out.log("Generation Stage 0: Air");
+    Serial.println(freeMemory());
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+      Serial.println(freeMemory());
       for (ycoord_t y = 0; y <= yLimit; y++)
         block.set(x, y, B_AIR);
     }
+    Serial.println(freeMemory());
     com.out.log(F("\tFinished"));
   }
   { //Stone
     com.out.log(F("Generation Stage 1: Solid Stone Layer"));
+    Serial.println(freeMemory());
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
       for (ycoord_t y = 0; y <= safeDivide(yLimit, 2) - 2; y++)
         block.set(x, y, B_STONE);
@@ -121,7 +127,7 @@ void World::generate (WorldSize sizeParam) {
     }
   }
   { //Caves
-    com.out.log(F("Generation Stage 3: Caves"));
+    com.out.log("Generation Stage 3: Caves");
     com.out.log(F("\tSeeding Caves"));
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
       for (ycoord_t y = 0; y <= safeDivide(worldHeight, 3); y++)
@@ -167,7 +173,7 @@ void World::generate (WorldSize sizeParam) {
     }
     for (int i = 0; i < 4; i++) {
       const byte chances[4][8] = {
-        {1,  1,  1,  1,  1,  1,  1,  1},  
+        {1,  1,  1,  1,  1,  1,  1,  1},
         {3,  2,  2,  2,  1,  1,  1,  1},
         {0, 0,  5,  3,  3,  3,  2,  1},
         {0,  0,  0,  0,  1,  1,  1,  1}
@@ -203,7 +209,7 @@ void World::generate (WorldSize sizeParam) {
     }
     for (int i = 0; i < 3; i++) {
       const byte chances[3][8] = {
-        {1,  1,  1,  1,  1,  1,  1,  1},  
+        {1,  1,  1,  1,  1,  1,  1,  1},
         {3,  2,  2,  2,  1,  1,  1,  1},
         {0,  0,  0,  0,  1,  1,  1,  1}
       };
@@ -227,9 +233,31 @@ void World::generate (WorldSize sizeParam) {
       }
     }
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
-    for (ycoord_t y = 0; y <= yLimit; y++)
-      if (block.get(x, y) == GEN_DIRT)
-        block.set(x, y, B_DIRT);
+      for (ycoord_t y = 0; y <= yLimit; y++)
+        if (block.get(x, y) == GEN_DIRT)
+          block.set(x, y, B_DIRT);
+    }
+    com.out.log(F("\tFinished"));
+  }
+  { //Dirt Veins
+    com.out.log(F("Generation Stage 6: Diamond Ore"));
+    com.out.log(F("\tSeeding Diamond Veins"));
+    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+      for (ycoord_t y = 0; y <= 4; y++)
+        if (((random() % 200) == 0 || ((random() % 100) == 0 && block.isTouching(x, y, GEN_AIR))) && block.get(x, y) == B_STONE)
+          block.set(x, y, B_DIA_ORE);
+    }
+    com.out.log("\tGrowing Diamond Veins");
+    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+      for (ycoord_t y = 0; y <= 5; y++) {
+        if ((block.isTouching(x, y, B_DIA_ORE) && (random() % 10) != 0))
+          block.set(x, y, GEN_T_DIA);
+      }
+    }
+    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+      for (ycoord_t y = 0; y <= yLimit; y++)
+        if (block.get(x, y) == GEN_T_DIA)
+          block.set(x, y, B_DIA_ORE);
     }
     com.out.log(F("\tFinished"));
   }

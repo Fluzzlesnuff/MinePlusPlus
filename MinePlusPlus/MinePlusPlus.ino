@@ -11,6 +11,7 @@ bool selectedGenerateButton = false;
 
 void setup() {
   com.init();
+  Serial.println(freeMemory());
   leftButton.setSampleSize(10);
   jumpButton.setSampleSize(10);
   rightButton.setSampleSize(10);
@@ -31,6 +32,7 @@ void setup() {
   screen.renderBitmap(Bitmaps::UI::loadIcon, 16, 2, 31, 23);
   screen.renderBitmap(Bitmaps::UI::generateIcon, 16, 2, 79, 23);
   screen.renderBitmap(Bitmaps::UI::upArrow, 8, 1, 35, 40);
+  Serial.println(freeMemory());
 }
 
 void loop() {
@@ -104,4 +106,22 @@ void worldLoop() {
     exit(0);
   }
   screen.updateAnimations();
+}
+
+#ifdef __arm__
+// should use uinstd.h to define sbrk but Due causes a conflict
+extern "C" char* sbrk(int incr);
+#else  // __ARM__
+extern char *__brkval;
+#endif  // __arm__
+ 
+int freeMemory() {
+  char top;
+#ifdef __arm__
+  return &top - reinterpret_cast<char*>(sbrk(0));
+#elif defined(CORE_TEENSY) || (ARDUINO > 103 && ARDUINO != 151)
+  return &top - __brkval;
+#else  // __arm__
+  return __brkval ? &top - __brkval : &top - __malloc_heap_start;
+#endif  // __arm__
 }
