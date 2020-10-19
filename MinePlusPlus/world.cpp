@@ -124,7 +124,7 @@ void World::generate (WorldSize sizeParam) {
     com.out.log(F("Generation Stage 3: Caves"));
     com.out.log(F("\tSeeding Caves"));
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
-      for (ycoord_t y = 0; y <= yLimit; y++)
+      for (ycoord_t y = 0; y <= safeDivide(worldHeight, 3); y++)
         if ((random() % 100) == 0 && block.get(x, y) == B_STONE)
           block.set(x, y, GEN_AIR);
     }
@@ -181,7 +181,7 @@ void World::generate (WorldSize sizeParam) {
           byte chance = chances[i][numTouching - 1];
           if (chance == 0)
             continue;
-          if ((block.isTouching(x, y, B_GRAVEL) && (random() % chance) == 0) || block.isTouching(x, y, B_GRAVEL >= 3))
+          if ((block.isTouching(x, y, B_GRAVEL) && (random() % chance) == 0) || block.isTouching(x, y, B_GRAVEL) >= 3)
             block.set(x, y, GEN_GRAVEL);
         }
       }
@@ -190,6 +190,46 @@ void World::generate (WorldSize sizeParam) {
           if (block.get(x, y) == GEN_GRAVEL)
             block.set(x, y, B_GRAVEL);
       }
+    }
+    com.out.log(F("\tFinished"));
+  }
+  { //Dirt Veins
+    com.out.log(F("Generation Stage 5: Dirt Veins"));
+    com.out.log(F("\tSeeding Dirt Veins"));
+    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+      for (ycoord_t y = safeDivide(worldHeight, 4); y <= yLimit; y++)
+        if ((random() % 200) == 0 && block.get(x, y) == B_STONE)
+          block.set(x, y, GEN_DIRT);
+    }
+    for (int i = 0; i < 3; i++) {
+      const byte chances[3][8] = {
+        {1,  1,  1,  1,  1,  1,  1,  1},  
+        {3,  2,  2,  2,  1,  1,  1,  1},
+        {0,  0,  0,  0,  1,  1,  1,  1}
+      };
+      com.out.log("\tGrowing Dirt Veins: Pass " + String(i + 1));
+      for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+        for (ycoord_t y = 0; y <= yLimit; y++) {
+          byte numTouching = block.isTouchingWide(x, y, GEN_DIRT);
+          if (numTouching == 0)
+            continue;
+          byte chance = chances[i][numTouching - 1];
+          if (chance == 0)
+            continue;
+          if ((block.isTouching(x, y, GEN_DIRT) && (random() % chance) == 0) || block.isTouching(x, y, GEN_DIRT) >= 3)
+            block.set(x, y, GEN_T_DIRT);
+        }
+      }
+      for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+        for (ycoord_t y = 0; y <= yLimit; y++)
+          if (block.get(x, y) == GEN_T_DIRT)
+            block.set(x, y, GEN_DIRT);
+      }
+    }
+    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= yLimit; y++)
+      if (block.get(x, y) == GEN_DIRT)
+        block.set(x, y, B_DIRT);
     }
     com.out.log(F("\tFinished"));
   }
