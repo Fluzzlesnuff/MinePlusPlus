@@ -1,8 +1,6 @@
 #ifndef includes_h
 #define includes_h
 
-int freeMemory();
-
 #include "Arduino.h"
 #include "ids.h"
 #include "bitmaps.h"

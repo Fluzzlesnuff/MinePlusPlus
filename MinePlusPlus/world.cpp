@@ -23,17 +23,17 @@ worldHeight_t worldHeight;
 xcoord_t xLimit; //Inclusive. Make negative to use negative x limit.
 ycoord_t yLimit; //Inclusive. Bottom limit is 0.
 
-void World::update (WorldUpdateType updateType) {
+void World::update (const WorldUpdateType updateType) {
 
 }
-void World::setTickRate (double tickRateParam) {
+void World::setTickRate (const double tickRateParam) {
 
 }
-void World::setWorldDimensions(WorldSize sizeParam) {
+void World::setWorldDimensions(const WorldSize sizeParam) {
   size = sizeParam;
   switch (size) {
     case Default:
-      worldWidth = 201;
+      worldWidth = 161;
       worldHeight = 33;
       break;
     case Tall:
@@ -47,239 +47,67 @@ void World::setWorldDimensions(WorldSize sizeParam) {
   }
 }
 void World::start() {
+  GLCD.ClearScreen();
   screen.renderWorld();
 }
 void World::generate (WorldSize sizeParam) {
   setWorldDimensions(sizeParam);
-  com.out.log(F("Beginning World Generation"));
+  com.out.logChars("Beginning World Generation");
   xLimit = (worldWidth - 1) / 2;
   yLimit = worldHeight - 1;
-  Serial.println(freeMemory());
   block.createBlockDB(worldWidth, worldHeight);
-  Serial.println(freeMemory());
-  { //Air
-    com.out.log("Generation Stage 0: Air");
-    Serial.println(freeMemory());
-    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
-      Serial.println(freeMemory());
-      for (ycoord_t y = 0; y <= yLimit; y++)
-        block.set(x, y, B_AIR);
-    }
-    Serial.println(freeMemory());
-    com.out.log(F("\tFinished"));
-  }
-  { //Stone
-    com.out.log(F("Generation Stage 1: Solid Stone Layer"));
-    Serial.println(freeMemory());
-    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
-      for (ycoord_t y = 0; y <= safeDivide(yLimit, 2) - 2; y++)
-        block.set(x, y, B_STONE);
-    }
-    for (int i = 0; i < 2; i++) { //Stone Hills
-      ycoord_t currentHillHeight = safeDivide(yLimit, 2) + 2;
-      int8_t lastDeviation = 0;
-      int8_t lastLastDeviation = 0;
-      for (xcoord_t x = 0; (i ? (x <= xLimit) : (x >= -xLimit)); (i ? (x++) : (x--))) {
-        int8_t deviation = randomNumber(0, 0.7, 1, 0.275, 2, 0.02, 3);
-        bool upOrDown = randomNumber(0, 0.5, 1, 0.5); //true is up, false is down
-        if (currentHillHeight >= yLimit - 4) { //if the height is near the build limit, the  height can't increase further
-          currentHillHeight -= deviation;
-          lastDeviation = -deviation;
-        } else if (currentHillHeight <= safeDivide(yLimit, 2) - 1) { //if the height is near the world halfway point, the hill height can't decrease further
-          currentHillHeight += deviation;
-          lastDeviation = deviation;
-        } else if (lastLastDeviation <= -2 && deviation >= 2 && upOrDown) { //if a 2x2 pitfall if forming, prevent it
-          currentHillHeight += 1;
-          lastDeviation = 1;
-        } else if (lastDeviation > 0) { //if the last deviation was positive, the new deviation can't be negtive
-          currentHillHeight += deviation;
-          lastDeviation = deviation;
-        } else if (lastDeviation < 0) { //if the last deviation was negative, the new deviation can't be positive
-          currentHillHeight -= deviation;
-          lastDeviation = -deviation;
-        } else {
-          if (upOrDown) { //if no special rules have been used, just choose whether to move the ground up or down.
-            currentHillHeight += deviation;
-            lastDeviation = deviation;
-          } else {
-            currentHillHeight -= deviation;
-            lastDeviation = -deviation;
-          }
-        }
-        lastLastDeviation = lastDeviation;
-        for (ycoord_t y = safeDivide(yLimit, 2) - 5; y <= currentHillHeight; y++) //finally fill in the stone at and below  the currentHillHeight
-          block.set(x, y, B_STONE);
-      }
-    }
-    com.out.log(F("\tFinished"));
-  }
-  { //Dirt
-    com.out.log(F("Generation Stage 2: Dirt Top Layer"));
-    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
-      for (ycoord_t y = 0; y <= yLimit; y++) {
-        if (block.get(x, y) == B_STONE && (y == yLimit || block.get(x, y + 1) == B_AIR || y == yLimit - 1 || block.get(x, y + 2) == B_AIR || ((y == yLimit - 2 || block.get(x, y + 3) == B_AIR) && randomNumber(1, 0.95, 0)) || ((y == yLimit - 3 || block.get(x, y + 4) == B_AIR) && randomNumber(0, 0.98, 1))))
-          /* Explanation:
-             This is a mess. It reads as: if the block in question is stone, and one of the following conditions is true, it becomes dirt.
-             The conditions: either it's 2 blocks below air 2 blocks of air, or (large chance) within 3 blocks of air, or (small chance) it's within 4 blocks of air.
-          */
-          block.set(x, y, B_DIRT);
-      }
-    }
-  }
-  { //Caves
-    com.out.log("Generation Stage 3: Caves");
-    com.out.log(F("\tSeeding Caves"));
-    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
-      for (ycoord_t y = 0; y <= safeDivide(worldHeight, 3); y++)
-        if ((random() % 100) == 0 && block.get(x, y) == B_STONE)
-          block.set(x, y, GEN_AIR);
-    }
-    for (int i = 0; i < 5; i++) {
-      const byte chances[5][8] = {
-        {1,  1,  1,  1,  1,  1,  1,  1},  // An array of chance lists, one for each value of i.
-        {2,  2,  1,  1,  1,  1,  1,  1},  // Chance list: An array of values of x.
-        {5,  3,  2,  1,  1,  1,  1,  1},  // For each number of isTouchingWide blocks, there is a value of x,
-        {0, 0,  3,  2,  1,  1,  1,  1},  // where the odds of changing the block in question to air are 1/x.
-        {0,  0,  0,  0,  0,  0,  1,  1}   // 0 means no chance.
-      };
-      com.out.log("\tGrowing Caves: Pass " + String(i + 1));
-      for (xcoord_t x = -xLimit; x <= xLimit; x++) {
-        for (ycoord_t y = 0; y <= yLimit; y++) {
-          byte numTouching = block.isTouchingWide(x, y, GEN_AIR);
-          if (numTouching == 0)
-            continue;
-          byte chance = chances[i][numTouching - 1];
-          if (chance == 0)
-            continue;
-          if (block.isTouching(x, y, GEN_AIR) && (random() % chance) == 0)
-            block.set(x, y, GEN_T_AIR);
-        }
-      }
-      for (xcoord_t x = -xLimit; x <= xLimit; x++) {
-        for (ycoord_t y = 0; y <= yLimit; y++)
-          if (block.get(x, y) == GEN_T_AIR)
-            block.set(x, y, GEN_AIR);
-      }
-    }
-    com.out.log(F("\tFinished"));
-  }
-  { //Gravel
-    com.out.log(F("Generation Stage 4: Gravel"));
-    com.out.log(F("\tSeeding Gravel Veins"));
-    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
-      for (ycoord_t y = 0; y <= yLimit; y++)
-        if ((random() % 150) == 0 && block.get(x, y) == B_STONE)
-          block.set(x, y, B_GRAVEL);
-    }
-    for (int i = 0; i < 4; i++) {
-      const byte chances[4][8] = {
-        {1,  1,  1,  1,  1,  1,  1,  1},
-        {3,  2,  2,  2,  1,  1,  1,  1},
-        {0, 0,  5,  3,  3,  3,  2,  1},
-        {0,  0,  0,  0,  1,  1,  1,  1}
-      };
-      com.out.log("\tGrowing Gravel Veins: Pass " + String(i + 1));
-      for (xcoord_t x = -xLimit; x <= xLimit; x++) {
-        for (ycoord_t y = 0; y <= yLimit; y++) {
-          byte numTouching = block.isTouchingWide(x, y, B_GRAVEL);
-          if (numTouching == 0)
-            continue;
-          byte chance = chances[i][numTouching - 1];
-          if (chance == 0)
-            continue;
-          if ((block.isTouching(x, y, B_GRAVEL) && (random() % chance) == 0) || block.isTouching(x, y, B_GRAVEL) >= 3)
-            block.set(x, y, GEN_GRAVEL);
-        }
-      }
-      for (xcoord_t x = -xLimit; x <= xLimit; x++) {
-        for (ycoord_t y = 0; y <= yLimit; y++)
-          if (block.get(x, y) == GEN_GRAVEL)
-            block.set(x, y, B_GRAVEL);
-      }
-    }
-    com.out.log(F("\tFinished"));
-  }
-  { //Dirt Veins
-    com.out.log(F("Generation Stage 5: Dirt Veins"));
-    com.out.log(F("\tSeeding Dirt Veins"));
-    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
-      for (ycoord_t y = safeDivide(worldHeight, 4); y <= yLimit; y++)
-        if ((random() % 200) == 0 && block.get(x, y) == B_STONE)
-          block.set(x, y, GEN_DIRT);
-    }
-    for (int i = 0; i < 3; i++) {
-      const byte chances[3][8] = {
-        {1,  1,  1,  1,  1,  1,  1,  1},
-        {3,  2,  2,  2,  1,  1,  1,  1},
-        {0,  0,  0,  0,  1,  1,  1,  1}
-      };
-      com.out.log("\tGrowing Dirt Veins: Pass " + String(i + 1));
-      for (xcoord_t x = -xLimit; x <= xLimit; x++) {
-        for (ycoord_t y = 0; y <= yLimit; y++) {
-          byte numTouching = block.isTouchingWide(x, y, GEN_DIRT);
-          if (numTouching == 0)
-            continue;
-          byte chance = chances[i][numTouching - 1];
-          if (chance == 0)
-            continue;
-          if ((block.isTouching(x, y, GEN_DIRT) && (random() % chance) == 0) || block.isTouching(x, y, GEN_DIRT) >= 3)
-            block.set(x, y, GEN_T_DIRT);
-        }
-      }
-      for (xcoord_t x = -xLimit; x <= xLimit; x++) {
-        for (ycoord_t y = 0; y <= yLimit; y++)
-          if (block.get(x, y) == GEN_T_DIRT)
-            block.set(x, y, GEN_DIRT);
-      }
-    }
-    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
-      for (ycoord_t y = 0; y <= yLimit; y++)
-        if (block.get(x, y) == GEN_DIRT)
-          block.set(x, y, B_DIRT);
-    }
-    com.out.log(F("\tFinished"));
-  }
-  { //Dirt Veins
-    com.out.log(F("Generation Stage 6: Diamond Ore"));
-    com.out.log(F("\tSeeding Diamond Veins"));
-    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
-      for (ycoord_t y = 0; y <= 4; y++)
-        if (((random() % 200) == 0 || ((random() % 100) == 0 && block.isTouching(x, y, GEN_AIR))) && block.get(x, y) == B_STONE)
-          block.set(x, y, B_DIA_ORE);
-    }
-    com.out.log("\tGrowing Diamond Veins");
-    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
-      for (ycoord_t y = 0; y <= 5; y++) {
-        if ((block.isTouching(x, y, B_DIA_ORE) && (random() % 10) != 0))
-          block.set(x, y, GEN_T_DIA);
-      }
-    }
-    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
-      for (ycoord_t y = 0; y <= yLimit; y++)
-        if (block.get(x, y) == GEN_T_DIA)
-          block.set(x, y, B_DIA_ORE);
-    }
-    com.out.log(F("\tFinished"));
-  }
-  com.out.log(F("\tGeneration Stage 13: Clean up Underground Generation"));
-  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
-    for (ycoord_t y = 0; y <= yLimit; y++)
-      if (block.get(x, y) == GEN_AIR)
-        block.set(x, y, B_AIR);
-  }
   player.move(0, safeDivide(yLimit, 2) + 4);
+  generateAir();
+  screen.renderWorldOverview();
+  Serial.println(freeMemory());
+  generateStone();
+  screen.renderWorldOverview();
+  Serial.println(freeMemory());
+  generateDirtLayer();
+  screen.renderWorldOverview();
+  Serial.println(freeMemory());
+  generateCaves();
+  screen.renderWorldOverview();
+  Serial.println(freeMemory());
+  generateGravelVeins();
+  screen.renderWorldOverview();
+  Serial.println(freeMemory());
+  generateDirtVeins();
+  screen.renderWorldOverview();
+  Serial.println(freeMemory());
+  generateDiamond();
+  screen.renderWorldOverview();
+  Serial.println(freeMemory());
+  generateIron();
+  screen.renderWorldOverview();
+  Serial.println(freeMemory());
+  generateGold();
+  screen.renderWorldOverview();
+  Serial.println(freeMemory());
+  generateCoal();
+  screen.renderWorldOverview();
+  Serial.println(freeMemory());
+  generateLavaPools();
+  screen.renderWorldOverview();
+  Serial.println(freeMemory());
+  generateWaterPools();
+  screen.renderWorldOverview();
+  Serial.println(freeMemory());
+  endUnderGroundGeneration();
+  screen.renderWorldOverview();
+  Serial.println(freeMemory());
   start();
-  com.out.log(F("\tFinished"));
+  com.out.logChars("\tFinished");
 }
 void World::load () {
   /*for (int j = 0; j < 16; j++) {
     for (int i = 0; i < 256; i++) {
     byte testByte = EEPROM.read(i + (j * 256));
-    com.out.log(String(testByte == i ? testByte : String(testByte) + "  !!!"));
+    com.out.logChars(String(testByte == i ? testByte : String(testByte) + "  !!!"));
     }
     }*/
 #ifdef SAVE_LOAD_LOGGING
-  com.out.log(F("Beginning World Loading"));
+  com.out.logChars("Beginning World Loading");
 #endif
   byte worldSizeByte = EEPROM.read(EE_WORLD_SIZE_BYTE);
   byte worldSize = (bitRead(worldSizeByte, 7) * 8) + (bitRead(worldSizeByte, 6) * 4) + (bitRead(worldSizeByte, 5) * 2) + bitRead(worldSizeByte, 4); //shift the bits
@@ -295,7 +123,7 @@ void World::load () {
       byte numberToLoad = EEPROM.read(EEPROMAddress + 1);
       byte blockToLoad = EEPROM.read(EEPROMAddress + 2);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-      com.out.log("F 3\t\t# " + String(numberToLoad) + "\t\tI " + String(blockToLoad) + "\tB " + String(blockDBAddress) + "-" + String(blockDBAddress + numberToLoad - 1) + "\t\tE " + String(EEPROMAddress) + "-" + String(EEPROMAddress + 2));
+      com.out.logChars("F 3\t\t# " + String(numberToLoad) + "\t\tI " + String(blockToLoad) + "\tB " + String(blockDBAddress) + "-" + String(blockDBAddress + numberToLoad - 1) + "\t\tE " + String(EEPROMAddress) + "-" + String(EEPROMAddress + 2));
 #endif
       EEPROMAddress += 3;
       for (index_t i = 0; i < numberToLoad; i++)
@@ -305,7 +133,7 @@ void World::load () {
       largeindex_t numberToLoad = (EEPROM.read(EEPROMAddress + 1) * 256) + EEPROM.read(EEPROMAddress + 2);
       byte blockToLoad = EEPROM.read(EEPROMAddress + 3);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-      com.out.log("F 4\t\t# " + String(numberToLoad) + "\t\tI " + String(blockToLoad) + "\tB " + String(blockDBAddress) + "-" + String(blockDBAddress + numberToLoad - 1) + "\t\tE " + String(EEPROMAddress) + "-" + String(EEPROMAddress + 3));
+      com.out.logChars("F 4\t\t# " + String(numberToLoad) + "\t\tI " + String(blockToLoad) + "\tB " + String(blockDBAddress) + "-" + String(blockDBAddress + numberToLoad - 1) + "\t\tE " + String(EEPROMAddress) + "-" + String(EEPROMAddress + 3));
 #endif
       EEPROMAddress += 4;
       for (largeindex_t i = 0; i < numberToLoad; i++)
@@ -313,13 +141,13 @@ void World::load () {
       blockDBAddress += numberToLoad - 1;
     } else if (byteRead == COMP_END) {
 #ifdef SAVE_LOAD_BYTE_LOGGING
-      com.out.log("Found COMP_END");
+      com.out.logChars("Found COMP_END");
 #endif
       break;
     }
     else {
 #ifdef SAVE_LOAD_BYTE_LOGGING
-      com.out.log("\t\t\t\tI " + String(byteRead) + "\tB " + String(blockDBAddress) + "\t\t\tE " + String(EEPROMAddress));
+      com.out.logChars("\t\t\t\tI " + String(byteRead) + "\tB " + String(blockDBAddress) + "\t\t\tE " + String(EEPROMAddress));
 #endif
       blockDB[blockDBAddress] = byteRead;
       EEPROMAddress++;
@@ -329,7 +157,7 @@ void World::load () {
   player.move(EEPROM.read(EE_PLAYER_X_HIGH_BYTE), EEPROM.read(EE_PLAYER_LOW_X_Y_BYTE));
   start();
 #ifdef SAVE_LOAD_LOGGING
-  com.out.log(F("\tFinished"));
+  com.out.logChars("\tFinished");
 #endif
 }
 void World::save () {
@@ -356,7 +184,7 @@ void World::save () {
       if (numberFound == 1) {
         EEPROM.update(EEPROMAddress, currentBlockID);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-        com.out.log("\t\t\t\tI " + String(currentBlockID) + "\tB " + String(i - 1) + "\t\t\tE " + String(EEPROMAddress));
+        com.out.logChars("\t\t\t\tI " + String(currentBlockID) + "\tB " + String(i - 1) + "\t\t\tE " + String(EEPROMAddress));
 #endif
         EEPROMAddress += 1;
       } else if (numberFound < 256) {
@@ -364,7 +192,7 @@ void World::save () {
         EEPROM.update(EEPROMAddress + 1, lowByte(numberFound));
         EEPROM.update(EEPROMAddress + 2, currentBlockID);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-        com.out.log("F 3\t\t# " + String(numberFound) + "\t\tI " + String(currentBlockID) + "\tB " + String(i - numberFound) + "-" + String(i - 1) + "\t\tE " + String(EEPROMAddress) + "-" + String(EEPROMAddress + 2));
+        com.out.logChars("F 3\t\t# " + String(numberFound) + "\t\tI " + String(currentBlockID) + "\tB " + String(i - numberFound) + "-" + String(i - 1) + "\t\tE " + String(EEPROMAddress) + "-" + String(EEPROMAddress + 2));
 #endif
         EEPROMAddress += 3;
       } else {
@@ -373,7 +201,7 @@ void World::save () {
         EEPROM.update(EEPROMAddress + 2, lowByte(numberFound));
         EEPROM.update(EEPROMAddress + 3, currentBlockID);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-        com.out.log("F 4\t\t# " + String(numberFound) + "\t\tI " + String(currentBlockID) + "\tB " + String(i - numberFound) + "-" + String(i - 1) + "\t\tE " + String(EEPROMAddress) + "-" + String(EEPROMAddress + 3));
+        com.out.logChars("F 4\t\t# " + String(numberFound) + "\t\tI " + String(currentBlockID) + "\tB " + String(i - numberFound) + "-" + String(i - 1) + "\t\tE " + String(EEPROMAddress) + "-" + String(EEPROMAddress + 3));
 #endif
         EEPROMAddress += 4;
       }
@@ -384,7 +212,7 @@ void World::save () {
   if (numberFound == 1) {
     EEPROM.update(EEPROMAddress, currentBlockID);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-    com.out.log("\t\t\t\tI " + String(currentBlockID) + "\tB " + String(i - 1) + "\t\t\tE " + String(EEPROMAddress));
+    com.out.logChars("\t\t\t\tI " + String(currentBlockID) + "\tB " + String(i - 1) + "\t\t\tE " + String(EEPROMAddress));
 #endif
     EEPROMAddress++;
   } else if (numberFound < 256) {
@@ -392,7 +220,7 @@ void World::save () {
     EEPROM.update(EEPROMAddress + 1, lowByte(numberFound));
     EEPROM.update(EEPROMAddress + 2, currentBlockID);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-    com.out.log("F 3\t\t# " + String(numberFound) + "\t\tI " + String(currentBlockID) + "\tB " + String(i - numberFound) + "-" + String(i - 1) + "\t\tE " + String(EEPROMAddress) + "-" + String(EEPROMAddress + 2));
+    com.out.logChars("F 3\t\t# " + String(numberFound) + "\t\tI " + String(currentBlockID) + "\tB " + String(i - numberFound) + "-" + String(i - 1) + "\t\tE " + String(EEPROMAddress) + "-" + String(EEPROMAddress + 2));
 #endif
     EEPROMAddress += 3;
   } else {
@@ -401,7 +229,7 @@ void World::save () {
     EEPROM.update(EEPROMAddress + 2, lowByte(numberFound));
     EEPROM.update(EEPROMAddress + 3, currentBlockID);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-    com.out.log("F 4\t\t# " + String(numberFound) + "\t\tI " + String(currentBlockID) + "\tB " + String(i - numberFound) + "-" + String(i - 1) + "\t\tE " + String(EEPROMAddress) + "-" + String(EEPROMAddress + 3));
+    com.out.logChars("F 4\t\t# " + String(numberFound) + "\t\tI " + String(currentBlockID) + "\tB " + String(i - numberFound) + "-" + String(i - 1) + "\t\tE " + String(EEPROMAddress) + "-" + String(EEPROMAddress + 3));
 #endif
     EEPROMAddress += 4;
   }
@@ -410,4 +238,328 @@ void World::save () {
 
 }
 
+//########################
+//# GENERATION FUNCTIONS #
+//########################
+void World::generateAir () {
+  com.out.logChars("Generation Stage 0: Air");
+  for (xcoord_t x = -xLimit; x <= xLimit; x++)
+    for (ycoord_t y = 0; y <= yLimit; y++)
+      block.set(x, y, B_AIR);
+  com.out.log("\tFinished");
+}
+void World::generateStone () {
+  com.out.logChars("Generation Stage 1: Solid Stone Layer");
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= safeDivide(yLimit, 2) - 2; y++)
+      block.set(x, y, B_STONE);
+  }
+  screen.renderWorldOverview();
+  for (int i = 0; i < 2; i++) { //Stone Hills
+    ycoord_t currentHillHeight = safeDivide(yLimit, 2) + 2;
+    int8_t lastDeviation = 0;
+    int8_t lastLastDeviation = 0;
+    for (xcoord_t x = 0; (i ? (x <= xLimit) : (x >= -xLimit)); (i ? (x++) : (x--))) {
+      int8_t deviation = randomNumber(0, 0.7, 1, 0.275, 2, 0.02, 3);
+      bool upOrDown = randomNumber(0, 0.5, 1, 0.5); //true is up, false is down
+      if (currentHillHeight >= yLimit - 4) { //if the height is near the build limit, the  height can't increase further
+        currentHillHeight -= deviation;
+        lastDeviation = -deviation;
+      } else if (currentHillHeight <= safeDivide(yLimit, 2) - 1) { //if the height is near the world halfway point, the hill height can't decrease further
+        currentHillHeight += deviation;
+        lastDeviation = deviation;
+      } else if (lastLastDeviation <= -2 && deviation >= 2 && upOrDown) { //if a 2x2 pitfall if forming, prevent it
+        currentHillHeight += 1;
+        lastDeviation = 1;
+      } else if (lastDeviation > 0) { //if the last deviation was positive, the new deviation can't be negtive
+        currentHillHeight += deviation;
+        lastDeviation = deviation;
+      } else if (lastDeviation < 0) { //if the last deviation was negative, the new deviation can't be positive
+        currentHillHeight -= deviation;
+        lastDeviation = -deviation;
+      } else {
+        if (upOrDown) { //if no special rules have been used, just choose whether to move the ground up or down.
+          currentHillHeight += deviation;
+          lastDeviation = deviation;
+        } else {
+          currentHillHeight -= deviation;
+          lastDeviation = -deviation;
+        }
+      }
+      lastLastDeviation = lastDeviation;
+      for (ycoord_t y = safeDivide(yLimit, 2) - 5; y <= currentHillHeight; y++) //finally fill in the stone at and below  the currentHillHeight
+        block.set(x, y, B_STONE);
+      screen.renderWorldOverview();
+    }
+    screen.renderWorldOverview();
+  }
+  com.out.logChars("\tFinished");
+}
+void World::generateDirtLayer () {
+  com.out.logChars("Generation Stage 2: Dirt Top Layer");
+  Serial.println(freeMemory());
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= yLimit; y++) {
+      if (block.get(x, y) == B_STONE && (y == yLimit || block.get(x, y + 1) == B_AIR || y == yLimit - 1 || block.get(x, y + 2) == B_AIR || ((y == yLimit - 2 || block.get(x, y + 3) == B_AIR) && randomNumber(1, 0.95, 0)) || ((y == yLimit - 3 || block.get(x, y + 4) == B_AIR) && randomNumber(0, 0.98, 1))))
+        /* Explanation:
+           This is a mess. It reads as: if the block in question is stone, and one of the following conditions is true, it becomes dirt.
+           The conditions: either it's 2 blocks below air 2 blocks of air, or (large chance) within 3 blocks of air, or (small chance) it's within 4 blocks of air.
+        */
+        block.set(x, y, B_DIRT);
+    }
+  }
+}
+void World::generateCaves () {
+  com.out.logChars("Generation Stage 3: Caves");
+  com.out.logChars("\tSeeding Caves");
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= yLimit; y++)
+      if ((random() % 100) == 0 && block.get(x, y) == B_STONE && !block.isNear(x, y, B_AIR, 4, Taxicab) && (!block.isNear(x, y, GEN_AIR, 7, Chebyshev) || (random() % 10) == 0)) {
+      //    1% chance           and      is stone              and              not near the surface     and       not near another cave seed      unless     small chance
+        block.set(x, y, GEN_AIR);
+        screen.renderWorldOverview();
+      }
+  }
+  for (int i = 0; i < 5; i++) {
+    const byte chances[5][8] = {
+      {1,  1,  1,  1,  1,  1,  1,  1},  // An array of chance lists, one for each value of i.
+      {2,  2,  1,  1,  1,  1,  1,  1},  // Chance list: An array of values of x.
+      {5,  3,  2,  1,  1,  1,  1,  1},  // For each number of isTouchingWide blocks, there is a value of x,
+      {0, 0,  3,  2,  1,  1,  1,  1},  // where the odds of changing the block in question to air are 1/x.
+      {0,  0,  0,  0,  0,  0,  1,  1}   // 0 means no chance.
+    };
+    com.out.prefix();
+    com.out.print("\tGrowing Caves:");
+    com.out.print(" Pass ");
+    com.out.println(String(i + 1));
+    Serial.println(freeMemory());
+    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+      for (ycoord_t y = 0; y <= yLimit; y++) {
+        byte numTouching = block.isTouchingWide(x, y, GEN_AIR);
+        if (numTouching == 0)
+          continue;
+        byte chance = chances[i][numTouching - 1];
+        if (chance == 0)
+          continue;
+        if (block.isTouching(x, y, GEN_AIR) && (random() % chance) == 0)
+          block.set(x, y, GEN_T_AIR);
+      }
+    }
+    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+      for (ycoord_t y = 0; y <= yLimit; y++)
+        if (block.get(x, y) == GEN_T_AIR)
+          block.set(x, y, GEN_AIR);
+    }
+    screen.renderWorldOverview();
+  }
+  com.out.logChars("\tFinished");
+}
+void World::generateGravelVeins () {
+  com.out.logChars("Generation Stage 4: Gravel");
+  com.out.logChars("\tSeeding Gravel Veins");
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= yLimit; y++)
+      if ((random() % 200) == 0 && block.get(x, y) == B_STONE)
+        block.set(x, y, B_GRAVEL);
+  }
+  for (int i = 0; i < 4; i++) {
+    const byte chances[4][8] = {
+      {1,  1,  1,  1,  1,  1,  1,  1},
+      {3,  2,  2,  2,  1,  1,  1,  1},
+      {0, 0,  5,  3,  3,  3,  2,  1},
+      {0,  0,  0,  0,  1,  1,  1,  1}
+    };
+    com.out.logMultiple("\tGrowing Gravel Veins: Pass " + String(i + 1));
+    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+      for (ycoord_t y = 0; y <= yLimit; y++) {
+        byte numTouching = block.isTouchingWide(x, y, B_GRAVEL);
+        if (numTouching == 0)
+          continue;
+        byte chance = chances[i][numTouching - 1];
+        if (chance == 0)
+          continue;
+        if ((block.isTouching(x, y, B_GRAVEL) && (random() % chance) == 0) || block.isTouching(x, y, B_GRAVEL) >= 3)
+          block.set(x, y, GEN_GRAVEL);
+      }
+    }
+    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+      for (ycoord_t y = 0; y <= yLimit; y++)
+        if (block.get(x, y) == GEN_GRAVEL)
+          block.set(x, y, B_GRAVEL);
+    }
+  }
+  com.out.logChars("\tFinished");
+}
+void World::generateDirtVeins () {
+  com.out.logChars("Generation Stage 5: Dirt Veins");
+  com.out.logChars("\tSeeding Dirt Veins");
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = safeDivide(worldHeight, 4); y <= yLimit; y++)
+      if ((random() % 250) == 0 && block.get(x, y) == B_STONE)
+        block.set(x, y, GEN_DIRT);
+  }
+  for (int i = 0; i < 3; i++) {
+    const byte chances[3][8] = {
+      {1,  1,  1,  1,  1,  1,  1,  1},
+      {3,  2,  2,  2,  1,  1,  1,  1},
+      {0,  0,  0,  0,  1,  1,  1,  1}
+    };
+    com.out.logMultiple("\tGrowing Dirt Veins: Pass " + String(i + 1));
+    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+      for (ycoord_t y = 0; y <= yLimit; y++) {
+        byte numTouching = block.isTouchingWide(x, y, GEN_DIRT);
+        if (numTouching == 0)
+          continue;
+        byte chance = chances[i][numTouching - 1];
+        if (chance == 0)
+          continue;
+        if ((block.isTouching(x, y, GEN_DIRT) && (random() % chance) == 0) || block.isTouching(x, y, GEN_DIRT) >= 3)
+          block.set(x, y, GEN_T_DIRT);
+      }
+    }
+    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+      for (ycoord_t y = 0; y <= yLimit; y++)
+        if (block.get(x, y) == GEN_T_DIRT)
+          block.set(x, y, GEN_DIRT);
+    }
+  }
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= yLimit; y++)
+      if (block.get(x, y) == GEN_DIRT)
+        block.set(x, y, B_DIRT);
+  }
+  com.out.logChars("\tFinished");
+}
+void World::generateDiamond () {
+  com.out.logChars("Generation Stage 6: Diamond Ore");
+  com.out.logChars("\tSeeding Diamond Veins");
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= 4; y++)
+      if (((random() % 300) == 0 || ((random() % 100) == 0 && block.isTouching(x, y, GEN_AIR))) && block.get(x, y) == B_STONE)
+        block.set(x, y, B_DIA_ORE);
+  }
+  com.out.logChars("\tGrowing Diamond Veins");
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= 5; y++) {
+      if ((block.isTouching(x, y, B_DIA_ORE) && (random() % 10) != 0) && block.get(x, y) == B_STONE)
+        block.set(x, y, GEN_T_DIA);
+    }
+  }
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= yLimit; y++)
+      if (block.get(x, y) == GEN_T_DIA)
+        block.set(x, y, B_DIA_ORE);
+  }
+  com.out.logChars("\tFinished");
+}
+void World::generateIron () {
+  com.out.logChars("Generation Stage 7: Iron Ore");
+  com.out.logChars("\tSeeding Iron Veins");
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= safeDivide(worldHeight, 3); y++)
+      if (((random() % 100) == 0 || ((random() % 400) == 0 && block.isTouching(x, y, GEN_AIR))) && block.get(x, y) == B_STONE)
+        block.set(x, y, B_IRON_ORE);
+  }
+  com.out.logChars("\tGrowing Iron Veins");
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= yLimit; y++) {
+      if ((block.isTouchingWide(x, y, B_IRON_ORE) && (random() % 4) != 0) && block.get(x, y) == B_STONE)
+        block.set(x, y, GEN_T_IRON);
+    }
+  }
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= yLimit; y++)
+      if (block.get(x, y) == GEN_T_IRON)
+        block.set(x, y, B_IRON_ORE);
+  }
+  com.out.logChars("\tFinished");
+}
+void World::generateGold () {
+  com.out.logChars("Generation Stage 8: Gold Ore");
+  com.out.logChars("\tSeeding Gold Veins");
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= yLimit; y++)
+      if (((random() % 150) == 0 || ((random() % 800) == 0 && block.isTouching(x, y, GEN_AIR))) && block.get(x, y) == B_STONE)
+        block.set(x, y, B_GOLD_ORE);
+  }
+  com.out.logChars("\tGrowing Gold Veins");
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= safeDivide(worldHeight, 3); y++) {
+      if ((block.isTouchingWide(x, y, B_GOLD_ORE) && (random() % 3) != 0) && block.get(x, y) == B_STONE)
+        block.set(x, y, GEN_T_GOLD);
+    }
+  }
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= yLimit; y++)
+      if (block.get(x, y) == GEN_T_GOLD)
+        block.set(x, y, B_GOLD_ORE);
+  }
+  com.out.logChars("\tFinished");
+}
+void World::generateCoal () {
+  com.out.logChars("Generation Stage 9: Coal Ore");
+  com.out.logChars("\tSeeding Coal Veins");
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= safeDivide(worldHeight, 2); y++)
+      if (((random() % 100) == 0 || ((random() % 70) == 0 && block.isTouching(x, y, GEN_AIR))) && block.get(x, y) == B_STONE)
+        block.set(x, y, B_COAL_ORE);
+  }
+  com.out.logChars("\tGrowing Coal Veins: Pass 1");
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= yLimit; y++) {
+      if ((block.isTouchingWide(x, y, B_COAL_ORE) && (random() % 2) == 0) && block.get(x, y) == B_STONE)
+        block.set(x, y, GEN_T_COAL);
+    }
+  }
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= yLimit; y++)
+      if (block.get(x, y) == GEN_T_COAL)
+        block.set(x, y, B_COAL_ORE);
+  }
+  com.out.logChars("\tGrowing Coal Veins: Pass 2");
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= yLimit; y++) {
+      if ((block.isTouching(x, y, B_COAL_ORE) && (random() % 4) == 0) && block.get(x, y) == B_STONE)
+        block.set(x, y, GEN_T_COAL);
+    }
+  }
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= yLimit; y++)
+      if (block.get(x, y) == GEN_T_COAL)
+        block.set(x, y, B_COAL_ORE);
+  }
+  com.out.logChars("\tFinished");
+}
+void World::generateLavaPools () {
+  com.out.logChars("Generation Stage 10: Lava Pools");
+  com.out.logChars("\tSeeding Lava Pools");
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= 5; y++)
+      if ((random() % 60) == 0 && block.get(x, y) == GEN_AIR)
+        block.set(x, y, B_LAVA3);
+  }
+  for (int i = 0; i < 10; i++) {
+    com.out.prefix();
+    com.out.print("\tGrowing Lava Pools:");
+    com.out.print(" Pass ");
+    com.out.println(String(i + 1));
+    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+      for (ycoord_t y = 0; y <= 5; y++)
+        if (block.isTouching(x, y, B_LAVA3) && block.get(x, y) == GEN_AIR)
+          block.set(x, y, B_LAVA3);
+    }
+  }
+}
+void World::generateWaterPools () {
+
+}
+void World::endUnderGroundGeneration () {
+  com.out.logChars("\tGeneration Stage 13: Clean up Underground Generation");
+  Serial.println(freeMemory());
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= yLimit; y++)
+      if (block.get(x, y) == GEN_AIR)
+        block.set(x, y, B_AIR);
+  }
+}
 World world;

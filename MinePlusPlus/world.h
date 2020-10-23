@@ -11,13 +11,26 @@ extern ycoord_t yLimit; //Inclusive. Bottom limit is 0.
 
 class World { //One instance only, but used as a proper object.
     WorldSize size;
-    void setWorldDimensions(WorldSize sizeParam);
+    void setWorldDimensions(const WorldSize sizeParam);
     void start (); //Sets starts the necessary world services *after* a world has been either loaded or generated.
+    void generateAir ();
+    void generateStone ();
+    void generateDirtLayer ();
+    void generateCaves ();
+    void generateGravelVeins ();
+    void generateDirtVeins ();
+    void generateDiamond ();
+    void generateIron ();
+    void generateGold ();
+    void generateCoal ();
+    void generateLavaPools ();
+    void generateWaterPools ();
+    void endUnderGroundGeneration ();
   public:
     bool isRunning = false;
-    void update (WorldUpdateType updateType); //Flows water, grows crops, drops gravel, etc.
-    void setTickRate (double tickRateParam);
-    void generate (WorldSize sizeParam); //Creates a new world in RAM.
+    void update (const WorldUpdateType updateType); //Flows water, grows crops, drops gravel, etc.
+    void setTickRate (const double tickRateParam);
+    void generate (const WorldSize sizeParam); //Creates a new world in RAM.
     void load (); //Loads a world from EEPROM into ram.
     void save (); //Saves the world in RAM to EEPROM, overwriting any older saves.
 };

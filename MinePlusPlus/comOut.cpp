@@ -1,29 +1,33 @@
 #include "includes.h"
 
-void CommunicationChannel::Output::print (String string) {
+void CommunicationChannel::Output::print (const String string) {
   Serial.print(string);
 }
-void CommunicationChannel::Output::println (String string) {
+void CommunicationChannel::Output::println (const String string) {
   Serial.println(string);
 }
-void CommunicationChannel::Output::log (String string) {
+void CommunicationChannel::Output::log (const String string) {
   com.out.prefix();
   Serial.println(string);
 }
-void CommunicationChannel::Output::log (ExactCoordPair coordPair) {
+void CommunicationChannel::Output::logMultiple (const StringSumHelper& string) {
+  com.out.prefix();
+  Serial.println(string);
+}
+void CommunicationChannel::Output::log (const ExactCoordPair coordPair) {
   com.out.prefix();
   Serial.print(double(coordPair.x));
   Serial.print(", ");
   Serial.println(double(coordPair.y));
 }
-void CommunicationChannel::Output::log (CoordPair coordPair) {
+void CommunicationChannel::Output::log (const CoordPair coordPair) {
   com.out.prefix();
   Serial.print(coordPair.x);
   Serial.print(F(", "));
   Serial.println(coordPair.y);
 }
 
-void CommunicationChannel::Output::throwError (Error error) {
+void CommunicationChannel::Output::throwError (const Error error) {
   com.out.prefix();
   Serial.print(F("Error thrown: "));
   switch (error) {

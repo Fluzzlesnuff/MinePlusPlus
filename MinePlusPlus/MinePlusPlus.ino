@@ -4,9 +4,9 @@
 
 #define GENERATE_ON_START
 
-#define PRESET_SEED 189
+//#define PRESET_SEED 189
 
-const int16_t playerSpeed = 200;
+#define PLAYER_SPEED 200
 bool selectedGenerateButton = false;
 
 void setup() {
@@ -73,28 +73,28 @@ void loop() {
 void worldLoop() {
   if (com.in.runCommands())
     screen.renderWorld();
-  if (leftButton.read(Normal, playerSpeed) && !rightButton.read()) {
+  if (leftButton.read(Normal, PLAYER_SPEED) && !rightButton.read()) {
     CoordPair newCoords = player.getCoords(-1);
     if (newCoords.x >= -xLimit) {
       player.move(newCoords);
       screen.renderWorld();
     }
   }
-  if (rightButton.read(Normal, playerSpeed) && !leftButton.read()) {
+  if (rightButton.read(Normal, PLAYER_SPEED) && !leftButton.read()) {
     CoordPair newCoords = player.getCoords(1);
     if (newCoords.x <= xLimit) {
       player.move(newCoords);
       screen.renderWorld();
     }
   }
-  if (jumpButton.read(Normal, playerSpeed)) {
+  if (jumpButton.read(Normal, PLAYER_SPEED)) {
     CoordPair newCoords = player.getCoords(0, 1);
     if (newCoords.y <= yLimit) {
       player.move(newCoords);
       screen.renderWorld();
     }
   }
-  if (leftMouseButton.read(Normal, playerSpeed)) {
+  if (leftMouseButton.read(Normal, PLAYER_SPEED)) {
     CoordPair newCoords = player.getCoords(0, -1);
     if (newCoords.y >= 0) {
       player.move(newCoords);
@@ -106,22 +106,4 @@ void worldLoop() {
     exit(0);
   }
   screen.updateAnimations();
-}
-
-#ifdef __arm__
-// should use uinstd.h to define sbrk but Due causes a conflict
-extern "C" char* sbrk(int incr);
-#else  // __ARM__
-extern char *__brkval;
-#endif  // __arm__
- 
-int freeMemory() {
-  char top;
-#ifdef __arm__
-  return &top - reinterpret_cast<char*>(sbrk(0));
-#elif defined(CORE_TEENSY) || (ARDUINO > 103 && ARDUINO != 151)
-  return &top - __brkval;
-#else  // __arm__
-  return __brkval ? &top - __brkval : &top - __malloc_heap_start;
-#endif  // __arm__
 }

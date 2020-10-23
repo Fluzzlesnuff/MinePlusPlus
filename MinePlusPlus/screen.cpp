@@ -6,7 +6,7 @@ byte animationFrame4;
 
 const uint16_t animationFramePeriod = 5000;
 
-void Screen::renderBitmap (const byte bitmap[], uint8_t rows, uint8_t columns, byte xPixel, byte yPixel) {
+void Screen::renderBitmap (const byte bitmap[], const uint8_t rows, const uint8_t columns, const byte xPixel, const byte yPixel) {
   const byte bitMasks[8] {
     B10000000, B1000000, B100000, B10000, B1000, B100, B10, B1
   };
@@ -19,7 +19,7 @@ void Screen::renderBitmap (const byte bitmap[], uint8_t rows, uint8_t columns, b
     }
   }
 }
-void Screen::renderBlock (xcoord_t x, ycoord_t y, int8_t xPixelOffset = 0, int8_t yPixelOffset = 0) {
+void Screen::renderBlock (const xcoord_t x, ycoord_t y, const int8_t xPixelOffset = 0, const int8_t yPixelOffset = 0) {
   id_t id;
   int8_t xRel = x - player.getCoords().x;
   int8_t yRel = y - player.getCoords().y;
@@ -51,12 +51,10 @@ void Screen::renderBlock (xcoord_t x, ycoord_t y, int8_t xPixelOffset = 0, int8_
       yPixelOffsetForLoop++;
   }
 }
-
-void Screen::renderBlock (CoordPair coords, int8_t xPixelOffset = 0, int8_t yPixelOffset = 0) {
+void Screen::renderBlock (const CoordPair coords, const int8_t xPixelOffset = 0, const int8_t yPixelOffset = 0) {
   renderBlock(coords.x, coords.y, xPixelOffset, yPixelOffset);
 }
-
-void Screen::renderWorld (bool reRenderAnimatedBlocks = false) {
+void Screen::renderWorld (const bool reRenderAnimatedBlocks = false) {
   static id_t oldRenderMap[13][7];
 #ifdef RENDER_LOGGING
   com.out.log(F("Rendering World"));
@@ -86,8 +84,41 @@ void Screen::renderWorld (bool reRenderAnimatedBlocks = false) {
   com.out.log(F("\tFinished"));
 #endif
 }
-
-byte* Screen::idToBitmap (id_t id, byte version = 0) {
+void Screen::forceRenderWorld () {
+#ifdef RENDER_LOGGING
+  com.out.log(F("Rendering World"));
+#endif
+  for (int8_t xIndex = 0; xIndex <= 6; xIndex++) {
+    for (int8_t yIndex = 0; yIndex <= 3; yIndex++) {
+      for (int8_t ySign = 0; ySign <= 1; ySign++) {
+        for (int8_t xSign = 0; xSign <= 1; xSign++) {
+          xcoord_t relX = xSign ? xIndex : -xIndex;
+          ycoord_t relY = ySign ? yIndex : -yIndex;
+          CoordPair blockCoords = player.getCoords(relX, relY);
+          id_t blockIDToRender;
+          if (blockCoords.x < -xLimit || blockCoords.x > xLimit || blockCoords.y < 0 || blockCoords.y > yLimit)
+            blockIDToRender = C_VOID;
+          else
+            blockIDToRender = block.get(blockCoords);
+          renderBlock(blockCoords);
+        }
+      }
+    }
+  }
+#ifdef RENDER_LOGGING
+  com.out.log(F("\tFinished"));
+#endif
+}
+void Screen::renderWorldOverview () {
+  for (index_t x = 0; x < 128; x++) {
+    for (index_t y = 0; y < 33; y++) {
+      id_t id = block.get(x - 64, 32 - y);
+      bool pixelColour = !(id == B_AIR || id == GEN_AIR);
+      GLCD.SetDot(x, y + 16, (pixelColour ? BLACK : WHITE));
+    }
+  }
+}
+byte* Screen::idToBitmap (const id_t id, const byte version = 0) {
   switch (id) {
     case B_AIR:       return Textures::Blocks::light_7;
     case B_FIRE:      return (animationFrame2 ? Textures::Blocks::fire2 : Textures::Blocks::fire1);
@@ -152,6 +183,8 @@ byte* Screen::idToBitmap (id_t id, byte version = 0) {
     case B_FLOWER:    return Textures::Blocks::flower;
     case B_TNT_U:     return Textures::Blocks::tnt;
 
+    case GEN_AIR:     return Textures::Blocks::light_7;
+
     case C_LIGHT0:    return Textures::Blocks::light_0;
     case C_LIGHT1:    return Textures::Blocks::light_1;
     case C_LIGHT2:    return Textures::Blocks::light_2;
@@ -163,13 +196,11 @@ byte* Screen::idToBitmap (id_t id, byte version = 0) {
     default:          return Textures::Blocks::error;
   }
 }
-
 void Screen::forceUpdateAnimations () {
   animationFrame2 = (animationFrame2 + 1) % 2;
   animationFrame3 = (animationFrame2 + 1) % 3;
   animationFrame4 = (animationFrame2 + 1) % 4;
 }
-
 void Screen::updateAnimations () {
   static uint32_t lastUpdateTime;
   if (millis() - lastUpdateTime >= animationFramePeriod) {

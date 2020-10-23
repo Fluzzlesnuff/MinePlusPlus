@@ -67,7 +67,9 @@ enum CommandType {
   Give,
   Teleport,
   Save,
-  Load
+  Load,
+  GetMemory,
+  ShowOverview
 };
 
 namespace ArgumentType {

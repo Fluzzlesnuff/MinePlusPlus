@@ -1,6 +1,6 @@
 #include "includes.h"
 
-CommunicationChannel::Input::Command::Command (CommandType commandTypeParam, String nameParam, index_t numArgsParam = 0, ArgTypeList argTypeListParam = ArgTypeList{{}}) {
+CommunicationChannel::Input::Command::Command (const CommandType commandTypeParam, const String nameParam, index_t numArgsParam = 0, const ArgTypeList argTypeListParam = ArgTypeList{{}}) {
   thisCommandType = commandTypeParam;
   numberOfArguments = numArgsParam;
   communicationName = nameParam;
@@ -8,7 +8,7 @@ CommunicationChannel::Input::Command::Command (CommandType commandTypeParam, Str
     argumentTypes[i] = argTypeListParam.argTypes[i];
 }
 
-CommandData CommunicationChannel::Input::parseCommand (String string) {
+CommandData CommunicationChannel::Input::parseCommand (const String string) {
   if (string == "") {
     CommandData failCommand;
     failCommand.type = CommandType::NoCommand;
@@ -43,6 +43,10 @@ CommandData CommunicationChannel::Input::parseCommand (String string) {
     outputCommand = com.in.save.parsePerCommand(commandArgs, numArgs);
   } else if (commandArgs[0] == "load") {
     outputCommand = com.in.load.parsePerCommand(commandArgs, numArgs);
+  } else if (commandArgs[0] == "mem") {
+    outputCommand = com.in.mem.parsePerCommand(commandArgs, numArgs);
+  } else if (commandArgs[0] == "map") {
+    outputCommand = com.in.map.parsePerCommand(commandArgs, numArgs);
   } else {
     com.out.log("Invalid Command");
     outputCommand.type = CommandType::CommandError;
@@ -50,7 +54,7 @@ CommandData CommunicationChannel::Input::parseCommand (String string) {
   return outputCommand;
 }
 
-CommandData CommunicationChannel::Input::Command::parsePerCommand (String* args, index_t inputArgsCount) {
+CommandData CommunicationChannel::Input::Command::parsePerCommand (const String* args, const index_t inputArgsCount) {
   CommandData outputCommand;
   outputCommand.type = thisCommandType;
   if (inputArgsCount < numberOfArguments) {
@@ -165,6 +169,19 @@ bool CommunicationChannel::Input::runCommands() {
       com.out.log("Load: Cannot load a world while a world is running!");
       return false;
     }
+  }
+  if (parsedCommand.type == CommandType::GetMemory) {
+    com.out.logMultiple("Free Memory: " + String(freeMemory()) + "B");
+    return true;
+  }
+  if (parsedCommand.type == CommandType::ShowOverview) {
+    com.out.log("Showing World Map");
+    GLCD.ClearScreen();
+    screen.renderWorldOverview();
+    while (!leftButton.read() && !jumpButton.read() && !rightButton.read() && !leftMouseButton.read() && !leftMouseButton.read());
+    GLCD.ClearScreen();
+    screen.forceRenderWorld();
+    return true;
   }
 
 }

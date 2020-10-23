@@ -10,9 +10,9 @@ class Button {
     bool pressing;
     unsigned long lastFired;
   public:
-    Button (byte pinParam, byte pinTypeParam);
-    bool read (ButtonReadMode mode = Normal, uint16_t repeatRate = 0);
-    void setSampleSize (uint16_t sampleSizeParam);
+    Button (const byte pinParam, const byte pinTypeParam);
+    bool read (const ButtonReadMode mode = Normal, const uint16_t repeatRate = 0);
+    void setSampleSize (const uint16_t sampleSizeParam);
 };
 
 class ResistiveButton {
@@ -22,11 +22,11 @@ class ResistiveButton {
     bool pressing;
     unsigned long lastFired;
   public:
-    ResistiveButton (byte pinParam);
-    bool read (ButtonReadMode mode = Normal, uint16_t repeatRate = 0);
+    ResistiveButton (const byte pinParam);
+    bool read (const ButtonReadMode mode = Normal, const uint16_t repeatRate = 0);
     uint16_t ResistiveButton::readRaw();
-    void setSampleSize (uint16_t sampleSizeParam);
-    void setThreshold (uint16_t thresholdParam);
+    void setSampleSize (const uint16_t sampleSizeParam);
+    void setThreshold (const uint16_t thresholdParam);
 };
 
 extern Button leftButton;
