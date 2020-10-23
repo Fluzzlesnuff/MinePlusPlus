@@ -58,43 +58,69 @@ void World::generate (WorldSize sizeParam) {
   block.createBlockDB(worldWidth, worldHeight);
   player.move(0, safeDivide(yLimit, 2) + 4);
   generateAir();
+#ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
+#endif
   Serial.println(freeMemory());
   generateStone();
+#ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
+#endif
   Serial.println(freeMemory());
   generateDirtLayer();
+#ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
+#endif
   Serial.println(freeMemory());
   generateCaves();
+#ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
+#endif
   Serial.println(freeMemory());
   generateGravelVeins();
+#ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
+#endif
   Serial.println(freeMemory());
   generateDirtVeins();
+#ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
+#endif
   Serial.println(freeMemory());
   generateDiamond();
+#ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
+#endif
   Serial.println(freeMemory());
   generateIron();
+#ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
+#endif
   Serial.println(freeMemory());
   generateGold();
+#ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
+#endif
   Serial.println(freeMemory());
   generateCoal();
+#ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
+#endif
   Serial.println(freeMemory());
   generateLavaPools();
+#ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
+#endif
   Serial.println(freeMemory());
   generateWaterPools();
+#ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
+#endif
   Serial.println(freeMemory());
   endUnderGroundGeneration();
+#ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
+#endif
   Serial.println(freeMemory());
   start();
   com.out.logChars("\tFinished");
@@ -254,7 +280,9 @@ void World::generateStone () {
     for (ycoord_t y = 0; y <= safeDivide(yLimit, 2) - 2; y++)
       block.set(x, y, B_STONE);
   }
+  #ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
+  #endif
   for (int i = 0; i < 2; i++) { //Stone Hills
     ycoord_t currentHillHeight = safeDivide(yLimit, 2) + 2;
     int8_t lastDeviation = 0;
@@ -289,9 +317,13 @@ void World::generateStone () {
       lastLastDeviation = lastDeviation;
       for (ycoord_t y = safeDivide(yLimit, 2) - 5; y <= currentHillHeight; y++) //finally fill in the stone at and below  the currentHillHeight
         block.set(x, y, B_STONE);
+        #ifdef RENDER_WHILE_GENERATING
       screen.renderWorldOverview();
+      #endif
     }
+    #ifdef RENDER_WHILE_GENERATING
     screen.renderWorldOverview();
+    #endif
   }
   com.out.logChars("\tFinished");
 }
@@ -315,9 +347,11 @@ void World::generateCaves () {
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= yLimit; y++)
       if ((random() % 100) == 0 && block.get(x, y) == B_STONE && !block.isNear(x, y, B_AIR, 4, Taxicab) && (!block.isNear(x, y, GEN_AIR, 7, Chebyshev) || (random() % 10) == 0)) {
-      //    1% chance           and      is stone              and              not near the surface     and       not near another cave seed      unless     small chance
+        //    1% chance           and      is stone              and              not near the surface     and       not near another cave seed      unless     small chance
         block.set(x, y, GEN_AIR);
+        #ifdef RENDER_WHILE_GENERATING
         screen.renderWorldOverview();
+        #endif
       }
   }
   for (int i = 0; i < 5; i++) {
@@ -350,7 +384,9 @@ void World::generateCaves () {
         if (block.get(x, y) == GEN_T_AIR)
           block.set(x, y, GEN_AIR);
     }
+    #ifdef RENDER_WHILE_GENERATING
     screen.renderWorldOverview();
+    #endif
   }
   com.out.logChars("\tFinished");
 }

@@ -1,12 +1,6 @@
 //VERSION: development version
 
 #include "includes.h"
-
-#define GENERATE_ON_START
-
-//#define PRESET_SEED 189
-
-#define PLAYER_SPEED 200
 bool selectedGenerateButton = false;
 
 void setup() {
