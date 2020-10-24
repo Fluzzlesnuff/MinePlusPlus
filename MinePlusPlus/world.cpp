@@ -117,6 +117,11 @@ void World::generate (WorldSize sizeParam) {
   screen.renderWorldOverview();
 #endif
   Serial.println(freeMemory());
+  generateLakes();
+#ifdef RENDER_WHILE_GENERATING
+  screen.renderWorldOverview();
+#endif
+  Serial.println(freeMemory());
   endUnderGroundGeneration();
 #ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
@@ -280,9 +285,9 @@ void World::generateStone () {
     for (ycoord_t y = 0; y <= safeDivide(yLimit, 2) - 2; y++)
       block.set(x, y, B_STONE);
   }
-  #ifdef RENDER_WHILE_GENERATING
+#ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
-  #endif
+#endif
   for (int i = 0; i < 2; i++) { //Stone Hills
     ycoord_t currentHillHeight = safeDivide(yLimit, 2) + 2;
     int8_t lastDeviation = 0;
@@ -317,13 +322,13 @@ void World::generateStone () {
       lastLastDeviation = lastDeviation;
       for (ycoord_t y = safeDivide(yLimit, 2) - 5; y <= currentHillHeight; y++) //finally fill in the stone at and below  the currentHillHeight
         block.set(x, y, B_STONE);
-        #ifdef RENDER_WHILE_GENERATING
+#ifdef RENDER_WHILE_GENERATING
       screen.renderWorldOverview();
-      #endif
+#endif
     }
-    #ifdef RENDER_WHILE_GENERATING
+#ifdef RENDER_WHILE_GENERATING
     screen.renderWorldOverview();
-    #endif
+#endif
   }
   com.out.logChars("\tFinished");
 }
@@ -349,9 +354,9 @@ void World::generateCaves () {
       if ((random() % 100) == 0 && block.get(x, y) == B_STONE && !block.isNear(x, y, B_AIR, 4, Taxicab) && (!block.isNear(x, y, GEN_AIR, 7, Chebyshev) || (random() % 10) == 0)) {
         //    1% chance           and      is stone              and              not near the surface     and       not near another cave seed      unless     small chance
         block.set(x, y, GEN_AIR);
-        #ifdef RENDER_WHILE_GENERATING
+#ifdef RENDER_WHILE_GENERATING
         screen.renderWorldOverview();
-        #endif
+#endif
       }
   }
   for (int i = 0; i < 5; i++) {
@@ -384,9 +389,9 @@ void World::generateCaves () {
         if (block.get(x, y) == GEN_T_AIR)
           block.set(x, y, GEN_AIR);
     }
-    #ifdef RENDER_WHILE_GENERATING
+#ifdef RENDER_WHILE_GENERATING
     screen.renderWorldOverview();
-    #endif
+#endif
   }
   com.out.logChars("\tFinished");
 }
@@ -574,20 +579,89 @@ void World::generateLavaPools () {
       if ((random() % 60) == 0 && block.get(x, y) == GEN_AIR)
         block.set(x, y, B_LAVA3);
   }
-  for (int i = 0; i < 10; i++) {
+  index_t i = 1;
+  while(true) {
     com.out.prefix();
     com.out.print("\tGrowing Lava Pools:");
     com.out.print(" Pass ");
-    com.out.println(String(i + 1));
+    com.out.println(String(i));
+    bool changesMade = false;
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
       for (ycoord_t y = 0; y <= 5; y++)
-        if (block.isTouching(x, y, B_LAVA3) && block.get(x, y) == GEN_AIR)
+        if (block.isTouching(x, y, B_LAVA3) && block.get(x, y) == GEN_AIR) {
           block.set(x, y, B_LAVA3);
+          changesMade = true;
+        }
     }
+    if (!changesMade)
+      break;
+    i++;
   }
 }
 void World::generateWaterPools () {
-
+  com.out.logChars("Generation Stage 11: Water Pools");
+  com.out.logChars("\tSeeding Water Pools");
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = 0; y <= safeDivide(worldHeight, 3); y++)
+      if ((random() % 50) == 0 && block.get(x, y) == GEN_AIR && (y == 0 ? true : (block.get(x, y - 1) == B_STONE)))
+        block.set(x, y, B_WATER7);
+  }
+  index_t i = 1;
+  while(true) {
+    com.out.prefix();
+    com.out.print("\tGrowing Water Pools:");
+    com.out.print(" Pass ");
+    com.out.println(String(i));
+    bool changesMade = false;
+    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+      for (ycoord_t y = 0; y <= 5; y++)
+        if (block.isTouching(x, y, B_WATER7) && block.get(x, y) == GEN_AIR) {
+          block.set(x, y, B_WATER7);
+          changesMade = true;
+        }
+    }
+    if (!changesMade)
+      break;
+    i++;
+  }
+}
+void World::generateLakes () {
+  com.out.logChars("Generation Stage 12: Lakes");
+  com.out.logChars("\tSeeding Lakes");
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+    for (ycoord_t y = safeDivide(worldHeight, 2); y <= safeDivide(worldHeight, 2) + 2; y++)
+      if ((random() % 20) == 0 && block.get(x, y) == B_AIR)
+        block.set(x, y, B_WATER7);
+  }
+#ifdef RENDER_WHILE_GENERATING
+  screen.renderWorldOverview();
+#endif
+  index_t i = 1;
+  while(true) {
+    com.out.prefix();
+    com.out.print("\tGrowing Lakes:");
+    com.out.print(" Pass ");
+    com.out.println(String(i));
+    bool changesMade = false;
+    for (xcoord_t x = -xLimit; x <= xLimit; x++) {
+      for (ycoord_t y = safeDivide(worldHeight, 2); y <= safeDivide(worldHeight, 2) + 3; y++)
+        if (block.isTouching(x, y, B_WATER7) && block.get(x, y) == B_AIR) {
+          block.set(x, y, B_WATER7);
+          changesMade = true;
+        }
+    }
+#ifdef RENDER_WHILE_GENERATING
+    screen.renderWorldOverview();
+#endif
+    if (!changesMade)
+      break;
+    i++;
+  }
+  com.out.logChars("\tGenerating Lake Beds");
+  for (xcoord_t x = -xLimit; x <= xLimit; x++)
+    for (ycoord_t y = safeDivide(worldHeight, 2) - 3; y <= safeDivide(worldHeight, 2) + 4; y++)
+      if (block.isNear(x, y, B_WATER7, 2, Taxicab) && (block.get(x, y) == B_DIRT || block.get(x, y) == B_STONE))
+        block.set(x, y, B_SAND);
 }
 void World::endUnderGroundGeneration () {
   com.out.logChars("\tGeneration Stage 13: Clean up Underground Generation");

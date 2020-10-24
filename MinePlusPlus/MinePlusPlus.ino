@@ -5,6 +5,8 @@ bool selectedGenerateButton = false;
 
 void setup() {
   com.init();
+  com.out.print(F("\n\n\n\n"));
+  com.out.logChars("Communication Channel(s) Initialized");
   Serial.println(freeMemory());
   leftButton.setSampleSize(10);
   jumpButton.setSampleSize(10);
@@ -19,13 +21,14 @@ void setup() {
 #ifndef PRESET_SEED
   randomSeed(analogRead(A15));
 #endif
-  com.out.print(F("\n\n\n\n"));
   com.out.log(F("Initializing Display"));
   GLCD.Init();
   com.out.log(F("\tComplete"));
+#ifndef GENERATE_ON_START
   screen.renderBitmap(Bitmaps::UI::loadIcon, 16, 2, 31, 23);
   screen.renderBitmap(Bitmaps::UI::generateIcon, 16, 2, 79, 23);
   screen.renderBitmap(Bitmaps::UI::upArrow, 8, 1, 35, 40);
+#endif
   Serial.println(freeMemory());
 }
 

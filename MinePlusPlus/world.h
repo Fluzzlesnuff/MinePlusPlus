@@ -25,6 +25,7 @@ class World { //One instance only, but used as a proper object.
     void generateCoal ();
     void generateLavaPools ();
     void generateWaterPools ();
+    void generateLakes ();
     void endUnderGroundGeneration ();
   public:
     bool isRunning = false;
@@ -35,6 +36,6 @@ class World { //One instance only, but used as a proper object.
     void save (); //Saves the world in RAM to EEPROM, overwriting any older saves.
 };
 
-extern World world; //The world object for world.xxx functions.
+extern World world; //The world object for world.xx functions.
 
 #endif

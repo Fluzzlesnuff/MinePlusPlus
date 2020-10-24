@@ -38,11 +38,11 @@
     10a. GEN_AIR below y=7 has a tiny chance of becoming B_LAVA3
       b. GEN_AIR below y=7 touching B_LAVA3 becomes B_LAVA3
     11a. GEN_AIR in the bottom 1/3 of the world that has stone below it has a tiny chance of becoming B_WATER7
-      b. GEN_AIR in the bottom 1/3 of the world touching B_WATER7 becomes B_WATER7
-    12. GEN_AIR becomes B_AIR, now that underground generation is done (finally!)
-    13a. Air below (inclusive) (1/2 world + 3 blocks) and above (1/2 world) has a tiny chance of becoming B_WATER7
+      b. GEN_AIR in the bottom 1/3 of the world touching B_WATER7 becomes B_WATER.
+    12a. Air below (inclusive) (1/2 world + 3 blocks) and above (1/2 world) has a tiny chance of becoming B_WATER7
       b. Air in that region touching B_WATER7 becomes B_WATER7
       c. Stone and dirt above (1/2 world - 2) and within 2 blocks (taxicab) of water becomes B_SAND
+    13. GEN_AIR becomes B_AIR, now that underground generation is done (finally!). Lakes were included before this to prevent upper caves from being treated as potential lake sites.
     14a. Dirt not within 4 blocks (wide) of water and above (1/2 world - 3) has a tiny chance of becoming GEN_SAND
       bi. Dirt touching (taxicab) GEN_SAND or B_SNDSTN becomes GEN_T_SAND and stone above (1/2 world - 5) touching (taxicab) GEN_SAND or B_SNDSTN becomes GEN_T_SNDSTN
         ii. GEN_T_SAND becomes GEN_SAND and GEN_T_SNDSTN becomes B_SNDSTN

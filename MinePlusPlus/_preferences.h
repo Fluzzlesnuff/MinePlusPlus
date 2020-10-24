@@ -3,7 +3,7 @@
 //##############
 #define GENERATE_ON_START //Skip the menu and go right to generating a Default world
 //#define PRESET_SEED 189 //Set a seed to generate from, or comment to create a seed
-//#define RENDER_WHILE_GENERATING //Show the map while generating. Slows down generation a lot.
+#define RENDER_WHILE_GENERATING //Show the map while generating. Slows down generation a lot.
 
 //###########
 //# GAMPLAY #
