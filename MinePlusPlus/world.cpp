@@ -23,11 +23,78 @@ worldHeight_t worldHeight;
 xcoord_t xLimit; //Inclusive. Make negative to use negative x limit.
 ycoord_t yLimit; //Inclusive. Bottom limit is 0.
 
-void World::update (const WorldUpdateType updateType) {
-
+bool World::tryUpdate() {
+  static uint32_t lastTickTime;
+  static uint32_t ticksDone;
+  bool madeChanges = false;
+  if(update(Constant))
+    madeChanges = true;
+  if (millis() - lastTickTime >= msPerTick) {
+    lastTickTime += msPerTick;
+    ticksDone++;
+    if(update(Tick))
+      madeChanges = true;
+    if (ticksDone % 2 == 0) {
+      if(update(Two_Tick))
+        madeChanges = true;
+      if (ticksDone % 4 == 0) { //Nested because a number divisible by 4 will always also be divisible by 2
+        if(update(Four_Tick))
+          madeChanges = true;
+        if (ticksDone % 8 == 0) { //Nested because a number divisible by 8 will always also be divisible by 4
+          if(update(Eight_Tick))
+            madeChanges = true;
+        }
+      }
+    }
+  }
+  return madeChanges;
+}
+bool World::update (const WorldUpdateType updateType) {
+  switch (updateType) {
+    case WorldUpdateType::Constant:   return updateConstant();
+    case WorldUpdateType::Tick:       return updateTick();
+    case WorldUpdateType::Two_Tick:   return update2Tick();
+    case WorldUpdateType::Four_Tick:  return update4Tick();
+    case WorldUpdateType::Eight_Tick: return update8Tick();
+  }
+}
+bool World::updateConstant() {
+  bool madeChanges = false;
+  return madeChanges;
+}
+bool World::updateTick() {
+  bool madeChanges = false;
+  for (xcoord_t x = -xLimit; x <= xLimit; x++) //Gravel and sand
+    for (ycoord_t y = 0; y <= yLimit - 1; y++)
+      if (block.isAir(block.get(x, y))) {
+        if (block.get(x, y + 1) == B_SAND) {
+          block.set(x, y, B_SAND);
+          block.set(x, y + 1, B_AIR);
+          madeChanges = true;
+        } else if (block.get(x, y + 1) == B_GRAVEL) {
+          block.set(x, y, B_GRAVEL);
+          block.set(x, y + 1, B_AIR);
+          madeChanges = true;
+        }
+      }
+  return madeChanges;
+}
+bool World::update2Tick() {
+  bool madeChanges = false;
+  return madeChanges;
+}
+bool World::update4Tick() {
+  bool madeChanges = false;
+  return madeChanges;
+}
+bool World::update8Tick() {
+  bool madeChanges = false;
+  return madeChanges;
 }
 void World::setTickRate (const double tickRateParam) {
-
+  ticksPerSecond = tickRateParam;
+  msPerTick = round(1000 / ticksPerSecond);
+  com.out.logMultiple("Set Tick Rate: " + String(ticksPerSecond) + " TPS (" + String(msPerTick) + "ms)");
 }
 void World::setWorldDimensions(const WorldSize sizeParam) {
   size = sizeParam;

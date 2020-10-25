@@ -11,8 +11,18 @@ extern ycoord_t yLimit; //Inclusive. Bottom limit is 0.
 
 class World { //One instance only, but used as a proper object.
     WorldSize size;
+    double ticksPerSecond;
+    uint16_t msPerTick;
     void setWorldDimensions(const WorldSize sizeParam);
     void start (); //Sets starts the necessary world services *after* a world has been either loaded or generated.
+    
+    bool update (const WorldUpdateType updateType); //Flows water, grows crops, drops gravel, etc.
+    bool updateConstant();
+    bool updateTick();
+    bool update2Tick();
+    bool update4Tick();
+    bool update8Tick();
+    
     void generateAir ();
     void generateStone ();
     void generateDirtLayer ();
@@ -33,7 +43,7 @@ class World { //One instance only, but used as a proper object.
     void generatePlants ();
   public:
     bool isRunning = false;
-    void update (const WorldUpdateType updateType); //Flows water, grows crops, drops gravel, etc.
+    bool tryUpdate();
     void setTickRate (const double tickRateParam);
     void generate (const WorldSize sizeParam); //Creates a new world in RAM.
     void load (); //Loads a world from EEPROM into ram.

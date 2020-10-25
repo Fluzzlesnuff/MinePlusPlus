@@ -15,6 +15,7 @@ void setup() {
   rightMouseButton.setSampleSize(10);
   leftMouseButton.setThreshold(990);
   rightMouseButton.setThreshold(990);
+  world.setTickRate(10);
 #ifdef PRESET_SEED
   randomSeed(PRESET_SEED);
 #endif
@@ -69,6 +70,8 @@ void loop() {
 }
 void worldLoop() {
   if (com.in.runCommands())
+    screen.renderWorld();
+  if(world.tryUpdate())
     screen.renderWorld();
   if (leftButton.read(Normal, PLAYER_SPEED) && !rightButton.read()) {
     CoordPair newCoords = player.getCoords(-1);
