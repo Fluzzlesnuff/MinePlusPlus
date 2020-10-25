@@ -6,7 +6,7 @@ void Player::move (const xcoord_t xParam, const ycoord_t yParam) {
 
 void Player::move (const double xParam, const double yParam) {
 #ifdef PLAYER_MOVE_LOGGING
-  com.out.log("Moving player to (" + String(xParam) + ", " + String(yParam) + ").");
+  com.out.logMultiple("Moving player to (" + String(xParam) + ", " + String(yParam) + ").");
 #endif
   if (x < -xLimit || x > xLimit)
     com.out.throwError(XCOORD_OOB);

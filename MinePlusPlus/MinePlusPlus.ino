@@ -6,7 +6,7 @@ bool selectedGenerateButton = false;
 void setup() {
   com.init();
   com.out.print(F("\n\n\n\n"));
-  com.out.logChars("Communication Channel(s) Initialized");
+  com.out.log(F("Communication Channel(s) Initialized"));
   Serial.println(freeMemory());
   leftButton.setSampleSize(10);
   jumpButton.setSampleSize(10);

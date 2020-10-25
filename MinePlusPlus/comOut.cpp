@@ -3,7 +3,13 @@
 void CommunicationChannel::Output::print (const String string) {
   Serial.print(string);
 }
+void CommunicationChannel::Output::print (const __FlashStringHelper *string) {
+  Serial.print(string);
+}
 void CommunicationChannel::Output::println (const String string) {
+  Serial.println(string);
+}
+void CommunicationChannel::Output::println (const __FlashStringHelper *string) {
   Serial.println(string);
 }
 void CommunicationChannel::Output::log (const String string) {
@@ -14,10 +20,14 @@ void CommunicationChannel::Output::logMultiple (const StringSumHelper& string) {
   com.out.prefix();
   Serial.println(string);
 }
+void CommunicationChannel::Output::log (const __FlashStringHelper *string) {
+  com.out.prefix();
+  Serial.println(string);
+}
 void CommunicationChannel::Output::log (const ExactCoordPair coordPair) {
   com.out.prefix();
   Serial.print(double(coordPair.x));
-  Serial.print(", ");
+  Serial.print(F(", "));
   Serial.println(double(coordPair.y));
 }
 void CommunicationChannel::Output::log (const CoordPair coordPair) {
