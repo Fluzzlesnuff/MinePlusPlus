@@ -27,6 +27,10 @@ class World { //One instance only, but used as a proper object.
     void generateWaterPools ();
     void generateLakes ();
     void endUnderGroundGeneration ();
+    void generateDeserts ();
+    void generateTrees ();
+    void generateLeaves ();
+    void generatePlants ();
   public:
     bool isRunning = false;
     void update (const WorldUpdateType updateType); //Flows water, grows crops, drops gravel, etc.

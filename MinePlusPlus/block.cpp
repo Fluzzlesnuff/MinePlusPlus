@@ -221,6 +221,13 @@ uint16_t Block::isNear(const CoordPair coordPair, const id_t id, const byte dist
   return isNear(coordPair.x, coordPair.y, id, distance, measurementType);
 }
 
+bool Block::isOpenToSky(const xcoord_t x, const ycoord_t y) {
+  for (ycoord_t yIndex = y + 1; yIndex <= yLimit; yIndex++)
+    if (!isAir(get(x, yIndex)))
+      return false;
+  return true;
+}
+
 void Block::createBlockDB (const worldWidth_t width, const worldHeight_t height) {
   uint16_t totalSize = width * height;
   blockDB = new id_t[totalSize];

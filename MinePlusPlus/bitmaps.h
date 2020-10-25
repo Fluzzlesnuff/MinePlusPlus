@@ -584,6 +584,7 @@ const static PROGMEM byte gravel[] {
   B11111, B11111
 };
 const static PROGMEM byte sand[] {
+  /* Original sand texture
   B11001, B11111,
   B10110, B00011,
   B10000, B10001,
@@ -593,6 +594,17 @@ const static PROGMEM byte sand[] {
   B10000, B00110,
   B10100, B00001,
   B10000, B01001,
+  B11111, B11111
+  */
+  B11111, B11111,
+  B11100, B11001,
+  B11100, B11001,
+  B10011, B00111,
+  B10011, B00111,
+  B11100, B11001,
+  B11100, B11001,
+  B10011, B00111,
+  B10011, B00111,
   B11111, B11111
 };
 const static PROGMEM byte wood[] {

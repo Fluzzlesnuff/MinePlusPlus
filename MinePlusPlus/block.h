@@ -52,6 +52,7 @@ class Block { //Not used in the object sense. Instead, this is just a set of fun
         Blocks out of bounds are simply not counted.
     */
     uint16_t isNear(const CoordPair coords, const id_t id, const byte distance, const MeasurementType measurementType);
+    bool isOpenToSky(const xcoord_t x, const ycoord_t y);
     void createBlockDB (const worldWidth_t width, const worldHeight_t height);
 };
 
