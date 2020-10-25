@@ -796,6 +796,35 @@ com.out.log("\tPass 2");
 #endif
 }
 void World::generatePlants () {
-
+  com.out.log(F("Generation Stage 17: Grass"));
+  com.out.log(F("\tSeeding Grass Patches"));
+  for (xcoord_t x = -xLimit; x <= xLimit; x++)
+    for (ycoord_t y = safeDivide(worldHeight, 2) - 2; y <= yLimit; y++)
+      if (block.get(x, y) == B_AIR && block.get(x, y - 1) == B_DIRT && (random() % 20) == 0 && block.isOpenToSky(x, y, B_LEAVES))
+        block.set(x, y, B_GRASS);
+  for (int i = 0; i < 4; i++) {
+  com.out.prefix();
+  com.out.print(F("\tGrowing Grass Patches:"));
+  com.out.print(" Pass ");
+  com.out.println(String(i + 1));
+  for (xcoord_t x = -xLimit; x <= xLimit; x++)
+    for (ycoord_t y = safeDivide(worldHeight, 2) - 2; y <= yLimit; y++)
+      if (block.get(x, y) == B_AIR && block.get(x, y - 1) == B_DIRT && (random() % 2) == 0 && block.isTouchingWide(x, y, B_GRASS) && block.isOpenToSky(x, y, B_LEAVES))
+        block.set(x, y, GEN_T_GRASS);
+  for (xcoord_t x = -xLimit; x <= xLimit; x++)
+    for (ycoord_t y = safeDivide(worldHeight, 2) - 2; y <= yLimit; y++)
+      if (block.get(x, y) == GEN_T_GRASS)
+        block.set(x, y, B_GRASS);
+  }
+  com.out.log(F("\tAdding Flowers"));
+  for (xcoord_t x = -xLimit; x <= xLimit; x++)
+    for (ycoord_t y = safeDivide(worldHeight, 2) - 2; y <= yLimit; y++)
+      if (block.get(x, y) == B_GRASS && (random() % 5) == 0)
+        block.set(x, y, B_FLOWER);
+  com.out.log(F("\tRemoving Some Grass")); //Makes patches have holes in them, as opposed to being full carpets of grass
+  for (xcoord_t x = -xLimit; x <= xLimit; x++)
+    for (ycoord_t y = safeDivide(worldHeight, 2) - 2; y <= yLimit; y++)
+      if (block.get(x, y) == B_GRASS && (random() % 5) == 0)
+        block.set(x, y, B_AIR);
 }
 World world;

@@ -221,10 +221,12 @@ uint16_t Block::isNear(const CoordPair coordPair, const id_t id, const byte dist
   return isNear(coordPair.x, coordPair.y, id, distance, measurementType);
 }
 
-bool Block::isOpenToSky(const xcoord_t x, const ycoord_t y) {
-  for (ycoord_t yIndex = y + 1; yIndex <= yLimit; yIndex++)
-    if (!isAir(get(x, yIndex)))
+bool Block::isOpenToSky(const xcoord_t x, const ycoord_t y, const id_t ignoreBlock1 = B_AIR, const id_t ignoreBlock2 = B_AIR) {
+  for (ycoord_t yIndex = y + 1; yIndex <= yLimit; yIndex++) {
+    id_t idToTest = get(x, yIndex);
+    if (!isAir(idToTest) && idToTest != ignoreBlock1 && idToTest != ignoreBlock2)
       return false;
+  }
   return true;
 }
 
