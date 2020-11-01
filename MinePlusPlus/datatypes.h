@@ -32,6 +32,7 @@ enum WorldUpdateType {
   Tick,
   Two_Tick,
   Four_Tick,
+  Five_Tick,
   Eight_Tick
 };
 

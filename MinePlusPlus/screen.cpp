@@ -193,6 +193,7 @@ byte* Screen::idToBitmap (const id_t id, const byte version = 0) {
     case C_LIGHT5:    return Textures::Blocks::light_5;
     case C_LIGHT6:    return Textures::Blocks::light_6;
     case C_LIGHT7:    return Textures::Blocks::light_7;
+    case WATER_SOURCE:return Textures::Blocks::water_7;
     default:          return Textures::Blocks::error;
   }
 }

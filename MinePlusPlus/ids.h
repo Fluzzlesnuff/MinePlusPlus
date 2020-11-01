@@ -83,6 +83,7 @@
 #define C_LIGHT6      B1000110
 #define C_LIGHT7      B1000111
 #define C_VOID        B1001000
+#define WATER_SOURCE  B1001001
 
 #define GEN_AIR       B1010000
 #define GEN_T_AIR     B1010001

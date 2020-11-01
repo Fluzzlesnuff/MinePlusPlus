@@ -3,6 +3,9 @@
 
 #include "datatypes.h"
 
+#define UPDATE_DISTANCE 10 //The horizontal distance from the player in which updates occur. Inclusive, so
+                            //a value of 1 updates the player's block and those to the left and right
+
 extern worldWidth_t worldWidth;
 extern worldHeight_t worldHeight;
 
@@ -21,6 +24,7 @@ class World { //One instance only, but used as a proper object.
     bool updateTick();
     bool update2Tick();
     bool update4Tick();
+    bool update5Tick();
     bool update8Tick();
     
     void generateAir ();

@@ -1,5 +1,5 @@
-#ifndef comTemplates_t
-#define comTemplates_t
+#ifndef comT_h
+#define comT_h
 
 #include "com.h"
 

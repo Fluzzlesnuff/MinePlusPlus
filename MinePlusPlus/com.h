@@ -56,5 +56,5 @@ class CommunicationChannel {
 
 extern CommunicationChannel com;
 
-#include "comTemplates.h"
+#include "comT.h"
 #endif

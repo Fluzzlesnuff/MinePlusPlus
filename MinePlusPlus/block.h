@@ -29,6 +29,8 @@ class Block { //Not used in the object sense. Instead, this is just a set of fun
     bool isFlammable(const id_t id);
     bool isFarmland(const id_t id);
     bool isAir(const id_t id);
+    bool isBrokenByFluid(const id_t id);
+    bool isBrokenByFallingBlocks(const id_t id);
 
     bool isMineable (const id_t id); //Returns true if the block is mineable.
 

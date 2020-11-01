@@ -107,8 +107,8 @@ bool Block::isSolid(const id_t id) {
   return false;
 }
 bool Block::isWater(const id_t id) {
-  id_t waterBlocks[] {B_WATER0, B_WATER1, B_WATER2, B_WATER3, B_WATER4, B_WATER5, B_WATER6, B_WATER7};
-  for (byte i = 0; i < 8; i++)
+  id_t waterBlocks[] {B_WATER0, B_WATER1, B_WATER2, B_WATER3, B_WATER4, B_WATER5, B_WATER6, B_WATER7, WATER_SOURCE};
+  for (byte i = 0; i < 9; i++)
     if (waterBlocks[i] == id)
       return true;
   return false;
@@ -135,9 +135,27 @@ bool Block::isFarmland(const id_t id) {
   return false;
 }
 bool Block::isAir(const id_t id) {
-  id_t airBlocks[] {B_AIR, C_LIGHT0, C_LIGHT1, C_LIGHT2, C_LIGHT3, C_LIGHT4, C_LIGHT5, C_LIGHT6, C_LIGHT7};
+  const id_t airBlocks[] {B_AIR, C_LIGHT0, C_LIGHT1, C_LIGHT2, C_LIGHT3, C_LIGHT4, C_LIGHT5, C_LIGHT6, C_LIGHT7};
   for (byte i = 0; i < 9; i++)
     if (airBlocks[i] == id)
+      return true;
+  return false;
+}
+bool Block::isBrokenByFluid(const id_t id) {
+  const id_t fluidBreakableBlocks[] {B_TORCH, B_GRASS, B_FLOWER, B_WATER0, B_WATER1, B_WATER2, B_WATER3, B_WATER4, B_WATER5, B_WATER6};
+  if (isAir(id))
+    return true;
+  for (byte i = 0; i < 10; i++)
+    if (fluidBreakableBlocks[i] == id)
+      return true;
+  return false;
+}
+bool Block::isBrokenByFallingBlocks(const id_t id) {
+  const id_t fallingBlockBreakableBlocks[] {B_TORCH, B_GRASS, B_FLOWER};
+  if (isAir(id))
+    return true;
+  for (byte i = 0; i < 3; i++)
+    if (fallingBlockBreakableBlocks[i] == id)
       return true;
   return false;
 }
