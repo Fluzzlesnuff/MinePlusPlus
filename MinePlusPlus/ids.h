@@ -5,105 +5,117 @@
 // # BLOCK IDS #
 // #############
 
-#define B_AIR           B0000000
-#define B_FIRE          B0000001
-#define B_DIRT          B0000010
-#define B_COBBLE        B0000011
-#define B_LAVA0         B0000100
-#define B_LAVA1         B0000101
-#define B_LAVA2         B0000110
-#define B_LAVA3         B0000111
-#define B_WATER0        B0001000
-#define B_WATER1        B0001001
-#define B_WATER2        B0001010
-#define B_WATER3        B0001011
-#define B_WATER4        B0001100
-#define B_WATER5        B0001101
-#define B_WATER6        B0001110
-#define B_WATER7        B0001111
-#define B_FARM0         B0010000
-#define B_FARM1         B0010001
-#define B_FARM2         B0010010
-#define B_FARM3         B0010011
-#define B_WHEAT0        B0010100
-#define B_WHEAT1        B0010101
-#define B_WHEAT2        B0010110
-#define B_WHEAT3        B0010111
-#define B_CARROT0       B0011000
-#define B_CARROT1       B0011001
-#define B_CARROT2       B0011010
-#define B_CARROT3       B0011011
-#define B_POTATO0       B0011100
-#define B_POTATO1       B0011101
-#define B_POTATO2       B0011110
-#define B_POTATO3       B0011111
-#define B_COAL_ORE      B0100000
-#define B_IRON_ORE      B0100001
-#define B_GOLD_ORE      B0100010
-#define B_DIA_ORE       B0100011
-#define B_DOOR_C        B0100100
-#define B_DOOR_O        B0100101
-#define B_TRAP_C        B0100110
-#define B_TRAP_O        B0100111
-#define B_STONE         B0101000
-#define B_SNDSTN        B0101001
-#define B_GRAVEL        B0101010
-#define B_SAND          B0101011
-#define B_WOOD          B0101100
-#define B_PLANKS        B0101101
-#define B_LEAVES        B0101110
-#define B_OBSIDIAN      B0101111
-#define B_GLASS         B0110000
-#define B_BRICKS        B0110001
-#define B_WOOL          B0110010
-#define B_GOLD_BLOCK    B0110011
-#define B_BED           B0110100
-#define B_LADDER        B0110101
-#define B_TORCH         B0110110
-#define B_SPONGE        B0110111
-#define B_CRAFT         B0111000
-#define B_FURNACE       B0111001
-#define B_CHEST         B0111010
-#define B_GRASS         B0111011
-#define B_SAPLING       B0111100
-#define B_FLOWER        B0111101
-#define B_TNT_U         B0111110
-#define B_TNT_L         B0111111
+#define B_AIR           0x00
+#define B_FIRE          0x01
+#define B_DIRT          0x02
+#define B_COBBLE        0x03
+#define B_LAVA0         0x04
+#define B_LAVA1         0x05
+#define B_LAVA2         0x06
+#define B_LAVA3         0x07
+#define B_WATER0        0x08
+#define B_WATER1        0x09
+#define B_WATER2        0x0a
+#define B_WATER3        0x0b
+#define B_WATER4        0x0c
+#define B_WATER5        0x0d
+#define B_WATER6        0x0e
+#define B_WATER7        0x0f
+#define B_FARM0         0x10
+#define B_FARM1         0x11
+#define B_FARM2         0x12
+#define B_FARM3         0x13
+#define B_WHEAT0        0x14
+#define B_WHEAT1        0x15
+#define B_WHEAT2        0x16
+#define B_WHEAT3        0x17
+#define B_CARROT0       0x18
+#define B_CARROT1       0x19
+#define B_CARROT2       0x1a
+#define B_CARROT3       0x1b
+#define B_POTATO0       0x1c
+#define B_POTATO1       0x1d
+#define B_POTATO2       0x1e
+#define B_POTATO3       0x1f
+#define B_COAL_ORE      0x20
+#define B_IRON_ORE      0x21
+#define B_GOLD_ORE      0x22
+#define B_DIA_ORE       0x23
+#define B_DOOR_C        0x24
+#define B_DOOR_O        0x25
+#define B_TRAP_C        0x26
+#define B_TRAP_O        0x27
+#define B_STONE         0x28
+#define B_SNDSTN        0x29
+#define B_GRAVEL        0x2a
+#define B_SAND          0x2b
+#define B_WOOD          0x2c
+#define B_PLANKS        0x2d
+#define B_LEAVES        0x2e
+#define B_OBSIDIAN      0x2f
+#define B_GLASS         0x30
+#define B_BRICKS        0x31
+#define B_WOOL          0x32
+#define B_GOLD_BLOCK    0x33
+#define B_BED           0x34
+#define B_LADDER        0x35
+#define B_TORCH         0x36
+#define B_SPONGE        0x37
+#define B_CRAFT         0x38
+#define B_FURNACE       0x39
+#define B_CHEST         0x3a
+#define B_GRASS         0x3b
+#define B_SAPLING       0x3c
+#define B_FLOWER        0x3d
+#define B_TNT_U         0x3e
+#define B_TNT_L         0x3f
+#define B_WATER_SOURCE  0x40
 
-// #####################
-// # CONTROL BLOCK IDS #
-// #####################
+// RUNTIME BLOCKS (Exist during regular world operation, but are not saved) [Overlap: Generation, Compression]
+#define R_LIGHT0        0xc0
+#define R_LIGHT1        0xc1
+#define R_LIGHT2        0xc2
+#define R_LIGHT3        0xc3
+#define R_LIGHT4        0xc4
+#define R_LIGHT5        0xc5
+#define R_LIGHT6        0xc6
+#define R_LIGHT7        0xc7
+#define R_VOID          0xc8
 
-#define C_LIGHT0      B1000000
-#define C_LIGHT1      B1000001
-#define C_LIGHT2      B1000010
-#define C_LIGHT3      B1000011
-#define C_LIGHT4      B1000100
-#define C_LIGHT5      B1000101
-#define C_LIGHT6      B1000110
-#define C_LIGHT7      B1000111
-#define C_VOID        B1001000
-#define WATER_SOURCE  B1001001
 
-#define GEN_AIR       B1010000
-#define GEN_T_AIR     B1010001
-#define GEN_DIRT      B1010010
-#define GEN_T_DIRT    B1010011
-#define GEN_GRAVEL    B1010100
-#define GEN_SAND      B1010110
-#define GEN_T_SAND    B1010111
-#define GEN_T_COAL    B1011000
-#define GEN_T_IRON    B1011001
-#define GEN_T_GOLD    B1011010
-#define GEN_T_DIA     B1011011
-#define GEN_T_WOOD    B1011100
-#define GEN_T_LEAVES  B1011101
-#define GEN_T_SNDSTN  B1011110
-#define GEN_T_GRASS   B1011111
+// GENERATION BLOCKS (Only exist during generation stage) [Overlap: Update, Compression]
+#define G_AIR       0xc0
+#define G_T_AIR     0xc1
+#define G_DIRT      0xc2
+#define G_T_DIRT    0xc3
+#define G_GRAVEL    0xc4
+#define G_SAND      0xc5
+#define G_T_SAND    0xc6
+#define G_T_COAL    0xc7
+#define G_T_IRON    0xc8
+#define G_T_GOLD    0xc9
+#define G_T_DIA     0xca
+#define G_T_WOOD    0xcb
+#define G_T_LEAVES  0xcc
+#define G_T_SNDSTN  0xcd
+#define G_T_GRASS   0xce
 
-#define COMP_END      B1111101
-#define FLAG_4_BYTE   B1111110
-#define FLAG_3_BYTE   B1111111
+// UPDATE BLOCKS (Only exist during updating) [Overlap: Generation, Compression]
+#define U_DEL_WATER0 0xe0
+#define U_DEL_WATER1 0xe1
+#define U_DEL_WATER2 0xe2
+#define U_DEL_WATER3 0xe3
+#define U_DEL_WATER4 0xe4
+#define U_DEL_WATER5 0xe5
+#define U_DEL_WATER6 0xe6
+#define U_DEL_WATER7 0xe7
+
+// COMPRESSION IDS
+#define C_3_FLAG    0xfa //Indicates that the next 2 bytes are compressed
+#define C_4_FLAG    0xfb //Indicates that the next 3 bytes are compressed
+#define C_COMMA     0xfc //Separates two similar saved items, such as two chests or two mobs
+#define C_SEMICOLON 0xfd //Separates two saving sections, such as pigs and zombies
+#define C_PERIOD    0xfe //Separates two world save sections, such as between blocks and items
 
 // ############
 // # ITEM IDS #

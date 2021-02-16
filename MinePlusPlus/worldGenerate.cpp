@@ -585,7 +585,7 @@ void World::generateLeaves () {
   com.out.log(F("\tPass 1"));
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = 0; y <= yLimit; y++)
-      if (block.get(x, y) == B_AIR && block.isTouchingWide(x, y, B_WOOD) && ((!block.isTouchingWide(x, y, B_DIRT) && !block.isTouchingWide(x, y, B_STONE) && !block.isTouchingWide(x, y, B_SAND) && !block.isTouchingWide(x, y, WATER_SOURCE)) || (x <= -xLimit + 1 ? false : block.get(x - 2, y) == GEN_T_LEAVES) || (x >= xLimit - 1 ? false : block.get(x + 2, y) == GEN_T_LEAVES)))
+      if (block.get(x, y) == B_AIR && block.isTouchingWide(x, y, B_WOOD) && ((!block.isTouchingWide(x, y, B_DIRT) && !block.isTouchingWide(x, y, B_STONE) && !block.isTouchingWide(x, y, B_SAND) && !block.isTouchingWide(x, y, B_WATER_SOURCE)) || (x <= -xLimit + 1 ? false : block.get(x - 2, y) == GEN_T_LEAVES) || (x >= xLimit - 1 ? false : block.get(x + 2, y) == GEN_T_LEAVES)))
         block.set(x, y, GEN_T_LEAVES);
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = 0; y <= yLimit; y++)

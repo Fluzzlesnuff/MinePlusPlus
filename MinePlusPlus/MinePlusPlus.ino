@@ -7,7 +7,6 @@ void setup() {
   com.init();
   com.out.print(F("\n\n\n\n"));
   com.out.log(F("Communication Channel(s) Initialized"));
-  Serial.println(freeMemory());
   leftButton.setSampleSize(10);
   jumpButton.setSampleSize(10);
   rightButton.setSampleSize(10);
@@ -30,7 +29,6 @@ void setup() {
   screen.renderBitmap(Bitmaps::UI::generateIcon, 16, 2, 79, 23);
   screen.renderBitmap(Bitmaps::UI::upArrow, 8, 1, 35, 40);
 #endif
-  Serial.println(freeMemory());
 }
 
 void loop() {
