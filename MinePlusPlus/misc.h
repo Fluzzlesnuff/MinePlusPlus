@@ -10,5 +10,4 @@ T1 floor (T1 value1, T2 value2);
 template<typename T1, typename T2>
 T1 ceil (T1 value1, T2 value2);
 
-#include "miscT.h"
 #endif
