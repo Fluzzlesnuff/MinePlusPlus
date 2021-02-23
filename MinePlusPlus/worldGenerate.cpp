@@ -183,9 +183,9 @@ void World::generateCaves () {
   com.out.log(F("\tSeeding Caves"));
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= yLimit; y++)
-      if ((random() % 100) == 0 && block.get(x, y) == B_STONE && !block.isNear(x, y, B_AIR, 4, Taxicab) && (!block.isNear(x, y, GEN_AIR, 7, Chebyshev) || (random() % 10) == 0)) {
+      if ((random() % 100) == 0 && block.get(x, y) == B_STONE && !block.isNear(x, y, B_AIR, 4, Taxicab) && (!block.isNear(x, y, G_AIR, 7, Chebyshev) || (random() % 10) == 0)) {
         //    1% chance           and      is stone              and              not near the surface     and       not near another cave seed      unless     small chance
-        block.set(x, y, GEN_AIR);
+        block.set(x, y, G_AIR);
 #ifdef RENDER_WHILE_GENERATING
         screen.renderWorldOverview();
 #endif
@@ -206,20 +206,20 @@ void World::generateCaves () {
     Serial.println(freeMemory());
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
       for (ycoord_t y = 0; y <= yLimit; y++) {
-        byte numTouching = block.isTouchingWide(x, y, GEN_AIR);
+        byte numTouching = block.isTouchingWide(x, y, G_AIR);
         if (numTouching == 0)
           continue;
         byte chance = chances[i][numTouching - 1];
         if (chance == 0)
           continue;
-        if (block.isTouching(x, y, GEN_AIR) && (random() % chance) == 0)
-          block.set(x, y, GEN_T_AIR);
+        if (block.isTouching(x, y, G_AIR) && (random() % chance) == 0)
+          block.set(x, y, G_T_AIR);
       }
     }
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
       for (ycoord_t y = 0; y <= yLimit; y++)
-        if (block.get(x, y) == GEN_T_AIR)
-          block.set(x, y, GEN_AIR);
+        if (block.get(x, y) == G_T_AIR)
+          block.set(x, y, G_AIR);
     }
 #ifdef RENDER_WHILE_GENERATING
     screen.renderWorldOverview();
@@ -252,12 +252,12 @@ void World::generateGravelVeins () {
         if (chance == 0)
           continue;
         if ((block.isTouching(x, y, B_GRAVEL) && (random() % chance) == 0) || block.isTouching(x, y, B_GRAVEL) >= 3)
-          block.set(x, y, GEN_GRAVEL);
+          block.set(x, y, G_GRAVEL);
       }
     }
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
       for (ycoord_t y = 0; y <= yLimit; y++)
-        if (block.get(x, y) == GEN_GRAVEL)
+        if (block.get(x, y) == G_GRAVEL)
           block.set(x, y, B_GRAVEL);
     }
   }
@@ -269,7 +269,7 @@ void World::generateDirtVeins () {
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = safeDivide(worldHeight, 4); y <= yLimit; y++)
       if ((random() % 250) == 0 && block.get(x, y) == B_STONE)
-        block.set(x, y, GEN_DIRT);
+        block.set(x, y, G_DIRT);
   }
   for (int i = 0; i < 3; i++) {
     const byte chances[3][8] = {
@@ -280,25 +280,25 @@ void World::generateDirtVeins () {
     com.out.logMultiple("\tGrowing Dirt Veins: Pass " + String(i + 1));
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
       for (ycoord_t y = 0; y <= yLimit; y++) {
-        byte numTouching = block.isTouchingWide(x, y, GEN_DIRT);
+        byte numTouching = block.isTouchingWide(x, y, G_DIRT);
         if (numTouching == 0)
           continue;
         byte chance = chances[i][numTouching - 1];
         if (chance == 0)
           continue;
-        if ((block.isTouching(x, y, GEN_DIRT) && (random() % chance) == 0) || block.isTouching(x, y, GEN_DIRT) >= 3)
-          block.set(x, y, GEN_T_DIRT);
+        if ((block.isTouching(x, y, G_DIRT) && (random() % chance) == 0) || block.isTouching(x, y, G_DIRT) >= 3)
+          block.set(x, y, G_T_DIRT);
       }
     }
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
       for (ycoord_t y = 0; y <= yLimit; y++)
-        if (block.get(x, y) == GEN_T_DIRT)
-          block.set(x, y, GEN_DIRT);
+        if (block.get(x, y) == G_T_DIRT)
+          block.set(x, y, G_DIRT);
     }
   }
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= yLimit; y++)
-      if (block.get(x, y) == GEN_DIRT)
+      if (block.get(x, y) == G_DIRT)
         block.set(x, y, B_DIRT);
   }
   com.out.log(F("\tFinished"));
@@ -308,19 +308,19 @@ void World::generateDiamond () {
   com.out.log(F("\tSeeding Diamond Veins"));
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= 4; y++)
-      if (((random() % 300) == 0 || ((random() % 100) == 0 && block.isTouching(x, y, GEN_AIR))) && block.get(x, y) == B_STONE)
+      if (((random() % 300) == 0 || ((random() % 100) == 0 && block.isTouching(x, y, G_AIR))) && block.get(x, y) == B_STONE)
         block.set(x, y, B_DIA_ORE);
   }
   com.out.log(F("\tGrowing Diamond Veins"));
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= 5; y++) {
       if ((block.isTouching(x, y, B_DIA_ORE) && (random() % 10) != 0) && block.get(x, y) == B_STONE)
-        block.set(x, y, GEN_T_DIA);
+        block.set(x, y, G_T_DIA);
     }
   }
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= yLimit; y++)
-      if (block.get(x, y) == GEN_T_DIA)
+      if (block.get(x, y) == G_T_DIA)
         block.set(x, y, B_DIA_ORE);
   }
   com.out.log(F("\tFinished"));
@@ -330,19 +330,19 @@ void World::generateIron () {
   com.out.log(F("\tSeeding Iron Veins"));
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= safeDivide(worldHeight, 3); y++)
-      if (((random() % 100) == 0 || ((random() % 400) == 0 && block.isTouching(x, y, GEN_AIR))) && block.get(x, y) == B_STONE)
+      if (((random() % 100) == 0 || ((random() % 400) == 0 && block.isTouching(x, y, G_AIR))) && block.get(x, y) == B_STONE)
         block.set(x, y, B_IRON_ORE);
   }
   com.out.log(F("\tGrowing Iron Veins"));
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= yLimit; y++) {
       if ((block.isTouchingWide(x, y, B_IRON_ORE) && (random() % 4) != 0) && block.get(x, y) == B_STONE)
-        block.set(x, y, GEN_T_IRON);
+        block.set(x, y, G_T_IRON);
     }
   }
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= yLimit; y++)
-      if (block.get(x, y) == GEN_T_IRON)
+      if (block.get(x, y) == G_T_IRON)
         block.set(x, y, B_IRON_ORE);
   }
   com.out.log(F("\tFinished"));
@@ -352,19 +352,19 @@ void World::generateGold () {
   com.out.log(F("\tSeeding Gold Veins"));
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= yLimit; y++)
-      if (((random() % 150) == 0 || ((random() % 800) == 0 && block.isTouching(x, y, GEN_AIR))) && block.get(x, y) == B_STONE)
+      if (((random() % 150) == 0 || ((random() % 800) == 0 && block.isTouching(x, y, G_AIR))) && block.get(x, y) == B_STONE)
         block.set(x, y, B_GOLD_ORE);
   }
   com.out.log(F("\tGrowing Gold Veins"));
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= safeDivide(worldHeight, 3); y++) {
       if ((block.isTouchingWide(x, y, B_GOLD_ORE) && (random() % 3) != 0) && block.get(x, y) == B_STONE)
-        block.set(x, y, GEN_T_GOLD);
+        block.set(x, y, G_T_GOLD);
     }
   }
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= yLimit; y++)
-      if (block.get(x, y) == GEN_T_GOLD)
+      if (block.get(x, y) == G_T_GOLD)
         block.set(x, y, B_GOLD_ORE);
   }
   com.out.log(F("\tFinished"));
@@ -374,31 +374,31 @@ void World::generateCoal () {
   com.out.log(F("\tSeeding Coal Veins"));
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= safeDivide(worldHeight, 2); y++)
-      if (((random() % 100) == 0 || ((random() % 70) == 0 && block.isTouching(x, y, GEN_AIR))) && block.get(x, y) == B_STONE)
+      if (((random() % 100) == 0 || ((random() % 70) == 0 && block.isTouching(x, y, G_AIR))) && block.get(x, y) == B_STONE)
         block.set(x, y, B_COAL_ORE);
   }
   com.out.log(F("\tGrowing Coal Veins: Pass 1"));
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= yLimit; y++) {
       if ((block.isTouchingWide(x, y, B_COAL_ORE) && (random() % 2) == 0) && block.get(x, y) == B_STONE)
-        block.set(x, y, GEN_T_COAL);
+        block.set(x, y, G_T_COAL);
     }
   }
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= yLimit; y++)
-      if (block.get(x, y) == GEN_T_COAL)
+      if (block.get(x, y) == G_T_COAL)
         block.set(x, y, B_COAL_ORE);
   }
   com.out.log(F("\tGrowing Coal Veins: Pass 2"));
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= yLimit; y++) {
       if ((block.isTouching(x, y, B_COAL_ORE) && (random() % 4) == 0) && block.get(x, y) == B_STONE)
-        block.set(x, y, GEN_T_COAL);
+        block.set(x, y, G_T_COAL);
     }
   }
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= yLimit; y++)
-      if (block.get(x, y) == GEN_T_COAL)
+      if (block.get(x, y) == G_T_COAL)
         block.set(x, y, B_COAL_ORE);
   }
   com.out.log(F("\tFinished"));
@@ -408,7 +408,7 @@ void World::generateLavaPools () {
   com.out.log(F("\tSeeding Lava Pools"));
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= 5; y++)
-      if ((random() % 60) == 0 && block.get(x, y) == GEN_AIR)
+      if ((random() % 60) == 0 && block.get(x, y) == G_AIR)
         block.set(x, y, B_LAVA3);
   }
   index_t i = 1;
@@ -420,7 +420,7 @@ void World::generateLavaPools () {
     bool changesMade = false;
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
       for (ycoord_t y = 0; y <= 5; y++)
-        if (block.isTouching(x, y, B_LAVA3) && block.get(x, y) == GEN_AIR) {
+        if (block.isTouching(x, y, B_LAVA3) && block.get(x, y) == G_AIR) {
           block.set(x, y, B_LAVA3);
           changesMade = true;
         }
@@ -435,8 +435,8 @@ void World::generateWaterPools () {
   com.out.log(F("\tSeeding Water Pools"));
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= safeDivide(worldHeight, 3); y++)
-      if ((random() % 50) == 0 && block.get(x, y) == GEN_AIR && (y == 0 ? true : (block.get(x, y - 1) == B_STONE)))
-        block.set(x, y, WATER_SOURCE);
+      if ((random() % 50) == 0 && block.get(x, y) == G_AIR && (y == 0 ? true : (block.get(x, y - 1) == B_STONE)))
+        block.set(x, y, B_WATER_SOURCE);
   }
   index_t i = 1;
   while (true) {
@@ -447,8 +447,8 @@ void World::generateWaterPools () {
     bool changesMade = false;
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
       for (ycoord_t y = 0; y <= 5; y++)
-        if (block.isTouching(x, y, WATER_SOURCE) && block.get(x, y) == GEN_AIR) {
-          block.set(x, y, WATER_SOURCE);
+        if (block.isTouching(x, y, B_WATER_SOURCE) && block.get(x, y) == G_AIR) {
+          block.set(x, y, B_WATER_SOURCE);
           changesMade = true;
         }
     }
@@ -463,7 +463,7 @@ void World::generateLakes () {
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = safeDivide(worldHeight, 2); y <= safeDivide(worldHeight, 2) + 2; y++)
       if ((random() % 40) == 0 && block.get(x, y) == B_AIR)
-        block.set(x, y, WATER_SOURCE);
+        block.set(x, y, B_WATER_SOURCE);
   }
 #ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
@@ -477,8 +477,8 @@ void World::generateLakes () {
     bool changesMade = false;
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
       for (ycoord_t y = safeDivide(worldHeight, 2) - 1; y <= safeDivide(worldHeight, 2) + 2; y++)
-        if (block.isTouching(x, y, WATER_SOURCE) && block.get(x, y) == B_AIR) {
-          block.set(x, y, WATER_SOURCE);
+        if (block.isTouching(x, y, B_WATER_SOURCE) && block.get(x, y) == B_AIR) {
+          block.set(x, y, B_WATER_SOURCE);
           changesMade = true;
         }
     }
@@ -492,7 +492,7 @@ void World::generateLakes () {
   com.out.log(F("\tGenerating Lake Beds"));
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = safeDivide(worldHeight, 2) - 3; y <= safeDivide(worldHeight, 2) + 4; y++)
-      if (block.isNear(x, y, WATER_SOURCE, 2, Taxicab) && (block.get(x, y) == B_DIRT || block.get(x, y) == B_STONE))
+      if (block.isNear(x, y, B_WATER_SOURCE, 2, Taxicab) && (block.get(x, y) == B_DIRT || block.get(x, y) == B_STONE))
         block.set(x, y, B_SAND);
 }
 void World::endUnderGroundGeneration () {
@@ -500,7 +500,7 @@ void World::endUnderGroundGeneration () {
   Serial.println(freeMemory());
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= yLimit; y++)
-      if (block.get(x, y) == GEN_AIR)
+      if (block.get(x, y) == G_AIR)
         block.set(x, y, B_AIR);
   }
 }
@@ -509,12 +509,12 @@ void World::generateDeserts () {
   com.out.log(F("\tSeeding Deserts"));
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = safeDivide(worldHeight, 2) - 3; y <= yLimit; y++)
-      if ((random() % 200) == 0 && block.get(x, y) == B_DIRT && (y == yLimit ? true : (block.get(x, y + 1) == B_AIR)) && !block.isNear(x, y, WATER_SOURCE, 5, Chebyshev))
-        block.set(x, y, GEN_SAND);
+      if ((random() % 200) == 0 && block.get(x, y) == B_DIRT && (y == yLimit ? true : (block.get(x, y + 1) == B_AIR)) && !block.isNear(x, y, B_WATER_SOURCE, 5, Chebyshev))
+        block.set(x, y, G_SAND);
   }
 #ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
-#endif
+#endifƒ
   index_t i = 1;
   for (int i = 0; i < 3; i++) {
     com.out.prefix();
@@ -523,23 +523,23 @@ void World::generateDeserts () {
     com.out.println(String(i + 1));
     for (xcoord_t x = -xLimit; x <= xLimit; x++)
       for (ycoord_t y = 0; y <= yLimit; y++)
-        if ((block.isTouching(x, y, GEN_SAND) || block.isTouching(x, y, B_SNDSTN)) && block.get(x, y) == B_DIRT)
-          block.set(x, y, GEN_T_SAND);
+        if ((block.isTouching(x, y, G_SAND) || block.isTouching(x, y, B_SNDSTN)) && block.get(x, y) == B_DIRT)
+          block.set(x, y, G_T_SAND);
     for (xcoord_t x = -xLimit; x <= xLimit; x++)
       for (ycoord_t y = safeDivide(worldHeight, 2) - 5; y <= yLimit; y++)
-        if ((block.isTouching(x, y, GEN_SAND) || block.isTouching(x, y, B_SNDSTN)) && block.get(x, y) == B_STONE)
-          block.set(x, y, GEN_T_SNDSTN);
+        if ((block.isTouching(x, y, G_SAND) || block.isTouching(x, y, B_SNDSTN)) && block.get(x, y) == B_STONE)
+          block.set(x, y, G_T_SNDSTN);
     for (xcoord_t x = -xLimit; x <= xLimit; x++)
       for (ycoord_t y = 0; y <= yLimit; y++) {
-        if (block.get(x, y) == GEN_T_SAND)
-          block.set(x, y, GEN_SAND);
-        else if (block.get(x, y) == GEN_T_SNDSTN)
+        if (block.get(x, y) == G_T_SAND)
+          block.set(x, y, G_SAND);
+        else if (block.get(x, y) == G_T_SNDSTN)
           block.set(x, y, B_SNDSTN);
       }
   }
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = 0; y <= yLimit; y++)
-      if (block.get(x, y) == GEN_SAND)
+      if (block.get(x, y) == G_SAND)
         block.set(x, y, B_SAND);
 }
 void World::generateTrees () {
@@ -562,10 +562,10 @@ void World::generateTrees () {
     for (xcoord_t x = -xLimit; x <= xLimit; x++)
       for (ycoord_t y = safeDivide(worldHeight, 2) - 4; y <= yLimit; y++)
         if (block.get(x, y) == B_AIR && block.get(x, y - 1) == B_WOOD && (random() % 10 < chances[i]))
-          block.set(x, y, GEN_T_WOOD);
+          block.set(x, y, G_T_WOOD);
     for (xcoord_t x = -xLimit; x <= xLimit; x++)
       for (ycoord_t y = 0; y <= yLimit; y++)
-        if (block.get(x, y) == GEN_T_WOOD)
+        if (block.get(x, y) == G_T_WOOD)
           block.set(x, y, B_WOOD);
   }
   com.out.prefix();
@@ -573,11 +573,11 @@ void World::generateTrees () {
   com.out.println(F(" Adding Branches"));
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = safeDivide(worldHeight, 2) - 4; y <= yLimit; y++)
-      if (block.get(x, y) == B_AIR && block.isTouching(x, y, B_WOOD) && (random() % 10) == 0 && !block.isTouching(x, y, B_DIRT) && !block.isTouching(x, y, B_SAND) && !block.isTouching(x, y, B_STONE) && !block.isTouching(x, y, WATER_SOURCE))
-        block.set(x, y, GEN_T_WOOD);
+      if (block.get(x, y) == B_AIR && block.isTouching(x, y, B_WOOD) && (random() % 10) == 0 && !block.isTouching(x, y, B_DIRT) && !block.isTouching(x, y, B_SAND) && !block.isTouching(x, y, B_STONE) && !block.isTouching(x, y, B_WATER_SOURCE))
+        block.set(x, y, G_T_WOOD);
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = 0; y <= yLimit; y++)
-      if (block.get(x, y) == GEN_T_WOOD)
+      if (block.get(x, y) == G_T_WOOD)
         block.set(x, y, B_WOOD);
 }
 void World::generateLeaves () {
@@ -585,11 +585,11 @@ void World::generateLeaves () {
   com.out.log(F("\tPass 1"));
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = 0; y <= yLimit; y++)
-      if (block.get(x, y) == B_AIR && block.isTouchingWide(x, y, B_WOOD) && ((!block.isTouchingWide(x, y, B_DIRT) && !block.isTouchingWide(x, y, B_STONE) && !block.isTouchingWide(x, y, B_SAND) && !block.isTouchingWide(x, y, B_WATER_SOURCE)) || (x <= -xLimit + 1 ? false : block.get(x - 2, y) == GEN_T_LEAVES) || (x >= xLimit - 1 ? false : block.get(x + 2, y) == GEN_T_LEAVES)))
-        block.set(x, y, GEN_T_LEAVES);
+      if (block.get(x, y) == B_AIR && block.isTouchingWide(x, y, B_WOOD) && ((!block.isTouchingWide(x, y, B_DIRT) && !block.isTouchingWide(x, y, B_STONE) && !block.isTouchingWide(x, y, B_SAND) && !block.isTouchingWide(x, y, B_WATER_SOURCE)) || (x <= -xLimit + 1 ? false : block.get(x - 2, y) == G_T_LEAVES) || (x >= xLimit - 1 ? false : block.get(x + 2, y) == G_T_LEAVES)))
+        block.set(x, y, G_T_LEAVES);
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = 0; y <= yLimit; y++)
-      if (block.get(x, y) == GEN_T_LEAVES)
+      if (block.get(x, y) == G_T_LEAVES)
         block.set(x, y, B_LEAVES);
 #ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
@@ -598,10 +598,10 @@ void World::generateLeaves () {
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = 0; y <= yLimit; y++)
       if ((block.get(x, y) == B_AIR && block.isTouching(x, y, B_LEAVES) && ((x == -xLimit ? false : block.get(x - 1, y) == B_LEAVES) || (x == xLimit ? false : block.get(x + 1, y) == B_LEAVES)) && ((x <= -xLimit + 1 ? false : block.get(x - 2, y) == B_WOOD) || (x >= xLimit - 1 ? false : block.get(x + 2, y) == B_WOOD))) && (random() % 5) != 0)
-        block.set(x, y, GEN_T_LEAVES);
+        block.set(x, y, G_T_LEAVES);
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = 0; y <= yLimit; y++)
-      if (block.get(x, y) == GEN_T_LEAVES)
+      if (block.get(x, y) == G_T_LEAVES)
         block.set(x, y, B_LEAVES);
 #ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
@@ -622,10 +622,10 @@ void World::generatePlants () {
     for (xcoord_t x = -xLimit; x <= xLimit; x++)
       for (ycoord_t y = safeDivide(worldHeight, 2) - 2; y <= yLimit; y++)
         if (block.get(x, y) == B_AIR && block.get(x, y - 1) == B_DIRT && (random() % 2) == 0 && block.isTouchingWide(x, y, B_GRASS) && block.isOpenToSky(x, y, B_LEAVES))
-          block.set(x, y, GEN_T_GRASS);
+          block.set(x, y, G_T_GRASS);
     for (xcoord_t x = -xLimit; x <= xLimit; x++)
       for (ycoord_t y = safeDivide(worldHeight, 2) - 2; y <= yLimit; y++)
-        if (block.get(x, y) == GEN_T_GRASS)
+        if (block.get(x, y) == G_T_GRASS)
           block.set(x, y, B_GRASS);
   }
   com.out.log(F("\tAdding Flowers"));

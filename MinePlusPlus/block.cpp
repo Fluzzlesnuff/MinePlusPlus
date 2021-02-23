@@ -107,7 +107,7 @@ bool Block::isSolid(const id_t id) {
   return false;
 }
 bool Block::isWater(const id_t id) {
-  id_t waterBlocks[] {B_WATER0, B_WATER1, B_WATER2, B_WATER3, B_WATER4, B_WATER5, B_WATER6, B_WATER7, WATER_SOURCE};
+  id_t waterBlocks[] {B_WATER0, B_WATER1, B_WATER2, B_WATER3, B_WATER4, B_WATER5, B_WATER6, B_WATER7, B_WATER_SOURCE};
   for (byte i = 0; i < 9; i++)
     if (waterBlocks[i] == id)
       return true;
@@ -135,7 +135,7 @@ bool Block::isFarmland(const id_t id) {
   return false;
 }
 bool Block::isAir(const id_t id) {
-  const id_t airBlocks[] {B_AIR, C_LIGHT0, C_LIGHT1, C_LIGHT2, C_LIGHT3, C_LIGHT4, C_LIGHT5, C_LIGHT6, C_LIGHT7};
+  const id_t airBlocks[] {B_AIR, R_LIGHT0, R_LIGHT1, R_LIGHT2, R_LIGHT3, R_LIGHT4, R_LIGHT5, R_LIGHT6, R_LIGHT7};
   for (byte i = 0; i < 9; i++)
     if (airBlocks[i] == id)
       return true;

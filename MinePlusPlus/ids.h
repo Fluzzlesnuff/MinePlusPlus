@@ -116,6 +116,7 @@
 #define C_COMMA     0xfc //Separates two similar saved items, such as two chests or two mobs
 #define C_SEMICOLON 0xfd //Separates two saving sections, such as pigs and zombies
 #define C_PERIOD    0xfe //Separates two world save sections, such as between blocks and items
+#define C_END       0xff //Will be deprecated once a map of the filesystem is added
 
 // ############
 // # ITEM IDS #
@@ -125,49 +126,21 @@
 #define I_GUNPOWDER           B00000001
 #define I_DIRT                B00000010
 #define I_COBBLE              B00000011
-#define I_IDK                 B00000100
-#define I_IDK                 B00000101
-#define I_IDK                 B00000110
-#define I_IDK                 B00000111
-#define I_IDK                 B00001000
-#define I_IDK                 B00001001
-#define I_IDK                 B00001010
-#define I_IDK                 B00001011
-#define I_IDK                 B00001100
-#define I_IDK                 B00001101
-#define I_IDK                 B00001110
-#define I_IDK                 B00001111
-#define I_IDK                 B00010000
-#define I_IDK                 B00010001
-#define I_IDK                 B00010010
-#define I_IDK                 B00010011
 #define I_WHEAT               B00010100
 #define I_SEEDS               B00010101
-#define I_IDK                 B00010110
-#define I_IDK                 B00010111
 #define I_CARROT              B00011000
-#define I_IDK                 B00011001
-#define I_IDK                 B00011010
-#define I_IDK                 B00011011
 #define I_POTATO              B00011100
 #define I_FLESH               B00011101
-#define I_IDK                 B00011110
-#define I_IDK                 B00011111
-#define I_IDK                 B00100000
 #define I_IRON_ORE            B00100001
 #define I_GOLD_ORE            B00100010
-#define I_IDK                 B00100011
 #define I_DOOR                B00100100
-#define I_IDK                 B00100101
 #define I_TRAP                B00100110
-#define I_IDK                 B00100111
 #define I_STONE               B00101000
 #define I_SNDSTN              B00101001
 #define I_GRAVEL              B00101010
 #define I_SAND                B00101011
 #define I_WOOD                B00101100
 #define I_PLANKS              B00101101
-#define I_IDK                 B00101110
 #define I_OBSIDIAN            B00101111
 #define I_GLASS               B00110000
 #define I_BRICKS              B00110001
@@ -180,11 +153,9 @@
 #define I_CRAFT               B00111000
 #define I_FURNACE             B00111001
 #define I_CHEST               B00111010
-#define I_IDK                 B00111011
 #define I_SAPLING             B00111100
 #define I_FLOWER              B00111101
 #define I_TNT                 B00111110
-#define I_IDK                 B00111111
 #define I_SWORD_WOOD          B01000000
 #define I_PICK_WOOD           B01000001
 #define I_SHOVEL_WOOD         B01000010

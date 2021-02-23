@@ -69,7 +69,7 @@ void World::load () {
   largeindex_t blockDBAddress = 0;
   while (true) {
     byte byteRead = EEPROM.read(EEPROMAddress);
-    if (byteRead == FLAG_3_BYTE) {
+    if (byteRead == C_3_FLAG) {
       byte numberToLoad = EEPROM.read(EEPROMAddress + 1);
       byte blockToLoad = EEPROM.read(EEPROMAddress + 2);
 #ifdef SAVE_LOAD_BYTE_LOGGING
@@ -79,7 +79,7 @@ void World::load () {
       for (index_t i = 0; i < numberToLoad; i++)
         blockDB[blockDBAddress + i] = blockToLoad;
       blockDBAddress += numberToLoad - 1;
-    } else if (byteRead == FLAG_4_BYTE) {
+    } else if (byteRead == C_4_FLAG) {
       largeindex_t numberToLoad = (EEPROM.read(EEPROMAddress + 1) * 256) + EEPROM.read(EEPROMAddress + 2);
       byte blockToLoad = EEPROM.read(EEPROMAddress + 3);
 #ifdef SAVE_LOAD_BYTE_LOGGING
@@ -89,7 +89,7 @@ void World::load () {
       for (largeindex_t i = 0; i < numberToLoad; i++)
         blockDB[blockDBAddress + i] = blockToLoad;
       blockDBAddress += numberToLoad - 1;
-    } else if (byteRead == COMP_END) {
+    } else if (byteRead == C_END) {
 #ifdef SAVE_LOAD_BYTE_LOGGING
       com.out.log(F("Found COMP_END"));
 #endif
@@ -138,7 +138,7 @@ void World::save () {
 #endif
         EEPROMAddress += 1;
       } else if (numberFound < 256) {
-        EEPROM.update(EEPROMAddress, FLAG_3_BYTE);
+        EEPROM.update(EEPROMAddress, C_3_FLAG);
         EEPROM.update(EEPROMAddress + 1, lowByte(numberFound));
         EEPROM.update(EEPROMAddress + 2, currentBlockID);
 #ifdef SAVE_LOAD_BYTE_LOGGING
@@ -146,7 +146,7 @@ void World::save () {
 #endif
         EEPROMAddress += 3;
       } else {
-        EEPROM.update(EEPROMAddress, FLAG_4_BYTE);
+        EEPROM.update(EEPROMAddress, C_4_FLAG);
         EEPROM.update(EEPROMAddress + 1, highByte(numberFound));
         EEPROM.update(EEPROMAddress + 2, lowByte(numberFound));
         EEPROM.update(EEPROMAddress + 3, currentBlockID);
@@ -166,7 +166,7 @@ void World::save () {
 #endif
     EEPROMAddress++;
   } else if (numberFound < 256) {
-    EEPROM.update(EEPROMAddress, FLAG_3_BYTE);
+    EEPROM.update(EEPROMAddress, C_3_FLAG);
     EEPROM.update(EEPROMAddress + 1, lowByte(numberFound));
     EEPROM.update(EEPROMAddress + 2, currentBlockID);
 #ifdef SAVE_LOAD_BYTE_LOGGING
@@ -174,7 +174,7 @@ void World::save () {
 #endif
     EEPROMAddress += 3;
   } else {
-    EEPROM.update(EEPROMAddress, FLAG_4_BYTE);
+    EEPROM.update(EEPROMAddress, C_4_FLAG);
     EEPROM.update(EEPROMAddress + 1, highByte(numberFound));
     EEPROM.update(EEPROMAddress + 2, lowByte(numberFound));
     EEPROM.update(EEPROMAddress + 3, currentBlockID);
@@ -183,8 +183,8 @@ void World::save () {
 #endif
     EEPROMAddress += 4;
   }
-  EEPROM.update(EEPROMAddress, COMP_END);
-  EEPROM.update(EEPROMAddress + 1, COMP_END);
+  EEPROM.update(EEPROMAddress, C_END);
+  EEPROM.update(EEPROMAddress + 1, C_END);
 
 }
 

@@ -68,7 +68,7 @@ void Screen::renderWorld (const bool reRenderAnimatedBlocks = false) {
           CoordPair blockCoords = player.getCoords(relX, relY);
           id_t blockIDToRender;
           if (blockCoords.x < -xLimit || blockCoords.x > xLimit || blockCoords.y < 0 || blockCoords.y > yLimit)
-            blockIDToRender = C_VOID;
+            blockIDToRender = R_VOID;
           else
             blockIDToRender = block.get(blockCoords);
           if (blockIDToRender != oldRenderMap[relX + 6][relY + 3]) {
@@ -97,7 +97,7 @@ void Screen::forceRenderWorld () {
           CoordPair blockCoords = player.getCoords(relX, relY);
           id_t blockIDToRender;
           if (blockCoords.x < -xLimit || blockCoords.x > xLimit || blockCoords.y < 0 || blockCoords.y > yLimit)
-            blockIDToRender = C_VOID;
+            blockIDToRender = R_VOID;
           else
             blockIDToRender = block.get(blockCoords);
           renderBlock(blockCoords);
@@ -113,7 +113,7 @@ void Screen::renderWorldOverview () {
   for (index_t x = 0; x < 128; x++) {
     for (index_t y = 0; y < 33; y++) {
       id_t id = block.get(x - 64, 32 - y);
-      bool pixelColour = !(id == B_AIR || id == GEN_AIR);
+      bool pixelColour = !(id == B_AIR || id == G_AIR);
       GLCD.SetDot(x, y + 16, (pixelColour ? BLACK : WHITE));
     }
   }
@@ -183,17 +183,17 @@ byte* Screen::idToBitmap (const id_t id, const byte version = 0) {
     case B_FLOWER:    return Textures::Blocks::flower;
     case B_TNT_U:     return Textures::Blocks::tnt;
 
-    case GEN_AIR:     return Textures::Blocks::light_7;
+    case G_AIR:     return Textures::Blocks::light_7;
 
-    case C_LIGHT0:    return Textures::Blocks::light_0;
-    case C_LIGHT1:    return Textures::Blocks::light_1;
-    case C_LIGHT2:    return Textures::Blocks::light_2;
-    case C_LIGHT3:    return Textures::Blocks::light_3;
-    case C_LIGHT4:    return Textures::Blocks::light_4;
-    case C_LIGHT5:    return Textures::Blocks::light_5;
-    case C_LIGHT6:    return Textures::Blocks::light_6;
-    case C_LIGHT7:    return Textures::Blocks::light_7;
-    case WATER_SOURCE:return Textures::Blocks::water_7;
+    case R_LIGHT0:    return Textures::Blocks::light_0;
+    case R_LIGHT1:    return Textures::Blocks::light_1;
+    case R_LIGHT2:    return Textures::Blocks::light_2;
+    case R_LIGHT3:    return Textures::Blocks::light_3;
+    case R_LIGHT4:    return Textures::Blocks::light_4;
+    case R_LIGHT5:    return Textures::Blocks::light_5;
+    case R_LIGHT6:    return Textures::Blocks::light_6;
+    case R_LIGHT7:    return Textures::Blocks::light_7;
+    case B_WATER_SOURCE:return Textures::Blocks::water_7;
     default:          return Textures::Blocks::error;
   }
 }
