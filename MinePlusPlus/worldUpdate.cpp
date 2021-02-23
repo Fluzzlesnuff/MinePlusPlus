@@ -40,14 +40,14 @@ bool World::update (const WorldUpdateType updateType) {
   }
 }
 bool World::updateConstant() {
-  xcoord_t leftmostXCoordinate = ceil(player.getCoords().x - UPDATE_DISTANCE, -xLimit);
-  xcoord_t rightmostXCoordinate = floor(player.getCoords().x + UPDATE_DISTANCE, xLimit);
+  xcoord_t leftmostXCoordinate = max(player.getCoords().x - UPDATE_DISTANCE, -xLimit);
+  xcoord_t rightmostXCoordinate = min(player.getCoords().x + UPDATE_DISTANCE, xLimit);
   bool madeChanges = false;
   return madeChanges;
 }
 bool World::updateTick() {
-  xcoord_t leftmostXCoordinate = ceil(player.getCoords().x - UPDATE_DISTANCE, -xLimit);
-  xcoord_t rightmostXCoordinate = floor(player.getCoords().x + UPDATE_DISTANCE, xLimit);
+  xcoord_t leftmostXCoordinate = max(player.getCoords().x - UPDATE_DISTANCE, -xLimit);
+  xcoord_t rightmostXCoordinate = min(player.getCoords().x + UPDATE_DISTANCE, xLimit);
   bool madeChanges = false;
   for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Gravel and sand
     for (ycoord_t y = 0; y <= yLimit - 1; y++)
@@ -65,20 +65,20 @@ bool World::updateTick() {
   return madeChanges;
 }
 bool World::update2Tick() {
-  xcoord_t leftmostXCoordinate = ceil(player.getCoords().x - UPDATE_DISTANCE, -xLimit);
-  xcoord_t rightmostXCoordinate = floor(player.getCoords().x + UPDATE_DISTANCE, xLimit);
+  xcoord_t leftmostXCoordinate = max(player.getCoords().x - UPDATE_DISTANCE, -xLimit);
+  xcoord_t rightmostXCoordinate = min(player.getCoords().x + UPDATE_DISTANCE, xLimit);
   bool madeChanges = false;
   return madeChanges;
 }
 bool World::update4Tick() {
-  xcoord_t leftmostXCoordinate = ceil(player.getCoords().x - UPDATE_DISTANCE, -xLimit);
-  xcoord_t rightmostXCoordinate = floor(player.getCoords().x + UPDATE_DISTANCE, xLimit);
+  xcoord_t leftmostXCoordinate = max(player.getCoords().x - UPDATE_DISTANCE, -xLimit);
+  xcoord_t rightmostXCoordinate = min(player.getCoords().x + UPDATE_DISTANCE, xLimit);
   bool madeChanges = false;
   return madeChanges;
 }
 bool World::update5Tick() {
-  xcoord_t leftmostXCoordinate = ceil(player.getCoords().x - UPDATE_DISTANCE, -xLimit);
-  xcoord_t rightmostXCoordinate = floor(player.getCoords().x + UPDATE_DISTANCE, xLimit);
+  xcoord_t leftmostXCoordinate = max(player.getCoords().x - UPDATE_DISTANCE, -xLimit);
+  xcoord_t rightmostXCoordinate = min(player.getCoords().x + UPDATE_DISTANCE, xLimit);
   bool madeChanges = false;
   { //Delete water that shouldn't exist
     for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Schedule water that doesn't have water to the sides for deletion
@@ -154,8 +154,8 @@ bool World::update5Tick() {
   return madeChanges;
 }
 bool World::update8Tick() {
-  xcoord_t leftmostXCoordinate = ceil(player.getCoords().x - UPDATE_DISTANCE, -xLimit);
-  xcoord_t rightmostXCoordinate = floor(player.getCoords().x + UPDATE_DISTANCE, xLimit);
+  xcoord_t leftmostXCoordinate = max(player.getCoords().x - UPDATE_DISTANCE, -xLimit);
+  xcoord_t rightmostXCoordinate = min(player.getCoords().x + UPDATE_DISTANCE, xLimit);
   bool madeChanges = false;
   return madeChanges;
 }
