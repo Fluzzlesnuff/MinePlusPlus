@@ -514,7 +514,7 @@ void World::generateDeserts () {
   }
 #ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
-#endifƒ
+#endif
   index_t i = 1;
   for (int i = 0; i < 3; i++) {
     com.out.prefix();

@@ -70,3 +70,21 @@ void CommunicationChannel::Output::prefix () {
 
 
 CommunicationChannel com;
+
+OStream& OStream::operator<< (const OStream& out, int input) {
+  Serial.print(input);
+  return out;
+}
+
+OStream& OStream::operator<< (const OStream& out, const String& input) {
+  Serial.print(input);
+  return out;
+}
+
+OStream& OStream::operator<< (const OStream& out, char input) {
+  Serial.print(input);
+  return out;
+}
+
+OStream cout;
+const char endl = '\n';
