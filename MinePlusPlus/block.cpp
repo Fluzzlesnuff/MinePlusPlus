@@ -10,21 +10,18 @@ id_t Block::get (xcoord_t x, ycoord_t y) {
     com.out.throwError(XCOORD_OOB);
   else if (y < 0 || y > yLimit)
     com.out.throwError(YCOORD_OOB);
-  else
-    return blockDB[coordsToAddress(x, y)];
+  return blockDB[coordsToAddress(x, y)];
 }
 id_t Block::get ( const CoordPair& coords) {
   return get(coords.x, coords.y);
 }
-
-bool Block::set (xcoord_t x, ycoord_t y, id_t id) {
+void Block::set (xcoord_t x, ycoord_t y, id_t id) {
   blockDB[coordsToAddress(x, y)] = id;
 #ifdef BLOCK_SET_LOGGING
   com.out.log("Set block at (" + String(x) + ", " + String(y) + ") with ID: " + id);
 #endif
 }
-
-bool Block::set (const CoordPair& coords, id_t id) {
+void Block::set (const CoordPair& coords, id_t id) {
   set(coords.x, coords.y, id);
 }
 
@@ -39,7 +36,6 @@ bool Block::isMineable (id_t id) {
     return false;
   return true;
 }
-
 bool Block::dropsItem (id_t id, id_t toolUsed) {
   const id_t cobbleTT[TT_ARRAY_SIZE] {I_PICK_WOOD, I_PICK_STONE, I_PICK_GOLD, I_PICK_IRON, I_PICK_DIA};
   const id_t coal_oreTT[TT_ARRAY_SIZE] {I_PICK_WOOD, I_PICK_STONE, I_PICK_GOLD, I_PICK_IRON, I_PICK_DIA};
@@ -83,17 +79,16 @@ bool Block::dropsItem (id_t id, id_t toolUsed) {
       return true;
   }
 }
-
 bool Block::isAnimated(id_t id) {
   return id == B_FIRE;
 }
 
 bool Block::place (const CoordPair& coords, id_t blockType) {
-
+  return true;
 }
 
 bool Block::isOpaque(id_t id) {
-
+  return true;
 }
 bool Block::isSolid(id_t id) {
   if (block.isWater(id) || block.isLava(id) || block.isAir(id))
@@ -260,7 +255,7 @@ blockDBAddress_t Block::coordsToAddress (xcoord_t x, ycoord_t y) {
   return (worldWidth * y) + x + ((worldWidth - 1) / 2);
 }
 
-bool Block::scanToolTable (id_t table[TT_ARRAY_SIZE], const id_t& tool) {
+bool Block::scanToolTable (const id_t table[TT_ARRAY_SIZE], const id_t& tool) {
   for (byte i = 0; i < TT_ARRAY_SIZE; i++)
     if (table[i] == tool)
       return true;

@@ -34,10 +34,10 @@ class CommunicationChannel {
             int8_t numberOfArguments; //The required number of arguments, not including the command name.
             ArgumentType::ArgumentType argumentTypes[8];
           public:
-            Command (CommandType commandTypeParam, const String& nameParam, index_t numArgsParam = 0, const ArgTypeList &argTypeListParam = ArgTypeList {
+            Command (CommandType commandTypeParam, const String& nameParam, uint8_t numArgsParam = 0, const ArgTypeList &argTypeListParam = ArgTypeList {
                        {}
                      });
-            CommandData parsePerCommand (const String *args, const index_t inputArgsCount);
+            CommandData parsePerCommand (const String *args, const uint8_t inputArgsCount) const;
         };
         const Command setblock{CommandType::SetBlock, "Setblock", 3, ArgTypeList{{ArgumentType::XCoord, ArgumentType::YCoord, ArgumentType::ID}}}; //All that is to pass an array to the constructor.
         const Command getblock {
@@ -68,10 +68,10 @@ class IStream : public IOStream {
 
 class OStream : public IOStream {
     void prefix ();
+    friend OStream& operator<< (OStream& out, int input);
+    friend OStream& operator<< (OStream& out, const String& input);
+    friend OStream& operator<< (OStream& out, char input);
   public:
-    OStream& operator<< (const OStream& out, int input);
-    OStream& operator<< (const OStream& out, const String& input);
-    OStream& operator<< (const OStream& out, char input);
 };
 
 extern OStream cout;

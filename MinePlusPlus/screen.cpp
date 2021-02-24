@@ -39,9 +39,9 @@ void Screen::renderBlock (xcoord_t x, ycoord_t y, int8_t xPixelOffset, int8_t yP
   com.out.log("Rendering block at relative coordinates (" + String(xRel) + ", " + String(yRel) + ")   \t[Top-left corner at pixel (" + String(xPixel) + ", " + String(yPixel) + "),\tID: " + String(id) + "].");
 #endif
   ycoord_t yPixelOffsetForLoop = 0;
-  for (index_t i{0}; i < 20; i++) {
-    for (index_t j{0}; j < 5; j++) {
-      int8_t specificPixelXCoord = (i % 2 ? j + 5 : j) + xPixel;
+  for (uint8_t i{0}; i < 20; i++) {
+    for (uint8_t j{0}; j < 5; j++) {
+      int16_t specificPixelXCoord = (i % 2 ? j + 5 : j) + xPixel;
       int8_t specificPixelYCoord = yPixelOffsetForLoop + yPixel;
       byte byteToRender = pgm_read_byte_near(bitmapToRender + i);
       if (specificPixelXCoord >= 0 && specificPixelXCoord <= 127 && specificPixelYCoord >= 0 && specificPixelYCoord <= 63)
@@ -94,13 +94,7 @@ void Screen::forceRenderWorld () {
         for (int8_t xSign = 0; xSign <= 1; xSign++) {
           xcoord_t relX = xSign ? xIndex : -xIndex;
           ycoord_t relY = ySign ? yIndex : -yIndex;
-          CoordPair blockCoords = player.getCoords(relX, relY);
-          id_t blockIDToRender;
-          if (blockCoords.x < -xLimit || blockCoords.x > xLimit || blockCoords.y < 0 || blockCoords.y > yLimit)
-            blockIDToRender = R_VOID;
-          else
-            blockIDToRender = block.get(blockCoords);
-          renderBlock(blockCoords);
+          renderBlock(player.getCoords(relX, relY));
         }
       }
     }
@@ -110,8 +104,8 @@ void Screen::forceRenderWorld () {
 #endif
 }
 void Screen::renderWorldOverview () {
-  for (index_t x = 0; x < 128; x++) {
-    for (index_t y = 0; y < 33; y++) {
+  for (uint8_t x = 0; x < 128; x++) {
+    for (uint8_t y = 0; y < 33; y++) {
       id_t id = block.get(x - 64, 32 - y);
       bool pixelColour = !(id == B_AIR || id == G_AIR);
       GLCD.SetDot(x, y + 16, (pixelColour ? BLACK : WHITE));
@@ -206,6 +200,7 @@ const byte* Screen::idToBitmap (id_t id, byte version, FunctionCallContext conte
       default:          return Textures::Blocks::error;
     }
   }
+  return Textures::Blocks::error;
 }
 void Screen::forceUpdateAnimations () {
   animationFrame2 = (animationFrame2 + 1) % 2;

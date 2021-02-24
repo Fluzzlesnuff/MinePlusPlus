@@ -8,10 +8,6 @@ typedef int8_t    xcoord_t;
 typedef uint16_t  blockDBAddress_t;
 typedef uint16_t  worldWidth_t;
 typedef uint8_t   worldHeight_t;
-typedef uint8_t   index_t;
-typedef int8_t    nindex_t;
-typedef uint16_t  largeindex_t;
-typedef int16_t   nlargeindex_t;
 
 typedef byte id_t;
 

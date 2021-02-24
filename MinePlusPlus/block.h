@@ -11,13 +11,13 @@ class Block { //Not used in the object sense. Instead, this is just a set of fun
 
     friend class World;
 
-    bool scanToolTable (id_t table[TT_ARRAY_SIZE], const id_t& tool);
+    bool scanToolTable (const id_t table[TT_ARRAY_SIZE], const id_t& tool);
     blockDBAddress_t coordsToAddress (xcoord_t x, ycoord_t y);
   public:
     id_t get (xcoord_t x, ycoord_t y); //Gets the ID of the block at a certain coordinate pair.
     id_t get (const CoordPair& coords); //Like above, but takes a CoordPair, most often from player.getCoords or mob.getCoords.
-    bool set (xcoord_t x, ycoord_t y, id_t id); //Changes the block at a given coordinate to the given ID.
-    bool set (const CoordPair& coords, id_t id); //Like above, but takes a CoordPair, most often from player.getCoords or mob.getCoords.
+    void set (xcoord_t x, ycoord_t y, id_t id); //Changes the block at a given coordinate to the given ID.
+    void set (const CoordPair& coords, id_t id); //Like above, but takes a CoordPair, most often from player.getCoords or mob.getCoords.
     bool place (xcoord_t x, ycoord_t y, id_t blockType); //Attempts to place a block at the given coords. Returns true if the block was replaceable.
     bool place (const CoordPair& coords, id_t blockType);
 

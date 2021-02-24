@@ -87,7 +87,7 @@ bool World::update5Tick() {
           bool validWaterToLeft = false;
           bool validWaterToRight = false;
           bool validWaterAbove = false;
-          for (index_t side = 0; side < 2; side++) {
+          for (uint8_t side = 0; side < 2; side++) {
             if (x == (side ? xLimit : -xLimit)) //There's no water to the side if there's C_VOID to the set.
               (side ? validWaterToRight : validWaterToLeft) = false;
             else { //If it's not void, what is it?
@@ -104,7 +104,7 @@ bool World::update5Tick() {
         }
       }
   }
-  for (index_t side = 0; side < 2; side++) { //Flow water to sides
+  for (uint8_t side = 0; side < 2; side++) { //Flow water to sides
     for (xcoord_t x = (side ? leftmostXCoordinate : rightmostXCoordinate); side ? (x <= rightmostXCoordinate) : (x >= leftmostXCoordinate); side ? x++ : x--) //Water flowing to the sides
       for (ycoord_t y = 0; y <= yLimit; y++) {
         bool validWaterToSide = false;

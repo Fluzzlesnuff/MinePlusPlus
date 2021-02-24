@@ -65,8 +65,8 @@ void World::load () {
   xLimit = (worldWidth - 1) / 2;
   yLimit = worldHeight - 1;
   block.createBlockDB(worldWidth, worldHeight);
-  largeindex_t EEPROMAddress = EE_WORLD_DATA_START_BYTE;
-  largeindex_t blockDBAddress = 0;
+  uint16_t EEPROMAddress = EE_WORLD_DATA_START_BYTE;
+  uint16_t blockDBAddress = 0;
   while (true) {
     byte byteRead = EEPROM.read(EEPROMAddress);
     if (byteRead == C_3_FLAG) {
@@ -76,17 +76,17 @@ void World::load () {
       com.out.logMultiple("F 3\t\t# " + String(numberToLoad) + "\t\tI " + String(blockToLoad) + "\tB " + String(blockDBAddress) + "-" + String(blockDBAddress + numberToLoad - 1) + "\t\tE " + String(EEPROMAddress) + "-" + String(EEPROMAddress + 2));
 #endif
       EEPROMAddress += 3;
-      for (index_t i = 0; i < numberToLoad; i++)
+      for (uint8_t i = 0; i < numberToLoad; i++)
         blockDB[blockDBAddress + i] = blockToLoad;
       blockDBAddress += numberToLoad - 1;
     } else if (byteRead == C_4_FLAG) {
-      largeindex_t numberToLoad = (EEPROM.read(EEPROMAddress + 1) * 256) + EEPROM.read(EEPROMAddress + 2);
+      uint16_t numberToLoad = (EEPROM.read(EEPROMAddress + 1) * 256) + EEPROM.read(EEPROMAddress + 2);
       byte blockToLoad = EEPROM.read(EEPROMAddress + 3);
 #ifdef SAVE_LOAD_BYTE_LOGGING
       com.out.logMultiple("F 4\t\t# " + String(numberToLoad) + "\t\tI " + String(blockToLoad) + "\tB " + String(blockDBAddress) + "-" + String(blockDBAddress + numberToLoad - 1) + "\t\tE " + String(EEPROMAddress) + "-" + String(EEPROMAddress + 3));
 #endif
       EEPROMAddress += 4;
-      for (largeindex_t i = 0; i < numberToLoad; i++)
+      for (uint16_t i = 0; i < numberToLoad; i++)
         blockDB[blockDBAddress + i] = blockToLoad;
       blockDBAddress += numberToLoad - 1;
     } else if (byteRead == C_END) {
@@ -123,10 +123,10 @@ void World::save () {
   EEPROM.update(EE_WORLD_SIZE_BYTE, worldSizeByte);
   EEPROM.update(EE_PLAYER_X_HIGH_BYTE, lowByte(player.getCoords().x));
   EEPROM.update(EE_PLAYER_LOW_X_Y_BYTE, player.getCoords().y);
-  largeindex_t numberFound = 0;
-  largeindex_t EEPROMAddress = EE_WORLD_DATA_START_BYTE;
+  uint16_t numberFound = 0;
+  uint16_t EEPROMAddress = EE_WORLD_DATA_START_BYTE;
   id_t currentBlockID = blockDB[0];
-  largeindex_t i;
+  uint16_t i;
   for (i = 0; i < worldWidth * worldHeight; i++) {
     if (currentBlockID == blockDB[i]) {
       numberFound++;

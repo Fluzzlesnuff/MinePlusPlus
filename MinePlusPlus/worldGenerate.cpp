@@ -411,7 +411,7 @@ void World::generateLavaPools () {
       if ((random() % 60) == 0 && block.get(x, y) == G_AIR)
         block.set(x, y, B_LAVA3);
   }
-  index_t i = 1;
+  uint8_t i = 1;
   while (true) {
     com.out.prefix();
     com.out.print(F("\tGrowing Lava Pools:"));
@@ -438,7 +438,7 @@ void World::generateWaterPools () {
       if ((random() % 50) == 0 && block.get(x, y) == G_AIR && (y == 0 ? true : (block.get(x, y - 1) == B_STONE)))
         block.set(x, y, B_WATER_SOURCE);
   }
-  index_t i = 1;
+  uint8_t i = 1;
   while (true) {
     com.out.prefix();
     com.out.print(F("\tGrowing Water Pools:"));
@@ -468,7 +468,7 @@ void World::generateLakes () {
 #ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
 #endif
-  index_t i = 1;
+  uint8_t i = 1;
   while (true) {
     com.out.prefix();
     com.out.print(F("\tGrowing Lakes:"));
@@ -515,7 +515,7 @@ void World::generateDeserts () {
 #ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
 #endif
-  index_t i = 1;
+  uint8_t i = 1;
   for (int i = 0; i < 3; i++) {
     com.out.prefix();
     com.out.print(F("\tGrowing Deserts:"));

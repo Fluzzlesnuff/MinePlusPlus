@@ -13,7 +13,7 @@ void Item::pickUp (xcoord_t x, ycoord_t y) {
 }
 
 void Item::spawn (xcoord_t x, ycoord_t y, id_t id) {
-  for (int i = 0; i < (sizeof(items) / sizeof(items[0])); i++) { //find the first NULL pointer in the array and assign it the value of the new item
+  for (uint8_t i = 0; i < (sizeof(items) / sizeof(items[0])); i++) { //find the first NULL pointer in the array and assign it the value of the new item
     if (items[i] == NULL) {
       items[i] = new ItemObject(x, y, id);
       return;
@@ -26,7 +26,7 @@ void Item::spawn (xcoord_t x, ycoord_t y, id_t id) {
 bool Item::despawn () {
   unsigned long oldestTime = millis();
   id_t oldestItemIndex = 255;
-  for (int i = 0; i < (sizeof(items) / sizeof(items[0])); i++) {
+  for (uint8_t i = 0; i < (sizeof(items) / sizeof(items[0])); i++) {
     if (items[i] == NULL) //If the pointer at items[i] is a null pointer, skip over it
       continue;
     if (items[i]->timeOfCreation < oldestTime) { // If a new oldest item is found, set the oldestTime and oldestItemIndex to that new item

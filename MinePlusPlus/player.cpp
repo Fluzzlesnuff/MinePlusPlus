@@ -27,10 +27,24 @@ void Player::move (const CoordPair& coords) {
 bool Player::walk (Direction dir, double distance) {
   switch (dir) {
     case left:
-      if (block.isAir(block.get(player.getCoords(-1))) && block.isAir(block.get(player.getCoords(-1, -1)))) {
-
+      if (block.isAir(block.get(getCoords(-1))) && block.isAir(block.get(getCoords(-1, -1)))) {
+        move(x - distance, y);
         return true;
       }
+      return false;
+    case right:
+      if (block.isAir(block.get(getCoords(1))) && block.isAir(block.get(getCoords(1, -1)))) {
+        move(x + distance, y);
+        return true;
+      }
+      return false;
+    case up:
+      if (block.isAir(block.get(getCoords(0, 1)))) {
+        move(x, y + distance);
+        return true;
+      }
+      return false;
+     default: return false;
   }
 }
 

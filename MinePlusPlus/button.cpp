@@ -6,9 +6,9 @@ Button::Button (byte pinParam, const byte pinTypeParam) {
   pinMode(pin, pinType);
 }
 bool Button::read (ButtonReadMode mode, const uint16_t repeatRate) {
-  index_t highs = 0;
-  index_t lows = 0;
-  for (index_t i = 0; i < sampleSize; i++) {
+  uint8_t highs = 0;
+  uint8_t lows = 0;
+  for (uint8_t i = 0; i < sampleSize; i++) {
     if (digitalRead(pin))
       highs++;
     else
@@ -39,9 +39,9 @@ ResistiveButton::ResistiveButton (byte pinParam) {
   pinMode(pin, INPUT_PULLUP);
 }
 bool ResistiveButton::read (ButtonReadMode mode, uint16_t repeatRate) {
-  index_t highs = 0;
-  index_t lows = 0;
-  for (index_t i = 0; i < sampleSize; i++) {
+  uint8_t highs = 0;
+  uint8_t lows = 0;
+  for (uint8_t i = 0; i < sampleSize; i++) {
     if (analogRead(pin) >= threshold)
       highs++;
     else
