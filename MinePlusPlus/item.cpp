@@ -1,18 +1,18 @@
 #include "includes.h"
 
 ItemObject *items[16];
-ItemObject::ItemObject (const xcoord_t xParam, const ycoord_t yParam, const id_t idParam) {
+ItemObject::ItemObject (xcoord_t xParam, ycoord_t yParam, id_t idParam) {
   x = xParam;
   y = yParam;
   id = idParam;
   timeOfCreation = millis();
 }
 
-void Item::pickUp (const xcoord_t x, const ycoord_t y) {
+void Item::pickUp (xcoord_t x, ycoord_t y) {
 
 }
 
-void Item::spawn (const xcoord_t x, const ycoord_t y, const id_t id) {
+void Item::spawn (xcoord_t x, ycoord_t y, id_t id) {
   for (int i = 0; i < (sizeof(items) / sizeof(items[0])); i++) { //find the first NULL pointer in the array and assign it the value of the new item
     if (items[i] == NULL) {
       items[i] = new ItemObject(x, y, id);

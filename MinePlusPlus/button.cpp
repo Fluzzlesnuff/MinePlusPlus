@@ -1,11 +1,11 @@
 #include "includes.h"
 
-Button::Button (const byte pinParam, const byte pinTypeParam) {
+Button::Button (byte pinParam, const byte pinTypeParam) {
   pin = pinParam;
   pinType = pinTypeParam;
   pinMode(pin, pinType);
 }
-bool Button::read (const ButtonReadMode mode = Normal, const uint16_t repeatRate = 0) {
+bool Button::read (ButtonReadMode mode, const uint16_t repeatRate) {
   index_t highs = 0;
   index_t lows = 0;
   for (index_t i = 0; i < sampleSize; i++) {
@@ -30,17 +30,15 @@ bool Button::read (const ButtonReadMode mode = Normal, const uint16_t repeatRate
   }
   return output;
 }
-void Button::setSampleSize (const uint16_t sampleSizeParam) {
+void Button::setSampleSize (uint16_t sampleSizeParam) {
   sampleSize = sampleSizeParam;
 }
-
-
 
 ResistiveButton::ResistiveButton (byte pinParam) {
   pin = pinParam;
   pinMode(pin, INPUT_PULLUP);
 }
-bool ResistiveButton::read (ButtonReadMode mode = Normal, uint16_t repeatRate = 0) {
+bool ResistiveButton::read (ButtonReadMode mode, uint16_t repeatRate) {
   index_t highs = 0;
   index_t lows = 0;
   for (index_t i = 0; i < sampleSize; i++) {
@@ -65,15 +63,12 @@ bool ResistiveButton::read (ButtonReadMode mode = Normal, uint16_t repeatRate = 
   }
   return output;
 }
-
 uint16_t ResistiveButton::readRaw() {
   return analogRead(pin);
 }
-
 void ResistiveButton::setSampleSize (uint16_t sampleSizeParam) {
   sampleSize = sampleSizeParam;
 }
-
 void ResistiveButton::setThreshold (uint16_t thresholdParam) {
   threshold = thresholdParam;
 }

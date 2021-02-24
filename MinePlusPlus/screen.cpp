@@ -6,7 +6,7 @@ byte animationFrame4;
 
 const uint16_t animationFramePeriod = 5000;
 
-void Screen::renderBitmap (const byte bitmap[], const uint8_t rows, const uint8_t columns, const byte xPixel, const byte yPixel) {
+void Screen::renderBitmap (const byte bitmap[], uint8_t rows, uint8_t columns, byte xPixel, byte yPixel) {
   const byte bitMasks[8] {
     B10000000, B1000000, B100000, B10000, B1000, B100, B10, B1
   };
@@ -19,7 +19,7 @@ void Screen::renderBitmap (const byte bitmap[], const uint8_t rows, const uint8_
     }
   }
 }
-void Screen::renderBlock (const xcoord_t x, ycoord_t y, const int8_t xPixelOffset, const int8_t yPixelOffset) {
+void Screen::renderBlock (xcoord_t x, ycoord_t y, int8_t xPixelOffset, int8_t yPixelOffset) {
   id_t id;
   int8_t xRel = x - player.getCoords().x;
   int8_t yRel = y - player.getCoords().y;
@@ -51,10 +51,10 @@ void Screen::renderBlock (const xcoord_t x, ycoord_t y, const int8_t xPixelOffse
       yPixelOffsetForLoop++;
   }
 }
-void Screen::renderBlock (const CoordPair coords, const int8_t xPixelOffset, const int8_t yPixelOffset) {
+void Screen::renderBlock (const CoordPair& coords, int8_t xPixelOffset, int8_t yPixelOffset) {
   renderBlock(coords.x, coords.y, xPixelOffset, yPixelOffset);
 }
-void Screen::renderWorld (const bool reRenderAnimatedBlocks) {
+void Screen::renderWorld (bool reRenderAnimatedBlocks) {
   static id_t oldRenderMap[13][7];
 #ifdef RENDER_LOGGING
   com.out.log(F("Rendering World"));
@@ -118,7 +118,7 @@ void Screen::renderWorldOverview () {
     }
   }
 }
-const byte* Screen::idToBitmap (const id_t id, const byte version = 0, FunctionCallContext context) {
+const byte* Screen::idToBitmap (id_t id, byte version, FunctionCallContext context) {
   if (context == FunctionCallContext::Generic) {
     switch (id) {
       case B_AIR:       return Textures::Blocks::light_7;
@@ -183,7 +183,7 @@ const byte* Screen::idToBitmap (const id_t id, const byte version = 0, FunctionC
       case B_SAPLING:   return Textures::Blocks::sapling;
       case B_FLOWER:    return Textures::Blocks::flower;
       case B_TNT_U:     return Textures::Blocks::tnt;
-  
+
       case R_LIGHT0:    return Textures::Blocks::light_0;
       case R_LIGHT1:    return Textures::Blocks::light_1;
       case R_LIGHT2:    return Textures::Blocks::light_2;
@@ -192,13 +192,13 @@ const byte* Screen::idToBitmap (const id_t id, const byte version = 0, FunctionC
       case R_LIGHT5:    return Textures::Blocks::light_5;
       case R_LIGHT6:    return Textures::Blocks::light_6;
       case R_LIGHT7:    return Textures::Blocks::light_7;
-      case B_WATER_SOURCE:return Textures::Blocks::water_7;
+      case B_WATER_SOURCE: return Textures::Blocks::water_7;
       default:          return Textures::Blocks::error;
     }
   } else if (context == FunctionCallContext::Generation) {
     switch (id) {
       case G_AIR:     return Textures::Blocks::light_7;
-      
+
       default:          return Textures::Blocks::error;
     }
   } else if (context == FunctionCallContext::Update) {

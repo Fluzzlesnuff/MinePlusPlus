@@ -1,5 +1,5 @@
 #include "includes.h"
 
-void CommunicationChannel::init(const long bitrate = 1000000) {
+void CommunicationChannel::init(long bitrate) {
   Serial.begin(bitrate);
 }

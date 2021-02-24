@@ -1,6 +1,6 @@
 #include "includes.h"
 
-void Mob::damage (const id_t hearts) {
+void Mob::damage (id_t hearts) {
   if (hearts >= health) {
     kill();
   } else {
@@ -12,7 +12,7 @@ void Mob::kill () {
 
 }
 
-bool Mob::walk (const Direction dir) {
+bool Mob::walk (Direction dir) {
   if (dir == right) {
     if (!block.isSolid(block.get(x + 1, y)) && !block.isSolid(block.get(x + 1, y - 1))) {
       x++;
@@ -37,23 +37,23 @@ bool Mob::walk (const Direction dir) {
   }
 }
 
-int Mob::drop (const id_t id, const id_t num = 1) {
+int Mob::drop (id_t id, id_t num) {
 
 }
 
-int Mob::dropRand (const id_t id1, const id_t num1, const float chance1, const id_t num2 = 0, const float chance2 = 0, const id_t num3 = 0, const float chance3 = 0 ) {
+int Mob::dropRand (id_t id1, id_t num1, float chance1, id_t num2, float chance2, id_t num3, float chance3) {
 
 }
 
-void Mob::follow (const bool safety = true) {
+void Mob::follow (bool safety) {
 
 }
 
-void Hostile::attackMelee (const id_t hearts) {
+void Hostile::attackMelee (id_t hearts) {
 
 }
 
-void Hostile::attackRanged (const id_t hearts, const id_t projectileId) {
+void Hostile::attackRanged (id_t hearts, id_t projectileId) {
 
 }
 

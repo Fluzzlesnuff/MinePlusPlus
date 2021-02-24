@@ -1,6 +1,6 @@
 #include "includes.h"
 
-CommunicationChannel::Input::Command::Command (const CommandType commandTypeParam, const String nameParam, index_t numArgsParam = 0, const ArgTypeList argTypeListParam = ArgTypeList{{}}) {
+CommunicationChannel::Input::Command::Command (CommandType commandTypeParam, const String& nameParam, index_t numArgsParam, const ArgTypeList& argTypeListParam) {
   thisCommandType = commandTypeParam;
   numberOfArguments = numArgsParam;
   communicationName = nameParam;
@@ -8,7 +8,7 @@ CommunicationChannel::Input::Command::Command (const CommandType commandTypePara
     argumentTypes[i] = argTypeListParam.argTypes[i];
 }
 
-CommandData CommunicationChannel::Input::parseCommand (const String string) {
+CommandData CommunicationChannel::Input::parseCommand (const String& string) {
   if (string == "") {
     CommandData failCommand;
     failCommand.type = CommandType::NoCommand;
@@ -54,7 +54,7 @@ CommandData CommunicationChannel::Input::parseCommand (const String string) {
   return outputCommand;
 }
 
-CommandData CommunicationChannel::Input::Command::parsePerCommand (const String* args, const index_t inputArgsCount) {
+CommandData CommunicationChannel::Input::Command::parsePerCommand (const String* args, index_t inputArgsCount) {
   CommandData outputCommand;
   outputCommand.type = thisCommandType;
   if (inputArgsCount < numberOfArguments) {

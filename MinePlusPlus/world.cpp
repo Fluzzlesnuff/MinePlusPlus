@@ -23,12 +23,12 @@ worldHeight_t worldHeight;
 xcoord_t xLimit; //Inclusive. Make negative to use negative x limit.
 ycoord_t yLimit; //Inclusive. Bottom limit is 0.
 
-void World::setTickRate (const double tickRateParam) {
+void World::setTickRate (double tickRateParam) {
   ticksPerSecond = tickRateParam;
   msPerTick = round(1000 / ticksPerSecond);
   com.out.logMultiple("Set Tick Rate: " + String(ticksPerSecond) + " TPS (" + String(msPerTick) + "ms)");
 }
-void World::setWorldDimensions(const WorldSize sizeParam) {
+void World::setWorldDimensions(WorldSize sizeParam) {
   size = sizeParam;
   switch (size) {
     case Default:

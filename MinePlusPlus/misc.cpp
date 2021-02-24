@@ -1,13 +1,13 @@
 #include "includes.h"
 
-int safeDivide (const int input, const int divisor) {
+int safeDivide (int input, int divisor) {
   return (input - (input % divisor)) / divisor;
 }
 
-bool doubleIsNear(const double a, const double b, const double threshold) {
+bool doubleIsNear(double a, double b, double threshold) {
   return abs(a - b) <= threshold;
 }
-int randomNumber(const int num1, double prob1, const int num2, double prob2, const int num3, double prob3, const int num4) {
+int randomNumber(int num1, double prob1, int num2, double prob2, int num3, double prob3, int num4) {
   double prob4 = 0;
   if (prob1 + prob2 + prob3 + prob4 > 1.01)
     com.out.throwError(PROB_SUM_ERR);

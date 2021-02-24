@@ -29,7 +29,7 @@ bool World::tryUpdate() {
   }
   return madeChanges;
 }
-bool World::update (const WorldUpdateType updateType) {
+bool World::update (WorldUpdateType updateType) {
   switch (updateType) {
     case WorldUpdateType::Constant:   return updateConstant();
     case WorldUpdateType::Tick:       return updateTick();

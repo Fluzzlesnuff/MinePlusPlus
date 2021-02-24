@@ -1,10 +1,10 @@
 #include "includes.h"
 
-void Player::move (const xcoord_t xParam, const ycoord_t yParam) {
+void Player::move (xcoord_t xParam, ycoord_t yParam) {
   move(double(xParam), double(yParam));
 }
 
-void Player::move (const double xParam, const double yParam) {
+void Player::move (double xParam, double yParam) {
 #ifdef PLAYER_MOVE_LOGGING
   com.out.logMultiple("Moving player to (" + String(xParam) + ", " + String(yParam) + ").");
 #endif
@@ -16,15 +16,15 @@ void Player::move (const double xParam, const double yParam) {
   y = yParam;
 }
 
-void Player::move (const ExactCoordPair coords) {
+void Player::move (const ExactCoordPair& coords) {
   move(coords.x, coords.y);
 }
 
-void Player::move (const CoordPair coords) {
+void Player::move (const CoordPair& coords) {
   move(coords.x, coords.y);
 }
 
-bool Player::walk (const Direction dir, const double distance = 1) {
+bool Player::walk (Direction dir, double distance) {
   switch (dir) {
     case left:
       if (block.isAir(block.get(player.getCoords(-1))) && block.isAir(block.get(player.getCoords(-1, -1)))) {
@@ -34,11 +34,11 @@ bool Player::walk (const Direction dir, const double distance = 1) {
   }
 }
 
-CoordPair Player::getCoords(const xcoord_t xOffset = 0, const ycoord_t yOffset = 0) {
+CoordPair Player::getCoords(xcoord_t xOffset, ycoord_t yOffset) {
   return CoordPair{xcoord_t(round(x + xOffset)), ycoord_t(round(y + yOffset))};
 }
 
-ExactCoordPair Player::getExactCoords(const double xOffset = 0, const double yOffset = 0) {
+ExactCoordPair Player::getExactCoords(double xOffset, double yOffset) {
   return ExactCoordPair{x + xOffset, y + yOffset};
 }
 

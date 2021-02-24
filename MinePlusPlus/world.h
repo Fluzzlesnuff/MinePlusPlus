@@ -16,10 +16,10 @@ class World { //One instance only, but used as a proper object.
     WorldSize size;
     double ticksPerSecond;
     uint16_t msPerTick;
-    void setWorldDimensions(const WorldSize sizeParam);
+    void setWorldDimensions(WorldSize sizeParam);
     void start (); //Sets starts the necessary world services *after* a world has been either loaded or generated.
     
-    bool update (const WorldUpdateType updateType); //Flows water, grows crops, drops gravel, etc.
+    bool update (WorldUpdateType updateType); //Flows water, grows crops, drops gravel, etc.
     bool updateConstant();
     bool updateTick();
     bool update2Tick();
@@ -48,8 +48,8 @@ class World { //One instance only, but used as a proper object.
   public:
     bool isRunning = false;
     bool tryUpdate();
-    void setTickRate (const double tickRateParam);
-    void generate (const WorldSize sizeParam); //Creates a new world in RAM.
+    void setTickRate (double tickRateParam);
+    void generate (WorldSize sizeParam); //Creates a new world in RAM.
     void load (); //Loads a world from EEPROM into ram.
     void save (); //Saves the world in RAM to EEPROM, overwriting any older saves.
 };
