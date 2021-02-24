@@ -2,7 +2,7 @@
 #define screen_h
 
 class Screen { //A set of functions, not a proper object
-    byte* idToBitmap (const id_t id, const byte version = 0); //Generates a bitmap from an ID.
+    const byte* idToBitmap (const id_t id, const byte version = 0, FunctionCallContext context = FunctionCallContext::Generic); //Generates a bitmap from an ID.
     void forceUpdateAnimations (); //Internal function to update animation frame counters. Always updates.
   public:
     void renderBitmap(const byte bitmap[], const uint8_t rows, const uint8_t columns, const byte xPixel, const byte yPixel);

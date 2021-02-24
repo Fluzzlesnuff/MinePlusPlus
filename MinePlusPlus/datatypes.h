@@ -83,6 +83,12 @@ enum ArgumentType {
 };
 }
 
+enum class FunctionCallContext {
+  Generic,
+  Update,
+  Generation
+};
+
 struct ArgTypeList {
   ArgumentType::ArgumentType argTypes[8];
 };
