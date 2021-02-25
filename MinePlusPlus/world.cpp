@@ -57,7 +57,7 @@ void World::load () {
     }
     }*/
 #ifdef SAVE_LOAD_LOGGING
-  com.out.log(F("Beginning World Loading"));
+  cout << prefix << F("Beginning World Loading"));
 #endif
   byte worldSizeByte = EEPROM.read(EE_WORLD_SIZE_BYTE);
   byte worldSize = (bitRead(worldSizeByte, 7) * 8) + (bitRead(worldSizeByte, 6) * 4) + (bitRead(worldSizeByte, 5) * 2) + bitRead(worldSizeByte, 4); //shift the bits
@@ -91,7 +91,7 @@ void World::load () {
       blockDBAddress += numberToLoad - 1;
     } else if (byteRead == C_END) {
 #ifdef SAVE_LOAD_BYTE_LOGGING
-      com.out.log(F("Found COMP_END"));
+      cout << prefix << F("Found COMP_END"));
 #endif
       break;
     }
@@ -107,7 +107,7 @@ void World::load () {
   player.move(EEPROM.read(EE_PLAYER_X_HIGH_BYTE), EEPROM.read(EE_PLAYER_LOW_X_Y_BYTE));
   start();
 #ifdef SAVE_LOAD_LOGGING
-  com.out.log(F("\tFinished"));
+  cout << prefix << F("\tFinished"));
 #endif
 }
 void World::save () {

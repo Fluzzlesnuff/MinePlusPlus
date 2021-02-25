@@ -61,7 +61,7 @@ void CommunicationChannel::Output::throwError (Error error) {
 }
 
 void CommunicationChannel::Output::prefix () {
-  Serial.print(F("[At "));
+  Serial.print(F("[At"));
   Serial.print(millis());
   for (byte i = log10(millis()); i < 7; i++)
     Serial.print(F(" "));
@@ -75,16 +75,43 @@ OStream& operator<< (OStream& out, int input) {
   Serial.print(input);
   return out;
 }
-
 OStream& operator<< (OStream& out, const String& input) {
   Serial.print(input);
   return out;
 }
-
 OStream& operator<< (OStream& out, char input) {
   Serial.print(input);
   return out;
 }
-
+OStream& operator<< (OStream& out, const __FlashStringHelper *input) {
+  Serial.print(input);
+  return out;
+}
+OStream& operator<< (OStream& out, const CoordPair& coordPair) {
+  Serial.print(coordPair.x);
+  Serial.print(F(", "));
+  Serial.print(coordPair.y);
+  return out;
+}
+OStream& operator<< (OStream& out, const ExactCoordPair& coordPair) {
+  Serial.print(coordPair.x);
+  Serial.print(F(", "));
+  Serial.print(coordPair.y);
+  return out;
+}
+OStream& operator<< (OStream& out, IOStreamFlag flag) {
+  switch (flag) {
+    case endl:
+      Serial.print('\n');
+      break;
+    case prefix:
+      Serial.print(F("[At"));
+      for (byte i = log10(millis()); i < 7; i++)
+        Serial.print(F(" "));
+      Serial.print(millis());
+      Serial.print(F(" ms]:  "));
+      break;
+  }
+  return out;
+}
 OStream cout;
-const char endl = '\n';

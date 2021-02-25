@@ -5,8 +5,7 @@ bool selectedGenerateButton = false;
 
 void setup() {
   com.init();
-  com.out.print(F("\n\n\n\n"));
-  com.out.log(F("Communication Channel(s) Initialized"));
+  cout << prefix << F("Communication Channel(s) Initialized") << endl;
   leftButton.setSampleSize(10);
   jumpButton.setSampleSize(10);
   rightButton.setSampleSize(10);
@@ -21,9 +20,9 @@ void setup() {
 #ifndef PRESET_SEED
   randomSeed(analogRead(A15));
 #endif
-  com.out.log(F("Initializing Display"));
+  cout << prefix << F("Initializing Display") << endl;
   GLCD.Init();
-  com.out.log(F("\tComplete"));
+  cout << prefix << F("\tComplete") << endl;
 #ifndef GENERATE_ON_START
   screen.renderBitmap(Bitmaps::UI::loadIcon, 16, 2, 31, 23);
   screen.renderBitmap(Bitmaps::UI::generateIcon, 16, 2, 79, 23);

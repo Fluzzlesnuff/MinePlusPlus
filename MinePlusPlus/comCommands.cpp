@@ -14,7 +14,7 @@ CommandData CommunicationChannel::Input::parseCommand (const String& string) {
     failCommand.type = CommandType::NoCommand;
     return failCommand;
   }
-  com.out.log("\"" + string + "\"");
+  cout << prefix << "\"" + string + "\"");
   CommandData outputCommand;
   String commandArgs[8];
   uint8_t partIndex = 0;
@@ -48,7 +48,7 @@ CommandData CommunicationChannel::Input::parseCommand (const String& string) {
   } else if (commandArgs[0] == "map") {
     outputCommand = com.in.map.parsePerCommand(commandArgs, numArgs);
   } else {
-    com.out.log("Invalid Command");
+    cout << prefix << "Invalid Command");
     outputCommand.type = CommandType::CommandError;
   }
   return outputCommand;
@@ -58,10 +58,10 @@ CommandData CommunicationChannel::Input::Command::parsePerCommand (const String*
   CommandData outputCommand;
   outputCommand.type = thisCommandType;
   if (inputArgsCount < numberOfArguments) {
-    com.out.log(communicationName + ": Not enough arguments.");
+    cout << prefix << communicationName + ": Not enough arguments.");
     outputCommand.type = CommandType::CommandError;
   } else if (inputArgsCount > numberOfArguments) {
-    com.out.log(communicationName + ": Too many arguments.");
+    cout << prefix << communicationName + ": Too many arguments.");
     outputCommand.type = CommandType::CommandError;
   } else {
     for (uint8_t i = 0; i < numberOfArguments; i++) {
@@ -75,14 +75,14 @@ CommandData CommunicationChannel::Input::Command::parsePerCommand (const String*
           if (args[i + 1].charAt(binaryParseIndex) == '1')
             parsedDecimal += bit(args[i + 1].length() - binaryParseIndex - 1);
           else if (args[i + 1].charAt(binaryParseIndex) != '0')
-            com.out.log(communicationName + ": Argument " + String(i + 1) + " is invalid.");
+            cout << prefix << communicationName + ": Argument " + String(i + 1) + " is invalid.");
         }
         outputCommand.args[i] = parsedDecimal;
       }
 
       else if (args[i + 1].charAt(0) == '~') { //relative coordinates to exact coordinates parsing
         if (!(argumentTypes[i] == ArgumentType::XCoord || argumentTypes[i] == ArgumentType::YCoord)) {
-          com.out.log(communicationName + ": Argument " + String(i + 1) + " is invalid.");
+          cout << prefix << communicationName + ": Argument " + String(i + 1) + " is invalid.");
           outputCommand.type = CommandType::CommandError;
         }
 
@@ -93,7 +93,7 @@ CommandData CommunicationChannel::Input::Command::parsePerCommand (const String*
         else {
           numberPart = (args[i + 1].substring(1)).toInt();
           if (numberPart == 0) {
-            com.out.log(communicationName + ": Argument " + String(i + 1) + " is invalid.");
+            cout << prefix << communicationName + ": Argument " + String(i + 1) + " is invalid.");
             outputCommand.type = CommandType::CommandError;
           }
 
@@ -109,15 +109,15 @@ CommandData CommunicationChannel::Input::Command::parsePerCommand (const String*
       }
 
       else {
-        com.out.log(communicationName + ": Argument " + String(i + 1) + " is invalid.");
+        cout << prefix << communicationName + ": Argument " + String(i + 1) + " is invalid.");
         outputCommand.type = CommandType::CommandError;
       }
 
       if ((argumentTypes[i] == ArgumentType::XCoord) && (outputCommand.args[i] < -xLimit || outputCommand.args[i] > xLimit)) {
-        com.out.log(communicationName + ": Argument " + String(i + 1) + " is outside of the world.");
+        cout << prefix << communicationName + ": Argument " + String(i + 1) + " is outside of the world.");
         outputCommand.type = CommandType::CommandError;
       } else if ((argumentTypes[i] == ArgumentType::YCoord) && (outputCommand.args[i] < 0 || outputCommand.args[i] > yLimit)) {
-        com.out.log(communicationName + ": Argument " + String(i + 1) + " is outside of the world.");
+        cout << prefix << communicationName + ": Argument " + String(i + 1) + " is outside of the world.");
         outputCommand.type = CommandType::CommandError;
       }
     }
@@ -133,16 +133,16 @@ bool CommunicationChannel::Input::runCommands() {
     return false;
   if (parsedCommand.type == CommandType::SetBlock) {
     block.set(parsedCommand.args[0], parsedCommand.args[1], parsedCommand.args[2]);
-    com.out.log("Set block at (" + String(parsedCommand.args[0]) + ", " + String(parsedCommand.args[1]) + ") with ID " + String(parsedCommand.args[2]));
+    cout << prefix << "Set block at (" + String(parsedCommand.args[0]) + ", " + String(parsedCommand.args[1]) + ") with ID " + String(parsedCommand.args[2]));
     return true;
   }
   if (parsedCommand.type == CommandType::GetBlock) {
-    com.out.log("Block at (" + String(parsedCommand.args[0]) + ", " + String(parsedCommand.args[1]) + ") has ID " + String(block.get(parsedCommand.args[0], parsedCommand.args[1])));
+    cout << prefix << "Block at (" + String(parsedCommand.args[0]) + ", " + String(parsedCommand.args[1]) + ") has ID " + String(block.get(parsedCommand.args[0], parsedCommand.args[1])));
     return true;
   }
   if (parsedCommand.type == CommandType::Teleport) {
     player.move(parsedCommand.args[0], parsedCommand.args[1]);
-    com.out.log("Teleported to (" + String(parsedCommand.args[0]) + ", " + String(parsedCommand.args[1]) + ")");
+    cout << prefix << "Teleported to (" + String(parsedCommand.args[0]) + ", " + String(parsedCommand.args[1]) + ")");
     return true;
   }
   if (parsedCommand.type == CommandType::Fill) {
@@ -152,21 +152,21 @@ bool CommunicationChannel::Input::runCommands() {
         block.set(xIndex, yIndex, blockIDToFill);
       }
     }
-    com.out.log("Filled " + String((abs(parsedCommand.args[0] - parsedCommand.args[2]) + 1) * (abs(parsedCommand.args[1] - parsedCommand.args[3]) + 1)) + " blocks with ID " + String(parsedCommand.args[4]));
+    cout << prefix << "Filled " + String((abs(parsedCommand.args[0] - parsedCommand.args[2]) + 1) * (abs(parsedCommand.args[1] - parsedCommand.args[3]) + 1)) + " blocks with ID " + String(parsedCommand.args[4]));
     return true;
   }
   if (parsedCommand.type == CommandType::Save) {
     world.save();
-    com.out.log("Saved World");
+    cout << prefix << "Saved World");
     return true;
   }
   if (parsedCommand.type == CommandType::Load) {
     if (!world.isRunning) {
       world.load();
-      com.out.log("Loaded World");
+      cout << prefix << "Loaded World");
       return true;
     } else {
-      com.out.log("Load: Cannot load a world while a world is running!");
+      cout << prefix << "Load: Cannot load a world while a world is running!");
       return false;
     }
   }
@@ -175,7 +175,7 @@ bool CommunicationChannel::Input::runCommands() {
     return true;
   }
   if (parsedCommand.type == CommandType::ShowOverview) {
-    com.out.log("Showing World Map");
+    cout << prefix << "Showing World Map");
     GLCD.ClearScreen();
     screen.renderWorldOverview();
     while (!leftButton.read() && !jumpButton.read() && !rightButton.read() && !leftMouseButton.read() && !leftMouseButton.read());

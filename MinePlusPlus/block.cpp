@@ -4,7 +4,7 @@ id_t* blockDB;
 
 id_t Block::get (xcoord_t x, ycoord_t y) {
 #ifdef BLOCK_GET_LOGGING
-  com.out.log("Getting block at (" + String(x) + ", " + String(y) + ").");
+  cout << prefix << "Getting block at (" << String(x) << ", " << String(y) << ")." << endl;
 #endif
   if (x < -xLimit || x > xLimit)
     com.out.throwError(XCOORD_OOB);
@@ -18,7 +18,7 @@ id_t Block::get ( const CoordPair& coords) {
 void Block::set (xcoord_t x, ycoord_t y, id_t id) {
   blockDB[coordsToAddress(x, y)] = id;
 #ifdef BLOCK_SET_LOGGING
-  com.out.log("Set block at (" + String(x) + ", " + String(y) + ") with ID: " + id);
+  cout << prefix << "Set block at (" << x << ", " << y << ") with ID: " << id << endl;
 #endif
 }
 void Block::set (const CoordPair& coords, id_t id) {
@@ -196,7 +196,7 @@ uint16_t Block::isNear(xcoord_t x, ycoord_t y, id_t id, byte distance, Measureme
     return 0;
   }
 #ifdef BLOCK_NEAR_TOUCHING_LOGGING
-  com.out.log("Block::isNear Started with args " + String(x) + ", " + String(y) + ", " + String(id) + ", " + String(distance) + ", " + (measurementType == Chebyshev ? "Chebyshev" : "Taxicab"));
+  cout << prefix << "Block::isNear Started with args " << String(x) << ", " << String(y) << ", " << String(id) << ", " << String(distance) << ", " << (measurementType == Chebyshev ? "Chebyshev" : "Taxicab"));
 #endif
 
   uint16_t count{0};
@@ -247,7 +247,7 @@ void Block::createBlockDB (worldWidth_t width, worldHeight_t height) {
   uint16_t totalSize = width * height;
   blockDB = new id_t[totalSize];
 #ifdef BLOCK_DB_CREATION_LOGGING
-  com.out.log("Created blockDB with dimensions: " + String(width) + ", " + String(height));
+  cout << prefix << "Created blockDB with dimensions: " << String(width) << ", " << String(height));
 #endif
 }
 

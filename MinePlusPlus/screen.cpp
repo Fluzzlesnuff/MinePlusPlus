@@ -36,7 +36,7 @@ void Screen::renderBlock (xcoord_t x, ycoord_t y, int8_t xPixelOffset, int8_t yP
     id = block.get(x, y);
   const byte* bitmapToRender = idToBitmap(id);
 #ifdef RENDER_BLOCK_LOGGING
-  com.out.log("Rendering block at relative coordinates (" + String(xRel) + ", " + String(yRel) + ")   \t[Top-left corner at pixel (" + String(xPixel) + ", " + String(yPixel) + "),\tID: " + String(id) + "].");
+  cout << prefix << "Rendering block at relative coordinates (" + String(xRel) + ", " + String(yRel) + ")   \t[Top-left corner at pixel (" + String(xPixel) + ", " + String(yPixel) + "),\tID: " + String(id) + "].");
 #endif
   ycoord_t yPixelOffsetForLoop = 0;
   for (uint8_t i{0}; i < 20; i++) {
@@ -57,7 +57,7 @@ void Screen::renderBlock (const CoordPair& coords, int8_t xPixelOffset, int8_t y
 void Screen::renderWorld (bool reRenderAnimatedBlocks) {
   static id_t oldRenderMap[13][7];
 #ifdef RENDER_LOGGING
-  com.out.log(F("Rendering World"));
+  cout << prefix << F("Rendering World"));
 #endif
   for (int8_t xIndex = 0; xIndex <= 6; xIndex++) {
     for (int8_t yIndex = 0; yIndex <= 3; yIndex++) {
@@ -81,12 +81,12 @@ void Screen::renderWorld (bool reRenderAnimatedBlocks) {
     }
   }
 #ifdef RENDER_LOGGING
-  com.out.log(F("\tFinished"));
+  cout << prefix << F("\tFinished"));
 #endif
 }
 void Screen::forceRenderWorld () {
 #ifdef RENDER_LOGGING
-  com.out.log(F("Rendering World"));
+  cout << prefix << F("Rendering World"));
 #endif
   for (int8_t xIndex = 0; xIndex <= 6; xIndex++) {
     for (int8_t yIndex = 0; yIndex <= 3; yIndex++) {
@@ -100,7 +100,7 @@ void Screen::forceRenderWorld () {
     }
   }
 #ifdef RENDER_LOGGING
-  com.out.log(F("\tFinished"));
+  cout << prefix << F("\tFinished"));
 #endif
 }
 void Screen::renderWorldOverview () {

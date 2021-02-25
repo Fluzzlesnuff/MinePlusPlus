@@ -69,15 +69,13 @@ enum CommandType {
   ShowOverview
 };
 
-namespace ArgumentType {
-enum ArgumentType {
+enum class ArgumentType {
   Other,
   XCoord,
   YCoord,
   TargetSelector,
   ID
 };
-}
 
 enum class FunctionCallContext {
   Generic,
@@ -85,8 +83,12 @@ enum class FunctionCallContext {
   Generation
 };
 
+enum IOStreamFlag {
+  endl,
+  prefix
+};
 struct ArgTypeList {
-  ArgumentType::ArgumentType argTypes[8];
+  ArgumentType argTypes[8];
 };
 
 struct CoordPair {

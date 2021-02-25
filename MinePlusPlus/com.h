@@ -32,11 +32,9 @@ class CommunicationChannel {
             CommandType thisCommandType;
             String communicationName; //The name used in messages relating to the command, before the colon.
             int8_t numberOfArguments; //The required number of arguments, not including the command name.
-            ArgumentType::ArgumentType argumentTypes[8];
+            ArgumentType argumentTypes[8];
           public:
-            Command (CommandType commandTypeParam, const String& nameParam, uint8_t numArgsParam = 0, const ArgTypeList &argTypeListParam = ArgTypeList {
-                       {}
-                     });
+            Command (CommandType commandTypeParam, const String& nameParam, uint8_t numArgsParam = 0, const ArgTypeList &argTypeListParam = ArgTypeList {{}});
             CommandData parsePerCommand (const String *args, const uint8_t inputArgsCount) const;
         };
         const Command setblock{CommandType::SetBlock, "Setblock", 3, ArgTypeList{{ArgumentType::XCoord, ArgumentType::YCoord, ArgumentType::ID}}}; //All that is to pass an array to the constructor.
@@ -63,19 +61,26 @@ class IOStream {
 };
 
 class IStream : public IOStream {
-
+    friend IStream& operator>> (IStream& in, String& var);
 };
 
 class OStream : public IOStream {
     void prefix ();
-    friend OStream& operator<< (OStream& out, int input);
+    template <typename T>
+    friend OStream& operator<< (OStream& out, T input) {
+      Serial.print(input);
+      return out;
+    }
     friend OStream& operator<< (OStream& out, const String& input);
-    friend OStream& operator<< (OStream& out, char input);
+    friend OStream& operator<< (OStream& out, const __FlashStringHelper *input);
+    friend OStream& operator<< (OStream& out, const CoordPair& coordPair);
+    friend OStream& operator<< (OStream& out, const ExactCoordPair& coordPair);
+    friend OStream& operator<< (OStream& out, IOStreamFlag flag);  
   public:
 };
 
 extern OStream cout;
-extern const char endl;
+extern IStream cin;
 
 #include "comT.h"
 #endif
