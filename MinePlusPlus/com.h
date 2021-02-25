@@ -6,18 +6,6 @@ class CommunicationChannel {
     void init(long bitrate = 1000000);
     class Output {
       public:
-        void prefix ();
-        void print (const String& string);
-        void print (const __FlashStringHelper *string);
-        void println (const String& string);
-        void println (const __FlashStringHelper *string);
-        void log (const String& string);
-        template<size_t length>
-        void logChars (const char (&string)[length]);
-        void logMultiple (const StringSumHelper &string);
-        void log (const __FlashStringHelper *string);
-        void log (const ExactCoordPair& coordPair); //Print a ExactCoordPair to the serial monitor.
-        void log (const CoordPair& coordPair); //Print a CoordPair to the serial monitor.
         void throwError (Error error);
     };
     class Input {

@@ -2,7 +2,7 @@
 
 void World::generate (WorldSize sizeParam) {
   setWorldDimensions(sizeParam);
-  cout << prefix << F("Beginning World Generation"));
+  cout << prefix << F("Beginning World Generation") << endl;
   xLimit = (worldWidth - 1) / 2;
   yLimit = worldHeight - 1;
   block.createBlockDB(worldWidth, worldHeight);
@@ -98,21 +98,21 @@ void World::generate (WorldSize sizeParam) {
 #endif
   Serial.println(freeMemory());
   start();
-  cout << prefix << F("\tFinished"));
+  cout << prefix << F("\tFinished") << endl;
 }
 
 //########################
 //# GENERATION FUNCTIONS #
 //########################
 void World::generateAir () {
-  cout << prefix << F("Generation Stage 0: Air"));
+  cout << prefix << F("Generation Stage 0: Air") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = 0; y <= yLimit; y++)
       block.set(x, y, B_AIR);
-  cout << prefix << F("\tFinished"));
+  cout << prefix << F("\tFinished") << endl;
 }
 void World::generateStone () {
-  cout << prefix << F("Generation Stage 1: Solid Stone Layer"));
+  cout << prefix << F("Generation Stage 1: Solid Stone Layer") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= safeDivide(yLimit, 2) - 2; y++)
       block.set(x, y, B_STONE);
@@ -162,10 +162,10 @@ void World::generateStone () {
     screen.renderWorldOverview();
 #endif
   }
-  cout << prefix << F("\tFinished"));
+  cout << prefix << F("\tFinished") << endl;
 }
 void World::generateDirtLayer () {
-  cout << prefix << F("Generation Stage 2: Dirt Top Layer"));
+  cout << prefix << F("Generation Stage 2: Dirt Top Layer") << endl;
   Serial.println(freeMemory());
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= yLimit; y++) {
@@ -179,8 +179,8 @@ void World::generateDirtLayer () {
   }
 }
 void World::generateCaves () {
-  cout << prefix << F("Generation Stage 3: Caves"));
-  cout << prefix << F("\tSeeding Caves"));
+  cout << prefix << F("Generation Stage 3: Caves") << endl;
+  cout << prefix << F("\tSeeding Caves") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= yLimit; y++)
       if ((random() % 100) == 0 && block.get(x, y) == B_STONE && !block.isNear(x, y, B_AIR, 4, Taxicab) && (!block.isNear(x, y, G_AIR, 7, Chebyshev) || (random() % 10) == 0)) {
@@ -199,10 +199,7 @@ void World::generateCaves () {
       {0, 0,  3,  2,  1,  1,  1,  1},  // where the odds of changing the block in question to air are 1/x.
       {0,  0,  0,  0,  0,  0,  1,  1}   // 0 means no chance.
     };
-    com.out.prefix();
-    com.out.print(F("\tGrowing Caves:"));
-    com.out.print(F(" Pass "));
-    com.out.println(String(i + 1));
+    cout << prefix << F("\tGrowing Caves:") << F(" Pass ") << i + 1 << endl;
     Serial.println(freeMemory());
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
       for (ycoord_t y = 0; y <= yLimit; y++) {
@@ -225,11 +222,11 @@ void World::generateCaves () {
     screen.renderWorldOverview();
 #endif
   }
-  cout << prefix << F("\tFinished"));
+  cout << prefix << F("\tFinished") << endl;
 }
 void World::generateGravelVeins () {
-  cout << prefix << F("Generation Stage 4: Gravel"));
-  cout << prefix << F("\tSeeding Gravel Veins"));
+  cout << prefix << F("Generation Stage 4: Gravel") << endl;
+  cout << prefix << F("\tSeeding Gravel Veins") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= yLimit; y++)
       if ((random() % 200) == 0 && block.get(x, y) == B_STONE)
@@ -242,7 +239,7 @@ void World::generateGravelVeins () {
       {0, 0,  5,  3,  3,  3,  2,  1},
       {0,  0,  0,  0,  1,  1,  1,  1}
     };
-    com.out.logMultiple("\tGrowing Gravel Veins: Pass " + String(i + 1));
+    cout << prefix << "\tGrowing Gravel Veins: Pass " << i + 1 << endl;
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
       for (ycoord_t y = 0; y <= yLimit; y++) {
         byte numTouching = block.isTouchingWide(x, y, B_GRAVEL);
@@ -261,11 +258,11 @@ void World::generateGravelVeins () {
           block.set(x, y, B_GRAVEL);
     }
   }
-  cout << prefix << F("\tFinished"));
+  cout << prefix << F("\tFinished") << endl;
 }
 void World::generateDirtVeins () {
-  cout << prefix << F("Generation Stage 5: Dirt Veins"));
-  cout << prefix << F("\tSeeding Dirt Veins"));
+  cout << prefix << F("Generation Stage 5: Dirt Veins") << endl;
+  cout << prefix << F("\tSeeding Dirt Veins") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = safeDivide(worldHeight, 4); y <= yLimit; y++)
       if ((random() % 250) == 0 && block.get(x, y) == B_STONE)
@@ -277,7 +274,7 @@ void World::generateDirtVeins () {
       {3,  2,  2,  2,  1,  1,  1,  1},
       {0,  0,  0,  0,  1,  1,  1,  1}
     };
-    com.out.logMultiple("\tGrowing Dirt Veins: Pass " + String(i + 1));
+    cout << prefix << "\tGrowing Dirt Veins: Pass " << i + 1 << endl;
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
       for (ycoord_t y = 0; y <= yLimit; y++) {
         byte numTouching = block.isTouchingWide(x, y, G_DIRT);
@@ -301,17 +298,17 @@ void World::generateDirtVeins () {
       if (block.get(x, y) == G_DIRT)
         block.set(x, y, B_DIRT);
   }
-  cout << prefix << F("\tFinished"));
+  cout << prefix << F("\tFinished") << endl;
 }
 void World::generateDiamond () {
-  cout << prefix << F("Generation Stage 6: Diamond Ore"));
-  cout << prefix << F("\tSeeding Diamond Veins"));
+  cout << prefix << F("Generation Stage 6: Diamond Ore") << endl;
+  cout << prefix << F("\tSeeding Diamond Veins") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= 4; y++)
       if (((random() % 300) == 0 || ((random() % 100) == 0 && block.isTouching(x, y, G_AIR))) && block.get(x, y) == B_STONE)
         block.set(x, y, B_DIA_ORE);
   }
-  cout << prefix << F("\tGrowing Diamond Veins"));
+  cout << prefix << F("\tGrowing Diamond Veins") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= 5; y++) {
       if ((block.isTouching(x, y, B_DIA_ORE) && (random() % 10) != 0) && block.get(x, y) == B_STONE)
@@ -323,17 +320,17 @@ void World::generateDiamond () {
       if (block.get(x, y) == G_T_DIA)
         block.set(x, y, B_DIA_ORE);
   }
-  cout << prefix << F("\tFinished"));
+  cout << prefix << F("\tFinished") << endl;
 }
 void World::generateIron () {
-  cout << prefix << F("Generation Stage 7: Iron Ore"));
-  cout << prefix << F("\tSeeding Iron Veins"));
+  cout << prefix << F("Generation Stage 7: Iron Ore") << endl;
+  cout << prefix << F("\tSeeding Iron Veins") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= safeDivide(worldHeight, 3); y++)
       if (((random() % 100) == 0 || ((random() % 400) == 0 && block.isTouching(x, y, G_AIR))) && block.get(x, y) == B_STONE)
         block.set(x, y, B_IRON_ORE);
   }
-  cout << prefix << F("\tGrowing Iron Veins"));
+  cout << prefix << F("\tGrowing Iron Veins") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= yLimit; y++) {
       if ((block.isTouchingWide(x, y, B_IRON_ORE) && (random() % 4) != 0) && block.get(x, y) == B_STONE)
@@ -345,17 +342,17 @@ void World::generateIron () {
       if (block.get(x, y) == G_T_IRON)
         block.set(x, y, B_IRON_ORE);
   }
-  cout << prefix << F("\tFinished"));
+  cout << prefix << F("\tFinished") << endl;
 }
 void World::generateGold () {
-  cout << prefix << F("Generation Stage 8: Gold Ore"));
-  cout << prefix << F("\tSeeding Gold Veins"));
+  cout << prefix << F("Generation Stage 8: Gold Ore") << endl;
+  cout << prefix << F("\tSeeding Gold Veins") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= yLimit; y++)
       if (((random() % 150) == 0 || ((random() % 800) == 0 && block.isTouching(x, y, G_AIR))) && block.get(x, y) == B_STONE)
         block.set(x, y, B_GOLD_ORE);
   }
-  cout << prefix << F("\tGrowing Gold Veins"));
+  cout << prefix << F("\tGrowing Gold Veins") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= safeDivide(worldHeight, 3); y++) {
       if ((block.isTouchingWide(x, y, B_GOLD_ORE) && (random() % 3) != 0) && block.get(x, y) == B_STONE)
@@ -367,17 +364,17 @@ void World::generateGold () {
       if (block.get(x, y) == G_T_GOLD)
         block.set(x, y, B_GOLD_ORE);
   }
-  cout << prefix << F("\tFinished"));
+  cout << prefix << F("\tFinished") << endl;
 }
 void World::generateCoal () {
-  cout << prefix << F("Generation Stage 9: Coal Ore"));
-  cout << prefix << F("\tSeeding Coal Veins"));
+  cout << prefix << F("Generation Stage 9: Coal Ore") << endl;
+  cout << prefix << F("\tSeeding Coal Veins") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= safeDivide(worldHeight, 2); y++)
       if (((random() % 100) == 0 || ((random() % 70) == 0 && block.isTouching(x, y, G_AIR))) && block.get(x, y) == B_STONE)
         block.set(x, y, B_COAL_ORE);
   }
-  cout << prefix << F("\tGrowing Coal Veins: Pass 1"));
+  cout << prefix << F("\tGrowing Coal Veins: Pass 1") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= yLimit; y++) {
       if ((block.isTouchingWide(x, y, B_COAL_ORE) && (random() % 2) == 0) && block.get(x, y) == B_STONE)
@@ -389,7 +386,7 @@ void World::generateCoal () {
       if (block.get(x, y) == G_T_COAL)
         block.set(x, y, B_COAL_ORE);
   }
-  cout << prefix << F("\tGrowing Coal Veins: Pass 2"));
+  cout << prefix << F("\tGrowing Coal Veins: Pass 2") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= yLimit; y++) {
       if ((block.isTouching(x, y, B_COAL_ORE) && (random() % 4) == 0) && block.get(x, y) == B_STONE)
@@ -401,11 +398,11 @@ void World::generateCoal () {
       if (block.get(x, y) == G_T_COAL)
         block.set(x, y, B_COAL_ORE);
   }
-  cout << prefix << F("\tFinished"));
+  cout << prefix << F("\tFinished") << endl;
 }
 void World::generateLavaPools () {
-  cout << prefix << F("Generation Stage 10: Lava Pools"));
-  cout << prefix << F("\tSeeding Lava Pools"));
+  cout << prefix << F("Generation Stage 10: Lava Pools") << endl;
+  cout << prefix << F("\tSeeding Lava Pools") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= 5; y++)
       if ((random() % 60) == 0 && block.get(x, y) == G_AIR)
@@ -413,10 +410,7 @@ void World::generateLavaPools () {
   }
   uint8_t i = 1;
   while (true) {
-    com.out.prefix();
-    com.out.print(F("\tGrowing Lava Pools:"));
-    com.out.print(F(" Pass "));
-    com.out.println(String(i));
+    cout << prefix << F("\tGrowing Lava Pools: Pass ") << i << endl;
     bool changesMade = false;
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
       for (ycoord_t y = 0; y <= 5; y++)
@@ -431,8 +425,7 @@ void World::generateLavaPools () {
   }
 }
 void World::generateWaterPools () {
-  cout << prefix << F("Generation Stage 11: Water Pools"));
-  cout << prefix << F("\tSeeding Water Pools"));
+  cout << prefix << F("Generation Stage 11: Water Pools") << endl << F("\tSeeding Water Pools");
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= safeDivide(worldHeight, 3); y++)
       if ((random() % 50) == 0 && block.get(x, y) == G_AIR && (y == 0 ? true : (block.get(x, y - 1) == B_STONE)))
@@ -440,10 +433,7 @@ void World::generateWaterPools () {
   }
   uint8_t i = 1;
   while (true) {
-    com.out.prefix();
-    com.out.print(F("\tGrowing Water Pools:"));
-    com.out.print(F(" Pass "));
-    com.out.println(String(i));
+    cout << prefix << F("\tGrowing Water Pools: Pass ") << i << endl;
     bool changesMade = false;
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
       for (ycoord_t y = 0; y <= 5; y++)
@@ -458,8 +448,8 @@ void World::generateWaterPools () {
   }
 }
 void World::generateLakes () {
-  cout << prefix << F("Generation Stage 12: Lakes"));
-  cout << prefix << F("\tSeeding Lakes"));
+  cout << prefix << F("Generation Stage 12: Lakes") << endl;
+  cout << prefix << F("\tSeeding Lakes") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = safeDivide(worldHeight, 2); y <= safeDivide(worldHeight, 2) + 2; y++)
       if ((random() % 40) == 0 && block.get(x, y) == B_AIR)
@@ -470,10 +460,7 @@ void World::generateLakes () {
 #endif
   uint8_t i = 1;
   while (true) {
-    com.out.prefix();
-    com.out.print(F("\tGrowing Lakes:"));
-    com.out.print(F(" Pass "));
-    com.out.println(String(i));
+    cout << prefix << F("\tGrowing Lakes: Pass ") << i << endl;
     bool changesMade = false;
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
       for (ycoord_t y = safeDivide(worldHeight, 2) - 1; y <= safeDivide(worldHeight, 2) + 2; y++)
@@ -489,14 +476,14 @@ void World::generateLakes () {
       break;
     i++;
   }
-  cout << prefix << F("\tGenerating Lake Beds"));
+  cout << prefix << F("\tGenerating Lake Beds") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = safeDivide(worldHeight, 2) - 3; y <= safeDivide(worldHeight, 2) + 4; y++)
       if (block.isNear(x, y, B_WATER_SOURCE, 2, Taxicab) && (block.get(x, y) == B_DIRT || block.get(x, y) == B_STONE))
         block.set(x, y, B_SAND);
 }
 void World::endUnderGroundGeneration () {
-  cout << prefix << F("\tGeneration Stage 13: Clean up Underground Generation"));
+  cout << prefix << F("\tGeneration Stage 13: Clean up Underground Generation") << endl;
   Serial.println(freeMemory());
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = 0; y <= yLimit; y++)
@@ -505,8 +492,8 @@ void World::endUnderGroundGeneration () {
   }
 }
 void World::generateDeserts () {
-  cout << prefix << F("Generation Stage 14: Deserts"));
-  cout << prefix << F("\tSeeding Deserts"));
+  cout << prefix << F("Generation Stage 14: Deserts") << endl;
+  cout << prefix << F("\tSeeding Deserts") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = safeDivide(worldHeight, 2) - 3; y <= yLimit; y++)
       if ((random() % 200) == 0 && block.get(x, y) == B_DIRT && (y == yLimit ? true : (block.get(x, y + 1) == B_AIR)) && !block.isNear(x, y, B_WATER_SOURCE, 5, Chebyshev))
@@ -517,10 +504,7 @@ void World::generateDeserts () {
 #endif
   uint8_t i = 1;
   for (int i = 0; i < 3; i++) {
-    com.out.prefix();
-    com.out.print(F("\tGrowing Deserts:"));
-    com.out.print(F(" Pass "));
-    com.out.println(String(i + 1));
+    cout << prefix << F("\tGrowing Deserts: Pass ") << i << endl;
     for (xcoord_t x = -xLimit; x <= xLimit; x++)
       for (ycoord_t y = 0; y <= yLimit; y++)
         if ((block.isTouching(x, y, G_SAND) || block.isTouching(x, y, B_SNDSTN)) && block.get(x, y) == B_DIRT)
@@ -543,8 +527,8 @@ void World::generateDeserts () {
         block.set(x, y, B_SAND);
 }
 void World::generateTrees () {
-  cout << prefix << F("Generation Stage 15: Trees"));
-  cout << prefix << F("\tPlanting Trees"));
+  cout << prefix << F("Generation Stage 15: Trees") << endl;
+  cout << prefix << F("\tPlanting Trees") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = safeDivide(worldHeight, 2) - 4; y <= yLimit; y++)
       if ((random() % 10) == 0 && block.get(x, y) == B_AIR && block.get(x, y - 1) == B_DIRT && block.isOpenToSky(x, y) && !block.isTouchingWide(x, y, B_WOOD))
@@ -555,10 +539,7 @@ void World::generateTrees () {
 #endif
   uint8_t chances[] {10, 10, 10, 2}; //Chances for each pass. Chance of adding wood is chances[i]/10
   for (int i = 0; i < 4; i++) {
-    com.out.prefix();
-    com.out.print(F("\tGrowing Trees:"));
-    com.out.print(F(" Pass "));
-    com.out.println(String(i + 1));
+    cout << prefix << F("\tGrowing Trees: Pass ") << i << endl;
     for (xcoord_t x = -xLimit; x <= xLimit; x++)
       for (ycoord_t y = safeDivide(worldHeight, 2) - 4; y <= yLimit; y++)
         if (block.get(x, y) == B_AIR && block.get(x, y - 1) == B_WOOD && (random() % 10 < chances[i]))
@@ -568,9 +549,7 @@ void World::generateTrees () {
         if (block.get(x, y) == G_T_WOOD)
           block.set(x, y, B_WOOD);
   }
-  com.out.prefix();
-  com.out.print(F("\tGrowing Trees:"));
-  com.out.println(F(" Adding Branches"));
+  cout << prefix << F("\tGrowing Trees: Adding Branches") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = safeDivide(worldHeight, 2) - 4; y <= yLimit; y++)
       if (block.get(x, y) == B_AIR && block.isTouching(x, y, B_WOOD) && (random() % 10) == 0 && !block.isTouching(x, y, B_DIRT) && !block.isTouching(x, y, B_SAND) && !block.isTouching(x, y, B_STONE) && !block.isTouching(x, y, B_WATER_SOURCE))
@@ -581,8 +560,7 @@ void World::generateTrees () {
         block.set(x, y, B_WOOD);
 }
 void World::generateLeaves () {
-  cout << prefix << F("Generation Stage 16: Leaves"));
-  cout << prefix << F("\tPass 1"));
+  cout << prefix << F("Generation Stage 16: Leaves") << endl << F("\tPass 1") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = 0; y <= yLimit; y++)
       if (block.get(x, y) == B_AIR && block.isTouchingWide(x, y, B_WOOD) && ((!block.isTouchingWide(x, y, B_DIRT) && !block.isTouchingWide(x, y, B_STONE) && !block.isTouchingWide(x, y, B_SAND) && !block.isTouchingWide(x, y, B_WATER_SOURCE)) || (x <= -xLimit + 1 ? false : block.get(x - 2, y) == G_T_LEAVES) || (x >= xLimit - 1 ? false : block.get(x + 2, y) == G_T_LEAVES)))
@@ -594,7 +572,7 @@ void World::generateLeaves () {
 #ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
 #endif
-  cout << prefix << F("\tPass 2"));
+  cout << prefix << F("\tPass 2") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = 0; y <= yLimit; y++)
       if ((block.get(x, y) == B_AIR && block.isTouching(x, y, B_LEAVES) && ((x == -xLimit ? false : block.get(x - 1, y) == B_LEAVES) || (x == xLimit ? false : block.get(x + 1, y) == B_LEAVES)) && ((x <= -xLimit + 1 ? false : block.get(x - 2, y) == B_WOOD) || (x >= xLimit - 1 ? false : block.get(x + 2, y) == B_WOOD))) && (random() % 5) != 0)
@@ -608,17 +586,14 @@ void World::generateLeaves () {
 #endif
 }
 void World::generatePlants () {
-  cout << prefix << F("Generation Stage 17: Grass"));
-  cout << prefix << F("\tSeeding Grass Patches"));
+  cout << prefix << F("Generation Stage 17: Grass") << endl;
+  cout << prefix << F("\tSeeding Grass Patches") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = safeDivide(worldHeight, 2) - 2; y <= yLimit; y++)
       if (block.get(x, y) == B_AIR && block.get(x, y - 1) == B_DIRT && (random() % 20) == 0 && block.isOpenToSky(x, y, B_LEAVES))
         block.set(x, y, B_GRASS);
   for (int i = 0; i < 4; i++) {
-    com.out.prefix();
-    com.out.print(F("\tGrowing Grass Patches:"));
-    com.out.print(F(" Pass "));
-    com.out.println(String(i + 1));
+    cout << prefix << F("\tGrowing Grass Patches:") << F(" Pass ") << i + 1 << endl;
     for (xcoord_t x = -xLimit; x <= xLimit; x++)
       for (ycoord_t y = safeDivide(worldHeight, 2) - 2; y <= yLimit; y++)
         if (block.get(x, y) == B_AIR && block.get(x, y - 1) == B_DIRT && (random() % 2) == 0 && block.isTouchingWide(x, y, B_GRASS) && block.isOpenToSky(x, y, B_LEAVES))
@@ -628,12 +603,12 @@ void World::generatePlants () {
         if (block.get(x, y) == G_T_GRASS)
           block.set(x, y, B_GRASS);
   }
-  cout << prefix << F("\tAdding Flowers"));
+  cout << prefix << F("\tAdding Flowers") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = safeDivide(worldHeight, 2) - 2; y <= yLimit; y++)
       if (block.get(x, y) == B_GRASS && (random() % 5) == 0)
         block.set(x, y, B_FLOWER);
-  cout << prefix << F("\tRemoving Some Grass")); //Makes patches have holes in them, as opposed to being full carpets of grass
+  cout << prefix << F("\tRemoving Some Grass") << endl; //Makes patches have holes in them, as opposed to being full carpets of grass
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = safeDivide(worldHeight, 2) - 2; y <= yLimit; y++)
       if (block.get(x, y) == B_GRASS && (random() % 5) == 0)
