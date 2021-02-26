@@ -107,86 +107,87 @@ void Screen::renderWorldOverview () {
   for (uint8_t x = 0; x < 128; x++) {
     for (uint8_t y = 0; y < 33; y++) {
       id_t id = block.get(x - 64, 32 - y);
-      bool pixelColour = !(id == Blocks::air || id == G_AIR);
+      bool pixelColour = !(id == Blocks::air || id == Blocks::Generation::air);
       GLCD.SetDot(x, y + 16, (pixelColour ? BLACK : WHITE));
     }
   }
 }
 const byte* Screen::idToBitmap (id_t id, byte version, FunctionCallContext context) {
+	using namespace Blocks;
   if (context == FunctionCallContext::Generic) {
     switch (id) {
-      case Blocks::air:       return Textures::Blocks::light_7;
-      case Blocks::fire:      return (animationFrame2 ? Textures::Blocks::fire2 : Textures::Blocks::fire1);
-      case Blocks::dirt:      return Textures::Blocks::dirt;
-      case B_COBBLE:    return Textures::Blocks::cobblestone;
-      case Blocks::lava0:     return Textures::Blocks::lava_0;
-      case Blocks::lava1:     return Textures::Blocks::lava_1;
-      case Blocks::lava2:     return Textures::Blocks::lava_2;
-      case Blocks::lava3:     return Textures::Blocks::lava_3;
-      case Blocks::water0:    return Textures::Blocks::water_0;
-      case Blocks::water1:    return Textures::Blocks::water_1;
-      case Blocks::water2:    return Textures::Blocks::water_2;
-      case Blocks::water3:    return Textures::Blocks::water_3;
-      case Blocks::water4:    return Textures::Blocks::water_4;
-      case Blocks::water5:    return Textures::Blocks::water_5;
-      case Blocks::water6:    return Textures::Blocks::water_6;
-      case Blocks::water7:    return Textures::Blocks::water_7;
-      case B_FARM0:     //Allow to fall through to "return Textures::Blocks::farmland;"
-      case B_FARM1:
-      case B_FARM2:
-      case B_FARM3:     return Textures::Blocks::farmland;
-      case B_WHEAT0:    return Textures::Blocks::wheat_0;
-      case B_WHEAT1:    return Textures::Blocks::wheat_1;
-      case B_WHEAT2:    return Textures::Blocks::wheat_2;
-      case B_WHEAT3:    return Textures::Blocks::wheat_3;
-      case B_CARROT0:   return Textures::Blocks::carrots_0;
-      case B_CARROT1:   return Textures::Blocks::carrots_1;
-      case B_CARROT2:   return Textures::Blocks::carrots_2;
-      case B_CARROT3:   return Textures::Blocks::carrots_3;
-      case B_POTATO0:   return Textures::Blocks::potatoes_0;
-      case B_POTATO1:   return Textures::Blocks::potatoes_1;
-      case B_POTATO2:   return Textures::Blocks::potatoes_2;
-      case B_POTATO3:   return Textures::Blocks::potatoes_3;
-      case B_COAL_ORE:  return Textures::Blocks::coal_ore;
-      case B_IRON_ORE:  return Textures::Blocks::iron_ore;
-      case B_GOLD_ORE:  return Textures::Blocks::gold_ore;
-      case B_DIA_ORE:   return Textures::Blocks::diamond_ore;
-      case B_DOOR_C:    return (version ? Textures::Blocks::door_closed_top : Textures::Blocks::door_closed_bottom);
-      case B_DOOR_O:    return (version ? Textures::Blocks::door_open_top : Textures::Blocks::door_open_bottom);
-      case B_TRAP_C:    return Textures::Blocks::trapdoor_closed;
-      case B_TRAP_O:    return Textures::Blocks::trapdoor_open;
-      case B_STONE:     return Textures::Blocks::stone;
-      case B_SNDSTN:    return Textures::Blocks::sandstone;
-      case B_GRAVEL:    return Textures::Blocks::gravel;
-      case B_SAND:      return Textures::Blocks::sand;
-      case B_WOOD:      return Textures::Blocks::wood;
-      case B_PLANKS:    return Textures::Blocks::planks;
-      case B_LEAVES:    return Textures::Blocks::leaves;
-      case B_OBSIDIAN:  return Textures::Blocks::obsidian;
-      case B_GLASS:     return Textures::Blocks::glass;
-      case B_BRICKS:    return Textures::Blocks::bricks;
-      case B_WOOL:      return Textures::Blocks::wool;
-      case B_GOLD_BLOCK: return Textures::Blocks::gold_block;
-      case B_BED:       return (version ? Textures::Blocks::bed : Textures::Blocks::bed);
-      case B_LADDER:    return Textures::Blocks::ladder;
-      case B_TORCH:     if (version == 0) return Textures::Blocks::torch_straight; else if (version == 1) return Textures::Blocks::torch_left; return Textures::Blocks::torch_right;
-      case B_CRAFT:     return Textures::Blocks::crafting_table;
-      case B_FURNACE:   return Textures::Blocks::furnace;
-      case B_CHEST:     return Textures::Blocks::chest;
-      case B_GRASS:     return Textures::Blocks::grass;
-      case B_SAPLING:   return Textures::Blocks::sapling;
-      case B_FLOWER:    return Textures::Blocks::flower;
-      case B_TNT_U:     return Textures::Blocks::tnt;
+      case air:       return Textures::Blocks::light_7;
+      case fire:      return (animationFrame2 ? Textures::Blocks::fire2 : Textures::Blocks::fire1);
+      case dirt:      return Textures::Blocks::dirt;
+      case Blocks:    return Textures::Blocks::cobblestone;
+      case lava0:     return Textures::Blocks::lava_0;
+      case lava1:     return Textures::Blocks::lava_1;
+      case lava2:     return Textures::Blocks::lava_2;
+      case lava3:     return Textures::Blocks::lava_3;
+      case water0:    return Textures::Blocks::water_0;
+      case water1:    return Textures::Blocks::water_1;
+      case water2:    return Textures::Blocks::water_2;
+      case water3:    return Textures::Blocks::water_3;
+      case water4:    return Textures::Blocks::water_4;
+      case water5:    return Textures::Blocks::water_5;
+      case water6:    return Textures::Blocks::water_6;
+      case water7:    return Textures::Blocks::water_7;
+      case farmland0:     //Allow to fall through to "return Textures::Blocks::farmland;"
+      case farmland1:
+      case farmland2:
+      case farmland3:     return Textures::Blocks::farmland;
+      case wheat0:    return Textures::Blocks::wheat_0;
+      case wheat1:    return Textures::Blocks::wheat_1;
+      case wheat2:    return Textures::Blocks::wheat_2;
+      case wheat3:    return Textures::Blocks::wheat_3;
+      case carrot0:   return Textures::Blocks::carrots_0;
+      case carrot1:   return Textures::Blocks::carrots_1;
+      case carrot2:   return Textures::Blocks::carrots_2;
+      case carrot3:   return Textures::Blocks::carrots_3;
+      case potato0:   return Textures::Blocks::potatoes_0;
+      case potato1:   return Textures::Blocks::potatoes_1;
+      case potato2:   return Textures::Blocks::potatoes_2;
+      case potato3:   return Textures::Blocks::potatoes_3;
+      case coalOre:  return Textures::Blocks::coal_ore;
+      case ironOre:  return Textures::Blocks::iron_ore;
+      case goldOre:  return Textures::Blocks::gold_ore;
+      case diamondOre:   return Textures::Blocks::diamond_ore;
+      case closedDoor:    return (version ? Textures::Blocks::door_closed_top : Textures::Blocks::door_closed_bottom);
+      case openDoor:    return (version ? Textures::Blocks::door_open_top : Textures::Blocks::door_open_bottom);
+      case closedTrapdoor:    return Textures::Blocks::trapdoor_closed;
+      case openTrapdoor:    return Textures::Blocks::trapdoor_open;
+      case stone:     return Textures::Blocks::stone;
+      case sandstone:    return Textures::Blocks::sandstone;
+      case gravel:    return Textures::Blocks::gravel;
+      case sand:      return Textures::Blocks::sand;
+      case log:      return Textures::Blocks::wood;
+      case planks:    return Textures::Blocks::planks;
+      case leaves:    return Textures::Blocks::leaves;
+      case obsidian:  return Textures::Blocks::obsidian;
+      case glass:     return Textures::Blocks::glass;
+      case stoneBricks:    return Textures::Blocks::bricks;
+      case wool:      return Textures::Blocks::wool;
+      case goldBlock: return Textures::Blocks::gold_block;
+      case bed:       return (version ? Textures::Blocks::bed : Textures::Blocks::bed);
+      case ladder:    return Textures::Blocks::ladder;
+      case torch:     if (version == 0) return Textures::Blocks::torch_straight; else if (version == 1) return Textures::Blocks::torch_left; return Textures::Blocks::torch_right;
+      case craftingTable:     return Textures::Blocks::crafting_table;
+      case furnace:   return Textures::Blocks::furnace;
+      case chest:     return Textures::Blocks::chest;
+      case grass:     return Textures::Blocks::grass;
+      case sapling:   return Textures::Blocks::sapling;
+      case flower:    return Textures::Blocks::flower;
+      case tnt:     return Textures::Blocks::tnt;
 
-      case Blocks::Runtime::light0:    return Textures::Blocks::light_0;
-      case Blocks::Runtime::light1:    return Textures::Blocks::light_1;
-      case Blocks::Runtime::light2:    return Textures::Blocks::light_2;
-      case Blocks::Runtime::light3:    return Textures::Blocks::light_3;
-      case Blocks::Runtime::light4:    return Textures::Blocks::light_4;
-      case Blocks::Runtime::light5:    return Textures::Blocks::light_5;
-      case Blocks::Runtime::light6:    return Textures::Blocks::light_6;
-      case Blocks::Runtime::light7:    return Textures::Blocks::light_7;
-      case Blocks::waterSource: return Textures::Blocks::water_7;
+      case Runtime::light0:    return Textures::Blocks::light_0;
+      case Runtime::light1:    return Textures::Blocks::light_1;
+      case Runtime::light2:    return Textures::Blocks::light_2;
+      case Runtime::light3:    return Textures::Blocks::light_3;
+      case Runtime::light4:    return Textures::Blocks::light_4;
+      case Runtime::light5:    return Textures::Blocks::light_5;
+      case Runtime::light6:    return Textures::Blocks::light_6;
+      case Runtime::light7:    return Textures::Blocks::light_7;
+      case waterSource: return Textures::Blocks::water_7;
       default:          return Textures::Blocks::error;
     }
   } else if (context == FunctionCallContext::Generation) {
@@ -215,3 +216,4 @@ void Screen::updateAnimations () {
     renderWorld(true);
   }
 }
+
