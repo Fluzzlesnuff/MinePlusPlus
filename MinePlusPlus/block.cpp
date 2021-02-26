@@ -4,7 +4,7 @@ id_t* blockDB;
 
 id_t Block::get (xcoord_t x, ycoord_t y) {
 #ifdef BLOCK_GET_LOGGING
-  cout << prefix << "Getting block at (" << x << ", " << y << ")." << endl;
+  cout << prefix << F("Getting block at (") << x << F(", ") << y << ')' << endl;
 #endif
   if (x < -xLimit || x > xLimit)
     cout << XCOORD_OOB;
@@ -18,7 +18,7 @@ id_t Block::get ( const CoordPair& coords) {
 void Block::set (xcoord_t x, ycoord_t y, id_t id) {
   blockDB[coordsToAddress(x, y)] = id;
 #ifdef BLOCK_SET_LOGGING
-  cout << prefix << "Set block at (" << x << ", " << y << ") with ID: " << id << endl;
+  cout << prefix << F("Set block at (") << x << F(", ") << y << F(") with ID: ") << id << endl;
 #endif
 }
 void Block::set (const CoordPair& coords, id_t id) {
@@ -196,7 +196,7 @@ uint16_t Block::isNear(xcoord_t x, ycoord_t y, id_t id, byte distance, Measureme
     return 0;
   }
 #ifdef BLOCK_NEAR_TOUCHING_LOGGING
-  cout << prefix << "Block::isNear Started with args " << x << ", " << y << ", " << id << ", " << distance << ", " << (measurementType == Chebyshev ? "Chebyshev" : "Taxicab") << endl;
+  cout << prefix << F("Block::isNear Started with args ") << x << F(", ") << y << F(", ") << id << F(", ") << distance << F(", ") << (measurementType == Chebyshev ? F("Chebyshev") : F("Taxicab")) << endl;
 #endif
 
   uint16_t count{0};
@@ -247,7 +247,7 @@ void Block::createBlockDB (worldWidth_t width, worldHeight_t height) {
   uint16_t totalSize = width * height;
   blockDB = new id_t[totalSize];
 #ifdef BLOCK_DB_CREATION_LOGGING
-  cout << prefix << "Created blockDB with dimensions: " << width << ", " << height << endl;
+  cout << prefix << F("Created blockDB with dimensions: ") << width << F(", ") << height << endl;
 #endif
 }
 

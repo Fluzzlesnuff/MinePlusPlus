@@ -239,7 +239,7 @@ void World::generateGravelVeins () {
       {0, 0,  5,  3,  3,  3,  2,  1},
       {0,  0,  0,  0,  1,  1,  1,  1}
     };
-    cout << prefix << "\tGrowing Gravel Veins: Pass " << i + 1 << endl;
+    cout << prefix << F("\tGrowing Gravel Veins: Pass ") << i + 1 << endl;
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
       for (ycoord_t y = 0; y <= yLimit; y++) {
         byte numTouching = block.isTouchingWide(x, y, B_GRAVEL);
@@ -274,7 +274,7 @@ void World::generateDirtVeins () {
       {3,  2,  2,  2,  1,  1,  1,  1},
       {0,  0,  0,  0,  1,  1,  1,  1}
     };
-    cout << prefix << "\tGrowing Dirt Veins: Pass " << i + 1 << endl;
+    cout << prefix << F("\tGrowing Dirt Veins: Pass ") << i + 1 << endl;
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
       for (ycoord_t y = 0; y <= yLimit; y++) {
         byte numTouching = block.isTouchingWide(x, y, G_DIRT);

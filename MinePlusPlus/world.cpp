@@ -26,7 +26,7 @@ ycoord_t yLimit; //Inclusive. Bottom limit is 0.
 void World::setTickRate (double tickRateParam) {
   ticksPerSecond = tickRateParam;
   msPerTick = round(1000 / ticksPerSecond);
-  cout << prefix << "Set Tick Rate: " << ticksPerSecond << " TPS (" << msPerTick << "ms)" << endl;
+  cout << prefix << F("Set Tick Rate: ") << ticksPerSecond << F(" TPS (") << msPerTick << F("ms)") << endl;
 }
 void World::setWorldDimensions(WorldSize sizeParam) {
   size = sizeParam;
@@ -67,7 +67,7 @@ void World::load () {
       byte numberToLoad = EEPROM.read(EEPROMAddress + 1);
       byte blockToLoad = EEPROM.read(EEPROMAddress + 2);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-      cout << "F 3\t\t# " << numberToLoad << "\t\tI " << blockToLoad << "\tB " << blockDBAddress << "-" << (blockDBAddress + numberToLoad - 1) << "\t\tE " << EEPROMAddress << "-" << (EEPROMAddress + 2) << endl;
+      cout << F("F 3\t\t# ") << numberToLoad << F("\t\tI ") << blockToLoad << F("\tB ") << blockDBAddress << '-' << (blockDBAddress + numberToLoad - 1) << F("\t\tE ") << EEPROMAddress << '-' << (EEPROMAddress + 2) << endl;
 #endif
       EEPROMAddress += 3;
       for (uint8_t i = 0; i < numberToLoad; i++)
@@ -77,7 +77,7 @@ void World::load () {
       uint16_t numberToLoad = (EEPROM.read(EEPROMAddress + 1) * 256) + EEPROM.read(EEPROMAddress + 2);
       byte blockToLoad = EEPROM.read(EEPROMAddress + 3);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-      cout << "F 4\t\t# " << numberToLoad << "\t\tI " << blockToLoad << "\tB " << blockDBAddress << "-" << (blockDBAddress + numberToLoad - 1) << "\t\tE " << EEPROMAddress << "-" << (EEPROMAddress + 3) << endl;
+      cout << F("F 4\t\t# ") << numberToLoad << F("\t\tI ") << blockToLoad << F("\tB ") << blockDBAddress << '-' << (blockDBAddress + numberToLoad - 1) << F("\t\tE ") << EEPROMAddress << '-' << (EEPROMAddress + 3) << endl;
 #endif
       EEPROMAddress += 4;
       for (uint16_t i = 0; i < numberToLoad; i++)
@@ -91,7 +91,7 @@ void World::load () {
     }
     else {
 #ifdef SAVE_LOAD_BYTE_LOGGING
-      cout << "\t\t\t\tI " << byteRead << "\tB " << blockDBAddress << "\t\t\tE " << EEPROMAddress << endl;
+      cout << F("\t\t\t\tI ") << byteRead << F("\tB ") << blockDBAddress << F("\t\t\tE ") << EEPROMAddress << endl;
 #endif
       blockDB[blockDBAddress] = byteRead;
       EEPROMAddress++;
@@ -128,7 +128,7 @@ void World::save () {
       if (numberFound == 1) {
         EEPROM.update(EEPROMAddress, currentBlockID);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-        cout << "\t\t\t\tI " << currentBlockID << "\tB " << i - 1 << "\t\t\tE " << EEPROMAddress << endl;
+        cout << F("\t\t\t\tI ") << currentBlockID << F("\tB ") << i - 1 << F("\t\t\tE ") << EEPROMAddress << endl;
 #endif
         EEPROMAddress += 1;
       } else if (numberFound < 256) {
@@ -136,7 +136,7 @@ void World::save () {
         EEPROM.update(EEPROMAddress + 1, lowByte(numberFound));
         EEPROM.update(EEPROMAddress + 2, currentBlockID);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-        cout << "F 3\t\t# " << numberFound << "\t\tI " << currentBlockID << "\tB " << i - numberFound << "-" << i - 1 << "\t\tE " << EEPROMAddress << "-" << EEPROMAddress + 2 << endl;
+        cout << F("F 3\t\t# ") << numberFound << F("\t\tI ") << currentBlockID << F("\tB ") << i - numberFound << '-' << i - 1 << F("\t\tE ") << EEPROMAddress << '-' << EEPROMAddress + 2 << endl;
 #endif
         EEPROMAddress += 3;
       } else {
@@ -145,7 +145,7 @@ void World::save () {
         EEPROM.update(EEPROMAddress + 2, lowByte(numberFound));
         EEPROM.update(EEPROMAddress + 3, currentBlockID);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-        cout << "F 4\t\t# " << numberFound << "\t\tI " << currentBlockID << "\tB " << i - numberFound << "-" << i - 1 << "\t\tE " << EEPROMAddress << "-" << EEPROMAddress + 3 << endl;
+        cout << F("F 4\t\t# ") << numberFound << F("\t\tI ") << currentBlockID << F("\tB ") << i - numberFound << '-' << i - 1 << F("\t\tE ") << EEPROMAddress << '-' << EEPROMAddress + 3 << endl;
 #endif
         EEPROMAddress += 4;
       }
@@ -156,7 +156,7 @@ void World::save () {
   if (numberFound == 1) {
     EEPROM.update(EEPROMAddress, currentBlockID);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-    cout << "\t\t\t\tI " << currentBlockID << "\tB " << i - 1 << "\t\t\tE " << EEPROMAddress << endl;
+    cout << F("\t\t\t\tI ") << currentBlockID << F("\tB ") << i - 1 << F("\t\t\tE ") << EEPROMAddress << endl;
 #endif
     EEPROMAddress++;
   } else if (numberFound < 256) {
@@ -164,7 +164,7 @@ void World::save () {
     EEPROM.update(EEPROMAddress + 1, lowByte(numberFound));
     EEPROM.update(EEPROMAddress + 2, currentBlockID);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-    cout << "F 3\t\t# " << numberFound << "\t\tI " << currentBlockID << "\tB " << i - numberFound << "-" << i - 1 << "\t\tE " << EEPROMAddress << "-" << EEPROMAddress + 2 << endl;
+    cout << F("F 3\t\t# ") << numberFound << F("\t\tI ") << currentBlockID << F("\tB ") << i - numberFound << '-' << i - 1 << F("\t\tE ") << EEPROMAddress << '-' << EEPROMAddress + 2 << endl;
 #endif
     EEPROMAddress += 3;
   } else {
@@ -173,7 +173,7 @@ void World::save () {
     EEPROM.update(EEPROMAddress + 2, lowByte(numberFound));
     EEPROM.update(EEPROMAddress + 3, currentBlockID);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-    cout << "F 4\t\t# " << numberFound << "\t\tI " << currentBlockID << "\tB " << i - numberFound << "-" << i - 1 << "\t\tE " << EEPROMAddress << "-" << EEPROMAddress + 3 << endl;
+    cout << F("F 4\t\t# ") << numberFound << F("\t\tI ") << currentBlockID << F("\tB ") << i - numberFound << '-' << i - 1 << F("\t\tE ") << EEPROMAddress << '-' << EEPROMAddress + 3 << endl;
 #endif
     EEPROMAddress += 4;
   }
