@@ -4,7 +4,7 @@
 bool selectedGenerateButton = false;
 
 void setup() {
-  com.init();
+  iostream.init();
   cout << prefix << F("Communication Channel(s) Initialized") << endl;
   leftButton.setSampleSize(10);
   jumpButton.setSampleSize(10);
@@ -66,7 +66,7 @@ void loop() {
   }
 }
 void worldLoop() {
-  if (com.in.runCommands())
+  if (command.runCommands())
     screen.renderWorld();
   if(world.tryUpdate())
     screen.renderWorld();

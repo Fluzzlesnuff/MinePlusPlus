@@ -7,9 +7,9 @@ id_t Block::get (xcoord_t x, ycoord_t y) {
   cout << prefix << "Getting block at (" << x << ", " << y << ")." << endl;
 #endif
   if (x < -xLimit || x > xLimit)
-    com.out.throwError(XCOORD_OOB);
+    cout << XCOORD_OOB;
   else if (y < 0 || y > yLimit)
-    com.out.throwError(YCOORD_OOB);
+    cout << YCOORD_OOB;
   return blockDB[coordsToAddress(x, y)];
 }
 id_t Block::get ( const CoordPair& coords) {
@@ -188,11 +188,11 @@ byte Block::isTouchingWide(const CoordPair& coords, id_t id) {
 }
 uint16_t Block::isNear(xcoord_t x, ycoord_t y, id_t id, byte distance, MeasurementType measurementType) {
   if (x < -xLimit || x > xLimit) {
-    com.out.throwError(XCOORD_OOB);
+    cout << XCOORD_OOB;
     return 0;
   }
   if (y < 0 || y > yLimit) {
-    com.out.throwError(XCOORD_OOB);
+    cout << XCOORD_OOB;
     return 0;
   }
 #ifdef BLOCK_NEAR_TOUCHING_LOGGING
@@ -201,7 +201,7 @@ uint16_t Block::isNear(xcoord_t x, ycoord_t y, id_t id, byte distance, Measureme
 
   uint16_t count{0};
   if (distance < 2 || distance > 10) {
-    com.out.throwError(PARAM_OOB);
+    cout << PARAM_OOB;
     return 0;
   }
   if (measurementType == Chebyshev) {

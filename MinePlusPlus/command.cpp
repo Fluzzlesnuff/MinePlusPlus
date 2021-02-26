@@ -1,6 +1,6 @@
 #include "includes.h"
 
-CommunicationChannel::Input::Command::Command (CommandType commandTypeParam, const String& nameParam, uint8_t numArgsParam, const ArgTypeList& argTypeListParam) {
+CommandManager::Command::Command (CommandType commandTypeParam, const String& nameParam, uint8_t numArgsParam, const ArgTypeList& argTypeListParam) {
   thisCommandType = commandTypeParam;
   numberOfArguments = numArgsParam;
   communicationName = nameParam;
@@ -8,7 +8,7 @@ CommunicationChannel::Input::Command::Command (CommandType commandTypeParam, con
     argumentTypes[i] = argTypeListParam.argTypes[i];
 }
 
-CommandData CommunicationChannel::Input::parseCommand (const String& string) {
+CommandData CommandManager::parseCommand (const String& string) {
   if (string == "") {
     CommandData failCommand;
     failCommand.type = CommandType::NoCommand;
@@ -32,21 +32,21 @@ CommandData CommunicationChannel::Input::parseCommand (const String& string) {
   }
   commandArgs[partIndex] = currentPart;
   if (commandArgs[0] == "setblock") {
-    outputCommand = com.in.setblock.parsePerCommand(commandArgs, numArgs);
+    outputCommand = setblock.parsePerCommand(commandArgs, numArgs);
   } else if (commandArgs[0] == "getblock") {
-    outputCommand = com.in.getblock.parsePerCommand(commandArgs, numArgs);
+    outputCommand = getblock.parsePerCommand(commandArgs, numArgs);
   } else if (commandArgs[0] == "tp") {
-    outputCommand = com.in.teleport.parsePerCommand(commandArgs, numArgs);
+    outputCommand = teleport.parsePerCommand(commandArgs, numArgs);
   } else if (commandArgs[0] == "fill") {
-    outputCommand = com.in.fill.parsePerCommand(commandArgs, numArgs);
+    outputCommand = fill.parsePerCommand(commandArgs, numArgs);
   } else if (commandArgs[0] == "save") {
-    outputCommand = com.in.save.parsePerCommand(commandArgs, numArgs);
+    outputCommand = save.parsePerCommand(commandArgs, numArgs);
   } else if (commandArgs[0] == "load") {
-    outputCommand = com.in.load.parsePerCommand(commandArgs, numArgs);
+    outputCommand = load.parsePerCommand(commandArgs, numArgs);
   } else if (commandArgs[0] == "mem") {
-    outputCommand = com.in.mem.parsePerCommand(commandArgs, numArgs);
+    outputCommand = mem.parsePerCommand(commandArgs, numArgs);
   } else if (commandArgs[0] == "map") {
-    outputCommand = com.in.map.parsePerCommand(commandArgs, numArgs);
+    outputCommand = map.parsePerCommand(commandArgs, numArgs);
   } else {
     cout << prefix << "Invalid Command" << endl;
     outputCommand.type = CommandType::CommandError;
@@ -54,7 +54,7 @@ CommandData CommunicationChannel::Input::parseCommand (const String& string) {
   return outputCommand;
 }
 
-CommandData CommunicationChannel::Input::Command::parsePerCommand (const String* args, uint8_t inputArgsCount) const {
+CommandData CommandManager::Command::parsePerCommand (const String* args, uint8_t inputArgsCount) const {
   CommandData outputCommand;
   outputCommand.type = thisCommandType;
   if (inputArgsCount < numberOfArguments) {
@@ -125,8 +125,10 @@ CommandData CommunicationChannel::Input::Command::parsePerCommand (const String*
   return outputCommand;
 }
 
-bool CommunicationChannel::Input::runCommands() {
-  CommandData parsedCommand = com.in.parseCommand(com.in.read());
+bool CommandManager::runCommands() {
+  String stringToParse;
+  cin >> stringToParse;
+  CommandData parsedCommand = command.parseCommand(stringToParse);
   if (parsedCommand.type == CommandType::NoCommand)
     return false;
   if (parsedCommand.type == CommandType::CommandError)
@@ -183,5 +185,6 @@ bool CommunicationChannel::Input::runCommands() {
     screen.forceRenderWorld();
     return true;
   }
-
 }
+
+CommandManager command;

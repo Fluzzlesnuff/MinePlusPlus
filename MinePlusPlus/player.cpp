@@ -9,9 +9,9 @@ void Player::move (double xParam, double yParam) {
   cout << "Moving player to (" << xParam << ", " << yParam << ")." << endl;
 #endif
   if (x < -xLimit || x > xLimit)
-    com.out.throwError(XCOORD_OOB);
+    cout << XCOORD_OOB;
   if (y < 0 || y > yLimit)
-    com.out.throwError(YCOORD_OOB);
+    cout << YCOORD_OOB;
   x = xParam;
   y = yParam;
 }

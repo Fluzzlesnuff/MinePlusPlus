@@ -10,7 +10,7 @@ bool doubleIsNear(double a, double b, double threshold) {
 int randomNumber(int num1, double prob1, int num2, double prob2, int num3, double prob3, int num4) {
   double prob4 = 0;
   if (prob1 + prob2 + prob3 + prob4 > 1.01)
-    com.out.throwError(PROB_SUM_ERR);
+    cout << PROB_SUM_ERR;
 
   if (doubleIsNear(prob2, -1, 0.01))
     prob2 = 1 - prob1;

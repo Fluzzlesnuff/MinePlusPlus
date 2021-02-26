@@ -11,6 +11,7 @@
 #include "player.h"
 #include "screen.h"
 #include "com.h"
+#include "command.h"
 #include "datatypes.h"
 #include "misc.h"
 #include "_preferences.h"
