@@ -57,7 +57,7 @@ void Screen::renderBlock (const CoordPair& coords, int8_t xPixelOffset, int8_t y
 void Screen::renderWorld (bool reRenderAnimatedBlocks) {
   static id_t oldRenderMap[13][7];
 #ifdef RENDER_LOGGING
-  cout << prefix << F("Rendering World"));
+  cout << prefix << F("Rendering World") << endl;
 #endif
   for (int8_t xIndex = 0; xIndex <= 6; xIndex++) {
     for (int8_t yIndex = 0; yIndex <= 3; yIndex++) {
@@ -81,12 +81,12 @@ void Screen::renderWorld (bool reRenderAnimatedBlocks) {
     }
   }
 #ifdef RENDER_LOGGING
-  cout << prefix << F("\tFinished"));
+  cout << prefix << F("\tFinished") << endl;
 #endif
 }
 void Screen::forceRenderWorld () {
 #ifdef RENDER_LOGGING
-  cout << prefix << F("Rendering World"));
+  cout << prefix << F("Rendering World") << endl;
 #endif
   for (int8_t xIndex = 0; xIndex <= 6; xIndex++) {
     for (int8_t yIndex = 0; yIndex <= 3; yIndex++) {
@@ -100,7 +100,7 @@ void Screen::forceRenderWorld () {
     }
   }
 #ifdef RENDER_LOGGING
-  cout << prefix << F("\tFinished"));
+  cout << prefix << F("\tFinished") << endl;
 #endif
 }
 void Screen::renderWorldOverview () {
