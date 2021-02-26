@@ -58,7 +58,7 @@ void Hostile::attackRanged (id_t hearts, id_t projectileId) {
 }
 
 void Zombie::kill () {
-  dropRand(I_FLESH, 1, 1.0, 1, 0.5, 1, 0.1);
-  dropRand(I_POTATO, 1, 0.1);
-  dropRand(I_CARROT, 1, 0.1);
+  dropRand(Items::rottenFlesh, 1, 1.0, 1, 0.5, 1, 0.1);
+  dropRand(Items::potato, 1, 0.1);
+  dropRand(Items::carrot, 1, 0.1);
 }

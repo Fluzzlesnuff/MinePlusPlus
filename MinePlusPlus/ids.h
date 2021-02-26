@@ -79,7 +79,7 @@ const id_t light4 = 0xc4;
 const id_t light5 = 0xc5;
 const id_t light6 = 0xc6;
 const id_t light7 = 0xc7;
-const id_t void = 0xc8;
+const id_t empty = 0xc8;
 }
 
 namespace Generation {

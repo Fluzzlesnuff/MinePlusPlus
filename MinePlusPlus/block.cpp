@@ -32,55 +32,55 @@ bool Block::isMineable (id_t id) {
     return false;
   if (block.isLava(id))
     return false;
-  if (id == B_TNT_L)
+  if (id == Blocks::tnt)
     return false;
   return true;
 }
 bool Block::dropsItem (id_t id, id_t toolUsed) {
-  const id_t cobbleTT[TT_ARRAY_SIZE] {I_PICK_WOOD, I_PICK_STONE, I_PICK_GOLD, I_PICK_IRON, I_PICK_DIA};
-  const id_t coal_oreTT[TT_ARRAY_SIZE] {I_PICK_WOOD, I_PICK_STONE, I_PICK_GOLD, I_PICK_IRON, I_PICK_DIA};
-  const id_t iron_oreTT[TT_ARRAY_SIZE] {I_PICK_STONE, I_PICK_GOLD, I_PICK_IRON, I_PICK_DIA};
-  const id_t gold_oreTT[TT_ARRAY_SIZE] {I_PICK_IRON, I_PICK_DIA};
-  const id_t dia_oreTT[TT_ARRAY_SIZE] {I_PICK_IRON, I_PICK_DIA};
-  const id_t stoneTT[TT_ARRAY_SIZE] {I_PICK_WOOD, I_PICK_STONE, I_PICK_GOLD, I_PICK_IRON, I_PICK_DIA};
-  const id_t sndstnTT[TT_ARRAY_SIZE] {I_PICK_WOOD, I_PICK_STONE, I_PICK_GOLD, I_PICK_IRON, I_PICK_DIA};
-  const id_t obsidianTT[TT_ARRAY_SIZE] {I_PICK_DIA};
-  const id_t bricksTT[TT_ARRAY_SIZE] {I_PICK_WOOD, I_PICK_STONE, I_PICK_GOLD, I_PICK_IRON, I_PICK_DIA};
-  const id_t gold_blockTT[TT_ARRAY_SIZE] {I_PICK_IRON, I_PICK_DIA};
-  const id_t furnaceTT[TT_ARRAY_SIZE] {I_PICK_WOOD, I_PICK_STONE, I_PICK_GOLD, I_PICK_IRON, I_PICK_DIA};
+  const id_t cobblestone[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t coalOre[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t ironOre[TT_ARRAY_SIZE] {Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t goldOre[TT_ARRAY_SIZE] {Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t diamondOre[TT_ARRAY_SIZE] {Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t stone[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t sandstone[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t obsidian[TT_ARRAY_SIZE] {Items::diamondPickaxe};
+  const id_t stoneBricks[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t goldBlock[TT_ARRAY_SIZE] {Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t furnace[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
   if (!isMineable(id))
     return false;
   switch (id) {
-    case B_FIRE:
+    case Blocks::fire:
       return false;
-    case B_COBBLE:
-      return scanToolTable(cobbleTT, toolUsed);
-    case B_COAL_ORE:
-      return scanToolTable(coal_oreTT, toolUsed);
-    case B_IRON_ORE:
-      return scanToolTable(iron_oreTT, toolUsed);
-    case B_GOLD_ORE:
-      return scanToolTable(gold_oreTT, toolUsed);
-    case B_DIA_ORE:
-      return scanToolTable(dia_oreTT, toolUsed);
-    case B_STONE:
-      return scanToolTable(stoneTT, toolUsed);
-    case B_SNDSTN:
-      return scanToolTable(sndstnTT, toolUsed);
-    case B_OBSIDIAN:
-      return scanToolTable(obsidianTT, toolUsed);
-    case B_BRICKS:
-      return scanToolTable(bricksTT, toolUsed);
-    case B_GOLD_BLOCK:
-      return scanToolTable(gold_blockTT, toolUsed);
-    case B_FURNACE:
-      return scanToolTable(furnaceTT, toolUsed);
+    case Blocks::cobblestone:
+      return scanToolTable(cobblestone, toolUsed);
+    case Blocks::coalOre:
+      return scanToolTable(coalOre, toolUsed);
+    case Blocks::ironOre:
+      return scanToolTable(ironOre, toolUsed);
+    case Blocks::goldOre:
+      return scanToolTable(goldOre, toolUsed);
+    case Blocks::diamondOre:
+      return scanToolTable(diamondOre, toolUsed);
+    case Blocks::stone:
+      return scanToolTable(stone, toolUsed);
+    case Blocks::sandstone:
+      return scanToolTable(sandstone, toolUsed);
+    case Blocks::obsidian:
+      return scanToolTable(obsidian, toolUsed);
+    case Blocks::stoneBricks:
+      return scanToolTable(stoneBricks, toolUsed);
+    case Blocks::goldBlock:
+      return scanToolTable(goldBlock, toolUsed);
+    case Blocks::furnace:
+      return scanToolTable(furnace, toolUsed);
     default:
       return true;
   }
 }
 bool Block::isAnimated(id_t id) {
-  return id == B_FIRE;
+  return id == Blocks::fire;
 }
 
 bool Block::place (const CoordPair& coords, id_t blockType) {
@@ -91,53 +91,60 @@ bool Block::isOpaque(id_t id) {
   return true;
 }
 bool Block::isSolid(id_t id) {
+  using namespace Blocks;
   if (block.isWater(id) || block.isLava(id) || block.isAir(id))
     return false;
   if (block.isFarmland(id))
     return true;
-  id_t otherSolidBlocks[] {B_DIRT, B_COBBLE, B_COAL_ORE, B_IRON_ORE, B_GOLD_ORE, B_DIA_ORE, B_DOOR_C, B_TRAP_C, B_STONE, B_SNDSTN, B_GRAVEL, B_SAND, B_WOOD, B_PLANKS, B_LEAVES, B_OBSIDIAN, B_GLASS, B_BRICKS, B_WOOL, B_GOLD_BLOCK, B_SPONGE, B_TNT_U};
+  id_t otherSolidBlocks[] {dirt, cobblestone, coalOre, ironOre, goldOre, diamondOre, closedDoor, closedTrapdoor, stone, sandstone, gravel, sand, log, planks, leaves, obsidian, glass, stoneBricks, wool, goldBlock, sponge, tnt};
   for (byte i = 0; i < 22; i++)
     if (otherSolidBlocks[i] == id)
       return true;
   return false;
 }
 bool Block::isWater(id_t id) {
-  id_t waterBlocks[] {B_WATER0, B_WATER1, B_WATER2, B_WATER3, B_WATER4, B_WATER5, B_WATER6, B_WATER7, B_WATER_SOURCE};
+  using namespace Blocks;
+  id_t waterBlocks[] {water0, water1, water2, water3, water4, water5, water6, water7, waterSource};
   for (byte i = 0; i < 9; i++)
     if (waterBlocks[i] == id)
       return true;
   return false;
 }
 bool Block::isLava(id_t id) {
-  id_t lavaBlocks[] {B_LAVA0, B_LAVA1, B_LAVA2, B_LAVA3};
+  using namespace Blocks;
+  id_t lavaBlocks[] {lava0, lava1, lava2, lava3};
   for (byte i = 0; i < 4; i++)
     if (lavaBlocks[i] == id)
       return true;
   return false;
 }
 bool Block::isFlammable(id_t id) {
-  id_t flammableBlocks[] {B_DOOR_C, B_DOOR_O, B_TRAP_C, B_TRAP_O, B_WOOD, B_PLANKS, B_LEAVES, B_WOOL, B_LADDER, B_GRASS, B_SAPLING, B_FLOWER};
+  using namespace Blocks;
+  id_t flammableBlocks[] {closedDoor, openDoor, closedTrapdoor, openTrapdoor, log, planks, leaves, wool, ladder, grass, sapling, flower};
   for (byte i = 0; i < 12; i++)
     if (flammableBlocks[i] == id)
       return true;
   return false;
 }
 bool Block::isFarmland(id_t id) {
-  id_t farmlandBlocks[] {B_FARM0, B_FARM1, B_FARM2, B_FARM3};
+  using namespace Blocks;
+  id_t farmlandBlocks[] {farmland0, farmland1, farmland2, farmland3};
   for (byte i = 0; i < 4; i++)
     if (farmlandBlocks[i] == id)
       return true;
   return false;
 }
 bool Block::isAir(id_t id) {
-  const id_t airBlocks[] {B_AIR, R_LIGHT0, R_LIGHT1, R_LIGHT2, R_LIGHT3, R_LIGHT4, R_LIGHT5, R_LIGHT6, R_LIGHT7};
+  using namespace Blocks;
+  const id_t airBlocks[] {air, Runtime::light0, Runtime::light1, Runtime::light2, Runtime::light3, Runtime::light4, Runtime::light5, Runtime::light6, Runtime::light7};
   for (byte i = 0; i < 9; i++)
     if (airBlocks[i] == id)
       return true;
   return false;
 }
 bool Block::isBrokenByFluid(id_t id) {
-  const id_t fluidBreakableBlocks[] {B_TORCH, B_GRASS, B_FLOWER, B_WATER0, B_WATER1, B_WATER2, B_WATER3, B_WATER4, B_WATER5, B_WATER6};
+  using namespace Blocks;
+  const id_t fluidBreakableBlocks[] {torch, grass, flower, water0, water1, water2, water3, water4, water5, water6};
   if (isAir(id))
     return true;
   for (byte i = 0; i < 10; i++)
@@ -146,7 +153,8 @@ bool Block::isBrokenByFluid(id_t id) {
   return false;
 }
 bool Block::isBrokenByFallingBlocks(id_t id) {
-  const id_t fallingBlockBreakableBlocks[] {B_TORCH, B_GRASS, B_FLOWER};
+  using namespace Blocks;
+  const id_t fallingBlockBreakableBlocks[] {torch, grass, flower};
   if (isAir(id))
     return true;
   for (byte i = 0; i < 3; i++)
@@ -172,7 +180,6 @@ byte Block::isTouching(const CoordPair& coords, id_t id) {
   return isTouching(coords.x, coords.y, id);
 }
 byte Block::isTouchingWide(xcoord_t x, ycoord_t y, id_t id) {
-  // Scans blocks starting from the top and going clockwise
   id_t count{0};
   for (int8_t xOffset = -1; xOffset <= 1; xOffset++) {
     for (int8_t yOffset = -1; yOffset <= 1; yOffset++) {

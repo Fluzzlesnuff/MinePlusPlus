@@ -31,7 +31,7 @@ void Screen::renderBlock (xcoord_t x, ycoord_t y, int8_t xPixelOffset, int8_t yP
     B10000, B01000, B00100, B00010, B00001
   };
   if (x < -xLimit || x > xLimit || y < 0 || y > yLimit)
-    id = B_AIR;
+    id = Blocks::air;
   else
     id = block.get(x, y);
   const byte* bitmapToRender = idToBitmap(id);
@@ -68,7 +68,7 @@ void Screen::renderWorld (bool reRenderAnimatedBlocks) {
           CoordPair blockCoords = player.getCoords(relX, relY);
           id_t blockIDToRender;
           if (blockCoords.x < -xLimit || blockCoords.x > xLimit || blockCoords.y < 0 || blockCoords.y > yLimit)
-            blockIDToRender = R_VOID;
+            blockIDToRender = Blocks::Runtime::empty;
           else
             blockIDToRender = block.get(blockCoords);
           if (blockIDToRender != oldRenderMap[relX + 6][relY + 3]) {
@@ -107,7 +107,7 @@ void Screen::renderWorldOverview () {
   for (uint8_t x = 0; x < 128; x++) {
     for (uint8_t y = 0; y < 33; y++) {
       id_t id = block.get(x - 64, 32 - y);
-      bool pixelColour = !(id == B_AIR || id == G_AIR);
+      bool pixelColour = !(id == Blocks::air || id == G_AIR);
       GLCD.SetDot(x, y + 16, (pixelColour ? BLACK : WHITE));
     }
   }
@@ -115,22 +115,22 @@ void Screen::renderWorldOverview () {
 const byte* Screen::idToBitmap (id_t id, byte version, FunctionCallContext context) {
   if (context == FunctionCallContext::Generic) {
     switch (id) {
-      case B_AIR:       return Textures::Blocks::light_7;
-      case B_FIRE:      return (animationFrame2 ? Textures::Blocks::fire2 : Textures::Blocks::fire1);
-      case B_DIRT:      return Textures::Blocks::dirt;
+      case Blocks::air:       return Textures::Blocks::light_7;
+      case Blocks::fire:      return (animationFrame2 ? Textures::Blocks::fire2 : Textures::Blocks::fire1);
+      case Blocks::dirt:      return Textures::Blocks::dirt;
       case B_COBBLE:    return Textures::Blocks::cobblestone;
-      case B_LAVA0:     return Textures::Blocks::lava_0;
-      case B_LAVA1:     return Textures::Blocks::lava_1;
-      case B_LAVA2:     return Textures::Blocks::lava_2;
-      case B_LAVA3:     return Textures::Blocks::lava_3;
-      case B_WATER0:    return Textures::Blocks::water_0;
-      case B_WATER1:    return Textures::Blocks::water_1;
-      case B_WATER2:    return Textures::Blocks::water_2;
-      case B_WATER3:    return Textures::Blocks::water_3;
-      case B_WATER4:    return Textures::Blocks::water_4;
-      case B_WATER5:    return Textures::Blocks::water_5;
-      case B_WATER6:    return Textures::Blocks::water_6;
-      case B_WATER7:    return Textures::Blocks::water_7;
+      case Blocks::lava0:     return Textures::Blocks::lava_0;
+      case Blocks::lava1:     return Textures::Blocks::lava_1;
+      case Blocks::lava2:     return Textures::Blocks::lava_2;
+      case Blocks::lava3:     return Textures::Blocks::lava_3;
+      case Blocks::water0:    return Textures::Blocks::water_0;
+      case Blocks::water1:    return Textures::Blocks::water_1;
+      case Blocks::water2:    return Textures::Blocks::water_2;
+      case Blocks::water3:    return Textures::Blocks::water_3;
+      case Blocks::water4:    return Textures::Blocks::water_4;
+      case Blocks::water5:    return Textures::Blocks::water_5;
+      case Blocks::water6:    return Textures::Blocks::water_6;
+      case Blocks::water7:    return Textures::Blocks::water_7;
       case B_FARM0:     //Allow to fall through to "return Textures::Blocks::farmland;"
       case B_FARM1:
       case B_FARM2:
@@ -178,20 +178,20 @@ const byte* Screen::idToBitmap (id_t id, byte version, FunctionCallContext conte
       case B_FLOWER:    return Textures::Blocks::flower;
       case B_TNT_U:     return Textures::Blocks::tnt;
 
-      case R_LIGHT0:    return Textures::Blocks::light_0;
-      case R_LIGHT1:    return Textures::Blocks::light_1;
-      case R_LIGHT2:    return Textures::Blocks::light_2;
-      case R_LIGHT3:    return Textures::Blocks::light_3;
-      case R_LIGHT4:    return Textures::Blocks::light_4;
-      case R_LIGHT5:    return Textures::Blocks::light_5;
-      case R_LIGHT6:    return Textures::Blocks::light_6;
-      case R_LIGHT7:    return Textures::Blocks::light_7;
-      case B_WATER_SOURCE: return Textures::Blocks::water_7;
+      case Blocks::Runtime::light0:    return Textures::Blocks::light_0;
+      case Blocks::Runtime::light1:    return Textures::Blocks::light_1;
+      case Blocks::Runtime::light2:    return Textures::Blocks::light_2;
+      case Blocks::Runtime::light3:    return Textures::Blocks::light_3;
+      case Blocks::Runtime::light4:    return Textures::Blocks::light_4;
+      case Blocks::Runtime::light5:    return Textures::Blocks::light_5;
+      case Blocks::Runtime::light6:    return Textures::Blocks::light_6;
+      case Blocks::Runtime::light7:    return Textures::Blocks::light_7;
+      case Blocks::waterSource: return Textures::Blocks::water_7;
       default:          return Textures::Blocks::error;
     }
   } else if (context == FunctionCallContext::Generation) {
     switch (id) {
-      case G_AIR:     return Textures::Blocks::light_7;
+      case Generation::air:     return Textures::Blocks::light_7;
 
       default:          return Textures::Blocks::error;
     }

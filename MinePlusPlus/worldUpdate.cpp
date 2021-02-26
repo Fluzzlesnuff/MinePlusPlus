@@ -54,11 +54,11 @@ bool World::updateTick() {
       if (block.isBrokenByFallingBlocks(block.get(x, y))) {
         if (block.get(x, y + 1) == B_SAND) {
           block.set(x, y, B_SAND);
-          block.set(x, y + 1, B_AIR);
+          block.set(x, y + 1, Blocks::air);
           madeChanges = true;
         } else if (block.get(x, y + 1) == B_GRAVEL) {
           block.set(x, y, B_GRAVEL);
-          block.set(x, y + 1, B_AIR);
+          block.set(x, y + 1, Blocks::air);
           madeChanges = true;
         }
       }
@@ -83,7 +83,7 @@ bool World::update5Tick() {
   { //Delete water that shouldn't exist
     for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Schedule water that doesn't have water to the sides for deletion
       for (ycoord_t y = 0; y <= yLimit; y++) {
-        if (block.isWater(block.get(x, y)) && block.get(x, y) != B_WATER_SOURCE) { //Check whether the block is even water
+        if (block.isWater(block.get(x, y)) && block.get(x, y) != Blocks::waterSource) { //Check whether the block is even water
           bool validWaterToLeft = false;
           bool validWaterToRight = false;
           bool validWaterAbove = false;
@@ -92,7 +92,7 @@ bool World::update5Tick() {
               (side ? validWaterToRight : validWaterToLeft) = false;
             else { //If it's not void, what is it?
               id_t blockToCheck = block.get(x + (side ? 1 : -1), y);
-              if (block.isWater(blockToCheck) && (blockToCheck == B_WATER_SOURCE ? B_WATER7 : blockToCheck) > (block.isWater(block.get(x, y)) ? block.get(x, y) : B_WATER0)) { //If the block is water larger than the block current block, it's valid
+              if (block.isWater(blockToCheck) && (blockToCheck == Blocks::waterSource ? Blocks::water7 : blockToCheck) > (block.isWater(block.get(x, y)) ? block.get(x, y) : Blocks::water0)) { //If the block is water larger than the block current block, it's valid
                 (side ? validWaterToRight : validWaterToLeft) = true;
               }
             }
@@ -100,7 +100,7 @@ bool World::update5Tick() {
           if (y != yLimit && block.isWater(block.get(x, y + 1)))
             validWaterAbove = true;
           if (!(validWaterToLeft || validWaterToRight || validWaterAbove))
-            block.set(x, y, B_AIR);
+            block.set(x, y, Blocks::air);
         }
       }
   }
@@ -113,7 +113,7 @@ bool World::update5Tick() {
             validWaterToSide = false;
           else { //If it's not void, what is it?
             id_t blockToCheck = block.get(x + (side ? 1 : -1), y);
-            if (block.isWater(blockToCheck) && (blockToCheck == B_WATER_SOURCE ? B_WATER7 : blockToCheck) > (block.isWater(block.get(x, y)) ? block.get(x, y) + 1 : B_WATER0)) { //If the block is water larger than the block current block, continue
+            if (block.isWater(blockToCheck) && (blockToCheck == Blocks::waterSource ? Blocks::water7 : blockToCheck) > (block.isWater(block.get(x, y)) ? block.get(x, y) + 1 : Blocks::water0)) { //If the block is water larger than the block current block, continue
               //Now, to check if there is a block under the water to the side
               if (y == 0) //If it's void, it's good
                 validWaterToSide = true;
@@ -127,8 +127,8 @@ bool World::update5Tick() {
           id_t blockOnSide = 0;
           if (validWaterToSide) {
             blockOnSide = block.get(x +  (side ? 1 : -1), y);
-            if (blockOnSide == B_WATER_SOURCE)
-              blockOnSide = B_WATER7;
+            if (blockOnSide == Blocks::waterSource)
+              blockOnSide = Blocks::water7;
           }
           if (validWaterToSide) {
             block.set(x, y, blockOnSide - 1);
@@ -140,14 +140,14 @@ bool World::update5Tick() {
   for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Flow water down
     for (ycoord_t y = 0; y <= yLimit; y++)
       if (block.isBrokenByFluid(block.get(x, y)) && (y == yLimit ? false : block.isWater(block.get(x, y + 1)))) {
-        block.set(x, y, B_WATER7);
+        block.set(x, y, Blocks::water7);
         madeChanges = true;
       }
   for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Generate source blocks between other source blocks
     for (ycoord_t y = 0; y <= yLimit; y++)
-      if (block.isBrokenByFluid(block.get(x, y)) && (x == -xLimit ? false : block.get(x - 1, y) == B_WATER_SOURCE) && (x == xLimit ? false : block.get(x + 1, y) == B_WATER_SOURCE)) { //If the block in question has source blocks on both sides
+      if (block.isBrokenByFluid(block.get(x, y)) && (x == -xLimit ? false : block.get(x - 1, y) == Blocks::waterSource) && (x == xLimit ? false : block.get(x + 1, y) == Blocks::waterSource)) { //If the block in question has source blocks on both sides
         if (y == 0 || (!block.isBrokenByFluid(block.get(x - 1, y - 1)) && block.isSolid(block.get(x - 1, y - 1)) && !block.isBrokenByFluid(block.get(x + 1, y - 1)) && block.isSolid(block.get(x + 1, y - 1)))) { //If the source blocks have blocks beneath them
-          block.set(x, y, B_WATER_SOURCE);
+          block.set(x, y, Blocks::waterSource);
           madeChanges = true;
         }
       }

@@ -54,7 +54,7 @@ class Block { //Not used in the object sense. Instead, this is just a set of fun
         Blocks out of bounds are simply not counted.
     */
     uint16_t isNear(const CoordPair& coords, id_t id, byte distance, MeasurementType measurementType);
-    bool isOpenToSky(xcoord_t x, ycoord_t y, id_t ignoreBlock1 = B_AIR, id_t ignoreBlock2 = B_AIR);
+    bool isOpenToSky(xcoord_t x, ycoord_t y, id_t ignoreBlock1 = Blocks::air, id_t ignoreBlock2 = Blocks::air);
     void createBlockDB (worldWidth_t width, worldHeight_t height);
 };
 
