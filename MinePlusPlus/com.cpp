@@ -16,15 +16,7 @@ IStream& operator>> (IStream& in, String& var) {
   }
 }
 
-OStream& operator<< (OStream& out, int input) {
-  Serial.print(input);
-  return out;
-}
 OStream& operator<< (OStream& out, const String& input) {
-  Serial.print(input);
-  return out;
-}
-OStream& operator<< (OStream& out, char input) {
   Serial.print(input);
   return out;
 }

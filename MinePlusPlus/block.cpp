@@ -174,8 +174,8 @@ byte Block::isTouching(const CoordPair& coords, id_t id) {
 byte Block::isTouchingWide(xcoord_t x, ycoord_t y, id_t id) {
   // Scans blocks starting from the top and going clockwise
   id_t count{0};
-  for (int xOffset = -1; xOffset <= 1; xOffset++) {
-    for (int yOffset = -1; yOffset <= 1; yOffset++) {
+  for (int8_t xOffset = -1; xOffset <= 1; xOffset++) {
+    for (int8_t yOffset = -1; yOffset <= 1; yOffset++) {
       if (x + xOffset >= -xLimit && x + xOffset <= xLimit && y + yOffset >= 0 && y + yOffset <= yLimit)
         if (get(x + xOffset, y + yOffset) == id)
           count++;
