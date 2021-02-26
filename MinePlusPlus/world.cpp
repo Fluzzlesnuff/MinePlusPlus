@@ -26,7 +26,7 @@ ycoord_t yLimit; //Inclusive. Bottom limit is 0.
 void World::setTickRate (double tickRateParam) {
   ticksPerSecond = tickRateParam;
   msPerTick = round(1000 / ticksPerSecond);
-  cout << prefix << "Set Tick Rate: " << String(ticksPerSecond) << " TPS (" << String(msPerTick) << "ms)" << endl;
+  cout << prefix << "Set Tick Rate: " << ticksPerSecond << " TPS (" << msPerTick << "ms)" << endl;
 }
 void World::setWorldDimensions(WorldSize sizeParam) {
   size = sizeParam;
@@ -67,7 +67,7 @@ void World::load () {
       byte numberToLoad = EEPROM.read(EEPROMAddress + 1);
       byte blockToLoad = EEPROM.read(EEPROMAddress + 2);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-      com.out.logMultiple("F 3\t\t# " << String(numberToLoad) << "\t\tI " << String(blockToLoad) << "\tB " << String(blockDBAddress) << "-" << String(blockDBAddress + numberToLoad - 1) << "\t\tE " << String(EEPROMAddress) << "-" << String(EEPROMAddress + 2));
+      cout << "F 3\t\t# " << numberToLoad << "\t\tI " << blockToLoad << "\tB " << blockDBAddress << "-" << (blockDBAddress + numberToLoad - 1) << "\t\tE " << EEPROMAddress << "-" << (EEPROMAddress + 2);
 #endif
       EEPROMAddress += 3;
       for (uint8_t i = 0; i < numberToLoad; i++)
@@ -77,7 +77,7 @@ void World::load () {
       uint16_t numberToLoad = (EEPROM.read(EEPROMAddress + 1) * 256) + EEPROM.read(EEPROMAddress + 2);
       byte blockToLoad = EEPROM.read(EEPROMAddress + 3);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-      com.out.logMultiple("F 4\t\t# " << String(numberToLoad) << "\t\tI " << String(blockToLoad) << "\tB " << String(blockDBAddress) << "-" << String(blockDBAddress + numberToLoad - 1) << "\t\tE " << String(EEPROMAddress) << "-" << String(EEPROMAddress + 3));
+      com.out.logMultiple("F 4\t\t# " << numberToLoad << "\t\tI " << blockToLoad << "\tB " << blockDBAddress << "-" << (blockDBAddress + numberToLoad - 1) << "\t\tE " << EEPROMAddress << "-" << (EEPROMAddress + 3) << endl;
 #endif
       EEPROMAddress += 4;
       for (uint16_t i = 0; i < numberToLoad; i++)
@@ -91,7 +91,7 @@ void World::load () {
     }
     else {
 #ifdef SAVE_LOAD_BYTE_LOGGING
-      com.out.logMultiple("\t\t\t\tI " << String(byteRead) << "\tB " << String(blockDBAddress) << "\t\t\tE " << String(EEPROMAddress));
+      com.out.logMultiple("\t\t\t\tI " << byteRead << "\tB " << blockDBAddress << "\t\t\tE " << EEPROMAddress << endl;
 #endif
       blockDB[blockDBAddress] = byteRead;
       EEPROMAddress++;
@@ -128,7 +128,7 @@ void World::save () {
       if (numberFound == 1) {
         EEPROM.update(EEPROMAddress, currentBlockID);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-        com.out.logMultiple("\t\t\t\tI " << String(currentBlockID) << "\tB " << String(i - 1) << "\t\t\tE " << String(EEPROMAddress));
+        com.out.logMultiple("\t\t\t\tI " << currentBlockID << "\tB " << i - 1 << "\t\t\tE " << EEPROMAddress;
 #endif
         EEPROMAddress += 1;
       } else if (numberFound < 256) {
@@ -136,7 +136,7 @@ void World::save () {
         EEPROM.update(EEPROMAddress + 1, lowByte(numberFound));
         EEPROM.update(EEPROMAddress + 2, currentBlockID);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-        com.out.logMultiple("F 3\t\t# " << String(numberFound) << "\t\tI " << String(currentBlockID) << "\tB " << String(i - numberFound) << "-" << String(i - 1) << "\t\tE " << String(EEPROMAddress) << "-" << String(EEPROMAddress + 2));
+        com.out.logMultiple("F 3\t\t# " << numberFound << "\t\tI " << currentBlockID << "\tB " << i - numberFound << "-" << i - 1 << "\t\tE " << EEPROMAddress << "-" << EEPROMAddress + 2;
 #endif
         EEPROMAddress += 3;
       } else {
@@ -145,7 +145,7 @@ void World::save () {
         EEPROM.update(EEPROMAddress + 2, lowByte(numberFound));
         EEPROM.update(EEPROMAddress + 3, currentBlockID);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-        com.out.logMultiple("F 4\t\t# " << String(numberFound) << "\t\tI " << String(currentBlockID) << "\tB " << String(i - numberFound) << "-" << String(i - 1) << "\t\tE " << String(EEPROMAddress) << "-" << String(EEPROMAddress + 3));
+        com.out.logMultiple("F 4\t\t# " << numberFound << "\t\tI " << currentBlockID << "\tB " << i - numberFound << "-" << i - 1 << "\t\tE " << EEPROMAddress << "-" << EEPROMAddress + 3;
 #endif
         EEPROMAddress += 4;
       }
@@ -156,7 +156,7 @@ void World::save () {
   if (numberFound == 1) {
     EEPROM.update(EEPROMAddress, currentBlockID);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-    com.out.logMultiple("\t\t\t\tI " << String(currentBlockID) << "\tB " << String(i - 1) << "\t\t\tE " << String(EEPROMAddress));
+    com.out.logMultiple("\t\t\t\tI " << currentBlockID << "\tB " << i - 1 << "\t\t\tE " << EEPROMAddress;
 #endif
     EEPROMAddress++;
   } else if (numberFound < 256) {
@@ -164,7 +164,7 @@ void World::save () {
     EEPROM.update(EEPROMAddress + 1, lowByte(numberFound));
     EEPROM.update(EEPROMAddress + 2, currentBlockID);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-    com.out.logMultiple("F 3\t\t# " << String(numberFound) << "\t\tI " << String(currentBlockID) << "\tB " << String(i - numberFound) << "-" << String(i - 1) << "\t\tE " << String(EEPROMAddress) << "-" << String(EEPROMAddress + 2));
+    com.out.logMultiple("F 3\t\t# " << numberFound << "\t\tI " << currentBlockID << "\tB " << i - numberFound << "-" << i - 1 << "\t\tE " << EEPROMAddress << "-" << EEPROMAddress + 2;
 #endif
     EEPROMAddress += 3;
   } else {
@@ -173,7 +173,7 @@ void World::save () {
     EEPROM.update(EEPROMAddress + 2, lowByte(numberFound));
     EEPROM.update(EEPROMAddress + 3, currentBlockID);
 #ifdef SAVE_LOAD_BYTE_LOGGING
-    com.out.logMultiple("F 4\t\t# " << String(numberFound) << "\t\tI " << String(currentBlockID) << "\tB " << String(i - numberFound) << "-" << String(i - 1) << "\t\tE " << String(EEPROMAddress) << "-" << String(EEPROMAddress + 3));
+    com.out.logMultiple("F 4\t\t# " << numberFound << "\t\tI " << currentBlockID << "\tB " << i - numberFound << "-" << i - 1 << "\t\tE " << EEPROMAddress << "-" << EEPROMAddress + 3;
 #endif
     EEPROMAddress += 4;
   }

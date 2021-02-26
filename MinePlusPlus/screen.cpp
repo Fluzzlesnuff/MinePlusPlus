@@ -36,7 +36,7 @@ void Screen::renderBlock (xcoord_t x, ycoord_t y, int8_t xPixelOffset, int8_t yP
     id = block.get(x, y);
   const byte* bitmapToRender = idToBitmap(id);
 #ifdef RENDER_BLOCK_LOGGING
-  cout << prefix << "Rendering block at relative coordinates (" << String(xRel) << ", " << String(yRel) << ")   \t[Top-left corner at pixel (" << String(xPixel) << ", " << String(yPixel) << "),\tID: " << String(id) << "]." << endl;
+  cout << prefix << "Rendering block at relative coordinates (" << xRel << ", " << yRel << ")   \t[Top-left corner at pixel (" << xPixel << ", " << yPixel << "),\tID: " << id << "]." << endl;
 #endif
   ycoord_t yPixelOffsetForLoop = 0;
   for (uint8_t i{0}; i < 20; i++) {
