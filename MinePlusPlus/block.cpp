@@ -96,7 +96,7 @@ bool Block::isSolid(id_t id) {
     return false;
   if (block.isFarmland(id))
     return true;
-  id_t otherSolidBlocks[] {dirt, cobblestone, coalOre, ironOre, goldOre, diamondOre, closedDoor, closedTrapdoor, stone, sandstone, gravel, sand, log, planks, leaves, obsidian, glass, stoneBricks, wool, goldBlock, sponge, tnt};
+  id_t otherSolidBlocks[] {dirt, cobblestone, coalOre, ironOre, goldOre, diamondOre, closedDoor, closedTrapdoor, stone, sandstone, gravel, sand, wood, planks, leaves, obsidian, glass, stoneBricks, wool, goldBlock, sponge, tnt};
   for (byte i = 0; i < 22; i++)
     if (otherSolidBlocks[i] == id)
       return true;
@@ -120,7 +120,7 @@ bool Block::isLava(id_t id) {
 }
 bool Block::isFlammable(id_t id) {
   using namespace Blocks;
-  id_t flammableBlocks[] {closedDoor, openDoor, closedTrapdoor, openTrapdoor, log, planks, leaves, wool, ladder, grass, sapling, flower};
+  id_t flammableBlocks[] {closedDoor, openDoor, closedTrapdoor, openTrapdoor, wood, planks, leaves, wool, ladder, grass, sapling, flower};
   for (byte i = 0; i < 12; i++)
     if (flammableBlocks[i] == id)
       return true;

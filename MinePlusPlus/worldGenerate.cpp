@@ -242,7 +242,7 @@ void World::generateGravelVeins () {
     cout << prefix << F("\tGrowing Gravel Veins: Pass ") << i + 1 << endl;
     for (xcoord_t x = -xLimit; x <= xLimit; x++) {
       for (ycoord_t y = 0; y <= yLimit; y++) {
-        byte numTouching = block.isTouchingWide(x, y, Blocks::Gravel);
+        byte numTouching = block.isTouchingWide(x, y, Blocks::gravel);
         if (numTouching == 0)
           continue;
         byte chance = chances[i][numTouching - 1];
@@ -507,11 +507,11 @@ void World::generateDeserts () {
     cout << prefix << F("\tGrowing Deserts: Pass ") << i << endl;
     for (xcoord_t x = -xLimit; x <= xLimit; x++)
       for (ycoord_t y = 0; y <= yLimit; y++)
-        if ((block.isTouching(x, y, Blocks::Generation::sand) || block.isTouching(x, y, B_SNDSTN)) && block.get(x, y) == Blocks::dirt)
+        if ((block.isTouching(x, y, Blocks::Generation::sand) || block.isTouching(x, y, Blocks::sandstone)) && block.get(x, y) == Blocks::dirt)
           block.set(x, y, Blocks::Generation::sand);
     for (xcoord_t x = -xLimit; x <= xLimit; x++)
       for (ycoord_t y = safeDivide(worldHeight, 2) - 5; y <= yLimit; y++)
-        if ((block.isTouching(x, y, Blocks::Generation::sand) || block.isTouching(x, y, B_SNDSTN)) && block.get(x, y) == Blocks::stone)
+        if ((block.isTouching(x, y, Blocks::Generation::sand) || block.isTouching(x, y, Blocks::sandstone)) && block.get(x, y) == Blocks::stone)
           block.set(x, y, Blocks::Generation::sandstone);
     for (xcoord_t x = -xLimit; x <= xLimit; x++)
       for (ycoord_t y = 0; y <= yLimit; y++) {
@@ -531,8 +531,8 @@ void World::generateTrees () {
   cout << prefix << F("\tPlanting Trees") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++) {
     for (ycoord_t y = safeDivide(worldHeight, 2) - 4; y <= yLimit; y++)
-      if ((random() % 10) == 0 && block.get(x, y) == Blocks::air && block.get(x, y - 1) == Blocks::dirt && block.isOpenToSky(x, y) && !block.isTouchingWide(x, y, Blocks::log))
-        block.set(x, y, Blocks::log);
+      if ((random() % 10) == 0 && block.get(x, y) == Blocks::air && block.get(x, y - 1) == Blocks::dirt && block.isOpenToSky(x, y) && !block.isTouchingWide(x, y, Blocks::wood))
+        block.set(x, y, Blocks::wood);
   }
 #ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
@@ -542,28 +542,28 @@ void World::generateTrees () {
     cout << prefix << F("\tGrowing Trees: Pass ") << i << endl;
     for (xcoord_t x = -xLimit; x <= xLimit; x++)
       for (ycoord_t y = safeDivide(worldHeight, 2) - 4; y <= yLimit; y++)
-        if (block.get(x, y) == Blocks::air && block.get(x, y - 1) == Blocks::log && (random() % 10 < chances[i]))
-          block.set(x, y, Blocks::Generation::log);
+        if (block.get(x, y) == Blocks::air && block.get(x, y - 1) == Blocks::wood && (random() % 10 < chances[i]))
+          block.set(x, y, Blocks::Generation::wood);
     for (xcoord_t x = -xLimit; x <= xLimit; x++)
       for (ycoord_t y = 0; y <= yLimit; y++)
-        if (block.get(x, y) == Blocks::Generation::log)
-          block.set(x, y, Blocks::log);
+        if (block.get(x, y) == Blocks::Generation::wood)
+          block.set(x, y, Blocks::wood);
   }
   cout << prefix << F("\tGrowing Trees: Adding Branches") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = safeDivide(worldHeight, 2) - 4; y <= yLimit; y++)
-      if (block.get(x, y) == Blocks::air && block.isTouching(x, y, Blocks::log) && (random() % 10) == 0 && !block.isTouching(x, y, Blocks::dirt) && !block.isTouching(x, y, Blocks::sand) && !block.isTouching(x, y, Blocks::stone) && !block.isTouching(x, y, Blocks::waterSource))
-        block.set(x, y, Blocks::Generation::log);
+      if (block.get(x, y) == Blocks::air && block.isTouching(x, y, Blocks::wood) && (random() % 10) == 0 && !block.isTouching(x, y, Blocks::dirt) && !block.isTouching(x, y, Blocks::sand) && !block.isTouching(x, y, Blocks::stone) && !block.isTouching(x, y, Blocks::waterSource))
+        block.set(x, y, Blocks::Generation::wood);
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = 0; y <= yLimit; y++)
-      if (block.get(x, y) == Blocks::Generation::log)
-        block.set(x, y, Blocks::log);
+      if (block.get(x, y) == Blocks::Generation::wood)
+        block.set(x, y, Blocks::wood);
 }
 void World::generateLeaves () {
   cout << prefix << F("Generation Stage 16: Leaves") << endl << F("\tPass 1") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = 0; y <= yLimit; y++)
-      if (block.get(x, y) == Blocks::air && block.isTouchingWide(x, y, Blocks::log) && ((!block.isTouchingWide(x, y, Blocks::dirt) && !block.isTouchingWide(x, y, Blocks::stone) && !block.isTouchingWide(x, y, Blocks::sand) && !block.isTouchingWide(x, y, Blocks::waterSource)) || (x <= -xLimit + 1 ? false : block.get(x - 2, y) == Blocks::Generation::leaves) || (x >= xLimit - 1 ? false : block.get(x + 2, y) == Blocks::Generation::leaves)))
+      if (block.get(x, y) == Blocks::air && block.isTouchingWide(x, y, Blocks::wood) && ((!block.isTouchingWide(x, y, Blocks::dirt) && !block.isTouchingWide(x, y, Blocks::stone) && !block.isTouchingWide(x, y, Blocks::sand) && !block.isTouchingWide(x, y, Blocks::waterSource)) || (x <= -xLimit + 1 ? false : block.get(x - 2, y) == Blocks::Generation::leaves) || (x >= xLimit - 1 ? false : block.get(x + 2, y) == Blocks::Generation::leaves)))
         block.set(x, y, Blocks::Generation::leaves);
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = 0; y <= yLimit; y++)
@@ -575,7 +575,7 @@ void World::generateLeaves () {
   cout << prefix << F("\tPass 2") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = 0; y <= yLimit; y++)
-      if ((block.get(x, y) == Blocks::air && block.isTouching(x, y, Blocks::leaves) && ((x == -xLimit ? false : block.get(x - 1, y) == Blocks::leaves) || (x == xLimit ? false : block.get(x + 1, y) == Blocks::leaves)) && ((x <= -xLimit + 1 ? false : block.get(x - 2, y) == Blocks::log) || (x >= xLimit - 1 ? false : block.get(x + 2, y) == Blocks::log))) && (random() % 5) != 0)
+      if ((block.get(x, y) == Blocks::air && block.isTouching(x, y, Blocks::leaves) && ((x == -xLimit ? false : block.get(x - 1, y) == Blocks::leaves) || (x == xLimit ? false : block.get(x + 1, y) == Blocks::leaves)) && ((x <= -xLimit + 1 ? false : block.get(x - 2, y) == Blocks::wood) || (x >= xLimit - 1 ? false : block.get(x + 2, y) == Blocks::wood))) && (random() % 5) != 0)
         block.set(x, y, Blocks::Generation::leaves);
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = 0; y <= yLimit; y++)

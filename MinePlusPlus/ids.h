@@ -47,7 +47,7 @@ const id_t stone = 0x28;
 const id_t sandstone = 0x29;
 const id_t gravel = 0x2a;
 const id_t sand = 0x2b;
-const id_t log = 0x2c;
+const id_t wood = 0x2c;
 const id_t planks = 0x2d;
 const id_t leaves = 0x2e;
 const id_t obsidian = 0x2f;
@@ -94,7 +94,7 @@ const id_t coalOre = 0xc7;
 const id_t ironOre = 0xc8;
 const id_t goldOre = 0xc9;
 const id_t diamondOre = 0xca;
-const id_t log = 0xcb;
+const id_t wood = 0xcb;
 const id_t leaves = 0xcc;
 const id_t sandstone = 0xcd;
 const id_t grass = 0xce;
@@ -110,6 +110,7 @@ const id_t deletedWater5 = 0xe5;
 const id_t deletedWater6 = 0xe6;
 const id_t deletedWater7 = 0xe7;
 }
+}
 namespace Storage { 
 const id_t threeByteFlag = 0xfa; //Indicates that the next 2 bytes are compressed
 const id_t fourByteFlag  = 0xfb; //Indicates that the next 3 bytes are compressed
@@ -117,7 +118,6 @@ const id_t comma = 0xfc; //Separates two similar saved items, such as two chests
 const id_t semicolon = 0xfd; //Separates two saving sections, such as pigs and zombies
 const id_t period = 0xfe; //Separates two world save sections, such as between blocks and items
 const id_t end = 0xff; //Will be deprecated once a map of the filesystem is added
-}
 }
 
 namespace Items {
@@ -138,7 +138,7 @@ const id_t stone = 0x28;
 const id_t sandstone = 0x29;
 const id_t gravel = 0x2a;
 const id_t sand = 0x2b;
-const id_t log = 0x2c;
+const id_t wood = 0x2c;
 const id_t planks = 0x2d;
 const id_t obsidian = 0x2f;
 const id_t glass = 0x30;

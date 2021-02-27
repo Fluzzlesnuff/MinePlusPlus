@@ -83,7 +83,7 @@ void World::load () {
       for (uint16_t i = 0; i < numberToLoad; i++)
         blockDB[blockDBAddress + i] = blockToLoad;
       blockDBAddress += numberToLoad - 1;
-    } else if (byteRead == C_END) {
+    } else if (byteRead == Storage::end) {
 #ifdef SAVE_LOAD_BYTE_LOGGING
       cout << prefix << F("Found COMP_END") << endl;
 #endif
@@ -177,8 +177,8 @@ void World::save () {
 #endif
     EEPROMAddress += 4;
   }
-  EEPROM.update(EEPROMAddress, C_END);
-  EEPROM.update(EEPROMAddress + 1, C_END);
+  EEPROM.update(EEPROMAddress, Storage::end);
+  EEPROM.update(EEPROMAddress + 1, Storage::end);
 
 }
 

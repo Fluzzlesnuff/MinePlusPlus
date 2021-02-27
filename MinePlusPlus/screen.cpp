@@ -119,7 +119,7 @@ const byte* Screen::idToBitmap (id_t id, byte version, FunctionCallContext conte
       case air:       return Textures::Blocks::light_7;
       case fire:      return (animationFrame2 ? Textures::Blocks::fire2 : Textures::Blocks::fire1);
       case dirt:      return Textures::Blocks::dirt;
-      case Blocks:    return Textures::Blocks::cobblestone;
+      case cobblestone:    return Textures::Blocks::cobblestone;
       case lava0:     return Textures::Blocks::lava_0;
       case lava1:     return Textures::Blocks::lava_1;
       case lava2:     return Textures::Blocks::lava_2;
@@ -160,7 +160,7 @@ const byte* Screen::idToBitmap (id_t id, byte version, FunctionCallContext conte
       case sandstone:    return Textures::Blocks::sandstone;
       case gravel:    return Textures::Blocks::gravel;
       case sand:      return Textures::Blocks::sand;
-      case log:      return Textures::Blocks::wood;
+      case wood:      return Textures::Blocks::wood;
       case planks:    return Textures::Blocks::planks;
       case leaves:    return Textures::Blocks::leaves;
       case obsidian:  return Textures::Blocks::obsidian;
@@ -216,4 +216,3 @@ void Screen::updateAnimations () {
     renderWorld(true);
   }
 }
-

@@ -52,12 +52,12 @@ bool World::updateTick() {
   for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Gravel and sand
     for (ycoord_t y = 0; y <= yLimit - 1; y++)
       if (block.isBrokenByFallingBlocks(block.get(x, y))) {
-        if (block.get(x, y + 1) == B_SAND) {
-          block.set(x, y, B_SAND);
+        if (block.get(x, y + 1) == Blocks::sand) {
+          block.set(x, y, Blocks::sand);
           block.set(x, y + 1, Blocks::air);
           madeChanges = true;
-        } else if (block.get(x, y + 1) == B_GRAVEL) {
-          block.set(x, y, B_GRAVEL);
+        } else if (block.get(x, y + 1) == Blocks::gravel) {
+          block.set(x, y, Blocks::gravel);
           block.set(x, y + 1, Blocks::air);
           madeChanges = true;
         }
