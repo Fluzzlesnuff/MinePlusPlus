@@ -135,7 +135,7 @@ bool CommandManager::runCommands() {
     return false;
   if (parsedCommand.type == CommandType::SetBlock) {
     block.set(parsedCommand.args[0], parsedCommand.args[1], parsedCommand.args[2]);
-    cout << prefix << F("Set block at (") << parsedCommand.args[0] << F(", ") << parsedCommand.args[1] << F(") with ID ") << parsedCommand.args[2];
+    cout << prefix << F("Set block at (") << parsedCommand.args[0] << F(", ") << parsedCommand.args[1] << F(") with ID ") << parsedCommand.args[2] << endl;
     return true;
   }
   if (parsedCommand.type == CommandType::GetBlock) {
