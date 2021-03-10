@@ -101,31 +101,13 @@ bool Block::isSolid(id_t id) {
   return false;
 }
 bool Block::isWater(id_t id) {
-  using namespace Blocks;
-  id_t waterBlocks[] {water0, water1, water2, water3, water4, water5, water6, water7, waterSource};
-  for (byte i = 0; i < 9; i++)
-    if (waterBlocks[i] == id)
-      return true;
-  return isDeletedWater(id);
+  return (id >= Blocks::water0 && id <= Blocks::water7) || id == Blocks::waterSource || isDeletedWater(id);
 }
 bool Block::isDeletedWater(id_t id) {
-  using namespace Blocks;
-  id_t waterBlocks[] {
-    Update::deletedWater0, Update::deletedWater1, Update::deletedWater2, Update::deletedWater3, 
-    Update::deletedWater4, Update::deletedWater5, Update::deletedWater6, Update::deletedWater7
-  };
-  for (byte i = 0; i < 8; i++)
-    if (waterBlocks[i] == id)
-      return true;
-  return false;
+  return id >= Blocks::Update::deletedWater0 && id <= Blocks::Update::deletedWater7;
 }
 bool Block::isLava(id_t id) {
-  using namespace Blocks;
-  id_t lavaBlocks[] {lava0, lava1, lava2, lava3};
-  for (byte i = 0; i < 4; i++)
-    if (lavaBlocks[i] == id)
-      return true;
-  return false;
+  return id >= Blocks::lava0 && id <= Blocks::lava3;
 }
 bool Block::isFlammable(id_t id) {
   using namespace Blocks;
@@ -136,30 +118,20 @@ bool Block::isFlammable(id_t id) {
   return false;
 }
 bool Block::isFarmland(id_t id) {
-  using namespace Blocks;
-  id_t farmlandBlocks[] {farmland0, farmland1, farmland2, farmland3};
-  for (byte i = 0; i < 4; i++)
-    if (farmlandBlocks[i] == id)
-      return true;
-  return false;
+  return id >= Blocks::farmland0 && id <= Blocks::farmland3;
 }
 bool Block::isAir(id_t id) {
-  using namespace Blocks;
-  const id_t airBlocks[] {air, Runtime::light0, Runtime::light1, Runtime::light2, Runtime::light3, Runtime::light4, Runtime::light5, Runtime::light6, Runtime::light7};
-  for (byte i = 0; i < 9; i++)
-    if (airBlocks[i] == id)
-      return true;
-  return false;
+  return (id >= Blocks::Runtime::light0 && id <= Blocks::Runtime::light7) || id == Blocks::air;
 }
 bool Block::isBrokenByFluid(id_t id) {
   using namespace Blocks;
-  const id_t fluidBreakableBlocks[] {torch, grass, flower, water0, water1, water2, water3, water4, water5, water6};
+  const id_t fluidBreakableBlocks[] {torch, grass, flower};
   if (isAir(id))
     return true;
-  for (byte i = 0; i < 10; i++)
+  for (byte i = 0; i < 3; i++)
     if (fluidBreakableBlocks[i] == id)
       return true;
-  return false;
+  return (id >= Blocks::water0 && id <= Blocks::water6); //Check for water(0-6) if array scan returns false
 }
 bool Block::isBrokenByFallingBlocks(id_t id) {
   using namespace Blocks;
