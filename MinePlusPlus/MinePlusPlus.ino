@@ -5,7 +5,7 @@ bool selectedGenerateButton = false;
 
 void setup() {
   iostream.init();
-  cout << prefix << F("Communication Channel(s) Initialized") << endl;
+  cout << prefix << F("\n\nCommunication Channel(s) Initialized") << endl;
   leftButton.setSampleSize(10);
   jumpButton.setSampleSize(10);
   rightButton.setSampleSize(10);

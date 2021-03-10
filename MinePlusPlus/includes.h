@@ -17,6 +17,6 @@
 #include "_preferences.h"
 #include "button.h"
 #include <openGLCD.h>
-#include <CapacitiveSensor.h>
 #include <EEPROM.h>
+
 #endif
