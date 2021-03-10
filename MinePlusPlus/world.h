@@ -18,14 +18,21 @@ class World { //One instance only, but used as a proper object.
     uint16_t msPerTick;
     void setWorldDimensions(WorldSize sizeParam);
     void start (); //Sets starts the necessary world services *after* a world has been either loaded or generated.
+
+    xcoord_t leftmostXCoordinate; //Valid area for updates
+    xcoord_t rightmostXCoordinate; //Valid area for updates
+    bool updateMadeChanges;
     
-    bool update (WorldUpdateType updateType); //Flows water, grows crops, drops gravel, etc.
-    bool updateConstant();
-    bool updateTick();
-    bool update2Tick();
-    bool update4Tick();
-    bool update5Tick();
-    bool update8Tick();
+    void update (WorldUpdateType updateType); //Flows water, grows crops, drops gravel, etc.
+    void updateConstant();
+    void updateTick();
+    void update2Tick();
+    void update4Tick();
+    void update5Tick();
+    void update8Tick();
+
+    void updateWater ();
+    void updateFallingBlocks ();
     
     void generateAir ();
     void generateStone ();
@@ -45,6 +52,7 @@ class World { //One instance only, but used as a proper object.
     void generateTrees ();
     void generateLeaves ();
     void generatePlants ();
+
   public:
     bool isRunning = false;
     bool tryUpdate();

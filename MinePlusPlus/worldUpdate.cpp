@@ -2,84 +2,54 @@
 bool World::tryUpdate() {
   static uint32_t lastTickTime;
   static uint32_t ticksDone;
-  bool madeChanges = false;
-  if (update(Constant))
-    madeChanges = true;
+
+  leftmostXCoordinate = max(player.getCoords().x - UPDATE_DISTANCE, -xLimit);
+  rightmostXCoordinate = min(player.getCoords().x + UPDATE_DISTANCE, xLimit);
+  updateMadeChanges = false;
+  
+  update(Constant);
   if (millis() - lastTickTime >= msPerTick) {
     lastTickTime += msPerTick;
     ticksDone++;
-    if (update(Tick))
-      madeChanges = true;
-    if (ticksDone % 2 == 0) {
-      if (update(Two_Tick))
-        madeChanges = true;
-      if (ticksDone % 4 == 0) { //Nested because a number divisible by 4 will always also be divisible by 2
-        if (update(Four_Tick))
-          madeChanges = true;
-        if (ticksDone % 8 == 0) { //Nested because a number divisible by 8 will always also be divisible by 4
-          if (update(Eight_Tick))
-            madeChanges = true;
-        }
-      }
-    }
-    if (ticksDone % 5 == 0) {
-      if (update(Five_Tick))
-        madeChanges = true;
-    }
+    update(Tick);
+    if (ticksDone % 2 == 0)
+      update(Two_Tick);
+      if (ticksDone % 4 == 0) //Nested because a number divisible by 4 will always also be divisible by 2
+        update(Four_Tick);
+        if (ticksDone % 8 == 0) //Nested because a number divisible by 8 will always also be divisible by 4
+          update(Eight_Tick);
+    if (ticksDone % 5 == 0)
+      update(Five_Tick);
   }
-  return madeChanges;
+  return updateMadeChanges;
 }
-bool World::update (WorldUpdateType updateType) {
+void World::update (WorldUpdateType updateType) {
   switch (updateType) {
-    case WorldUpdateType::Constant:   return updateConstant();
-    case WorldUpdateType::Tick:       return updateTick();
-    case WorldUpdateType::Two_Tick:   return update2Tick();
-    case WorldUpdateType::Four_Tick:  return update4Tick();
-    case WorldUpdateType::Five_Tick:  return update5Tick();
-    case WorldUpdateType::Eight_Tick: return update8Tick();
+    case WorldUpdateType::Constant:   updateConstant(); break;
+    case WorldUpdateType::Tick:       updateTick();     break;
+    case WorldUpdateType::Two_Tick:   update2Tick();    break;
+    case WorldUpdateType::Four_Tick:  update4Tick();    break;
+    case WorldUpdateType::Five_Tick:  update5Tick();    break;
+    case WorldUpdateType::Eight_Tick: update8Tick();    break;
   }
 }
-bool World::updateConstant() {
-  xcoord_t leftmostXCoordinate = max(player.getCoords().x - UPDATE_DISTANCE, -xLimit);
-  xcoord_t rightmostXCoordinate = min(player.getCoords().x + UPDATE_DISTANCE, xLimit);
-  bool madeChanges = false;
-  return madeChanges;
+void World::updateConstant() {
 }
-bool World::updateTick() {
-  xcoord_t leftmostXCoordinate = max(player.getCoords().x - UPDATE_DISTANCE, -xLimit);
-  xcoord_t rightmostXCoordinate = min(player.getCoords().x + UPDATE_DISTANCE, xLimit);
-  bool madeChanges = false;
-  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Gravel and sand
-    for (ycoord_t y = 0; y <= yLimit - 1; y++)
-      if (block.isBrokenByFallingBlocks(block.get(x, y))) {
-        if (block.get(x, y + 1) == Blocks::sand) {
-          block.set(x, y, Blocks::sand);
-          block.set(x, y + 1, Blocks::air);
-          madeChanges = true;
-        } else if (block.get(x, y + 1) == Blocks::gravel) {
-          block.set(x, y, Blocks::gravel);
-          block.set(x, y + 1, Blocks::air);
-          madeChanges = true;
-        }
-      }
-  return madeChanges;
+void World::updateTick() {
+  updateFallingBlocks();
 }
-bool World::update2Tick() {
-  xcoord_t leftmostXCoordinate = max(player.getCoords().x - UPDATE_DISTANCE, -xLimit);
-  xcoord_t rightmostXCoordinate = min(player.getCoords().x + UPDATE_DISTANCE, xLimit);
-  bool madeChanges = false;
-  return madeChanges;
+void World::update2Tick() {
 }
-bool World::update4Tick() {
-  xcoord_t leftmostXCoordinate = max(player.getCoords().x - UPDATE_DISTANCE, -xLimit);
-  xcoord_t rightmostXCoordinate = min(player.getCoords().x + UPDATE_DISTANCE, xLimit);
-  bool madeChanges = false;
-  return madeChanges;
+void World::update4Tick() {
 }
-bool World::update5Tick() {
-  xcoord_t leftmostXCoordinate = max(player.getCoords().x - UPDATE_DISTANCE, -xLimit);
-  xcoord_t rightmostXCoordinate = min(player.getCoords().x + UPDATE_DISTANCE, xLimit);
-  bool madeChanges = false;
+void World::update5Tick() {
+  updateWater();
+}
+void World::World::update8Tick() {
+  
+}
+
+void World::updateWater () {
   { //Delete water that shouldn't exist
     for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Schedule water that doesn't have water to the sides for deletion
       for (ycoord_t y = 0; y <= yLimit; y++) {
@@ -132,7 +102,7 @@ bool World::update5Tick() {
           }
           if (validWaterToSide) {
             block.set(x, y, blockOnSide - 1);
-            madeChanges = true;
+            updateMadeChanges = true;
           }
         }
       }
@@ -141,21 +111,29 @@ bool World::update5Tick() {
     for (ycoord_t y = 0; y <= yLimit; y++)
       if (block.isBrokenByFluid(block.get(x, y)) && (y == yLimit ? false : block.isWater(block.get(x, y + 1)))) {
         block.set(x, y, Blocks::water7);
-        madeChanges = true;
+        updateMadeChanges = true;
       }
   for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Generate source blocks between other source blocks
     for (ycoord_t y = 0; y <= yLimit; y++)
       if (block.isBrokenByFluid(block.get(x, y)) && (x == -xLimit ? false : block.get(x - 1, y) == Blocks::waterSource) && (x == xLimit ? false : block.get(x + 1, y) == Blocks::waterSource)) { //If the block in question has source blocks on both sides
         if (y == 0 || (!block.isBrokenByFluid(block.get(x - 1, y - 1)) && block.isSolid(block.get(x - 1, y - 1)) && !block.isBrokenByFluid(block.get(x + 1, y - 1)) && block.isSolid(block.get(x + 1, y - 1)))) { //If the source blocks have blocks beneath them
           block.set(x, y, Blocks::waterSource);
-          madeChanges = true;
+          updateMadeChanges = true;
         }
       }
-  return madeChanges;
 }
-bool World::update8Tick() {
-  xcoord_t leftmostXCoordinate = max(player.getCoords().x - UPDATE_DISTANCE, -xLimit);
-  xcoord_t rightmostXCoordinate = min(player.getCoords().x + UPDATE_DISTANCE, xLimit);
-  bool madeChanges = false;
-  return madeChanges;
+void World::updateFallingBlocks () {
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++)
+    for (ycoord_t y = 0; y <= yLimit - 1; y++)
+      if (block.isBrokenByFallingBlocks(block.get(x, y))) {
+        if (block.get(x, y + 1) == Blocks::sand) {
+          block.set(x, y, Blocks::sand);
+          block.set(x, y + 1, Blocks::air);
+          updateMadeChanges = true;
+        } else if (block.get(x, y + 1) == Blocks::gravel) {
+          block.set(x, y, Blocks::gravel);
+          block.set(x, y + 1, Blocks::air);
+          updateMadeChanges = true;
+        }
+      }
 }
