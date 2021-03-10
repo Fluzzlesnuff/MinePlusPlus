@@ -6,13 +6,11 @@ id_t Block::get (xcoord_t x, ycoord_t y) {
 #ifdef BLOCK_GET_LOGGING
   cout << prefix << F("Getting block at (") << x << F(", ") << y << ')' << endl;
 #endif
-  if (x < -xLimit || x > xLimit)
-    cout << XCOORD_OOB;
-  else if (y < 0 || y > yLimit)
-    cout << YCOORD_OOB;
+  if (x < -xLimit || x > xLimit || y < 0 || y > yLimit)
+    return Blocks::Runtime::empty;
   return blockDB[coordsToAddress(x, y)];
 }
-id_t Block::get ( const CoordPair& coords) {
+id_t Block::get (const CoordPair& coords) {
   return get(coords.x, coords.y);
 }
 void Block::set (xcoord_t x, ycoord_t y, id_t id) {

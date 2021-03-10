@@ -2,7 +2,7 @@
 #define ids_h
 
 #include "datatypes.h"
-namespace Blocks {
+namespace Blocks { //0x00-0xbf
 const id_t air = 0x00;
 const id_t fire = 0x01;
 const id_t dirt = 0x02;
@@ -70,7 +70,7 @@ const id_t litTnt = 0x3f;
 const id_t lavaSource = 0x40;
 const id_t waterSource = 0x41;
 
-namespace Runtime {
+namespace Runtime { //0xc0-0xdf
 const id_t light0 = 0xc0;
 const id_t light1 = 0xc1;
 const id_t light2 = 0xc2;
@@ -80,9 +80,10 @@ const id_t light5 = 0xc5;
 const id_t light6 = 0xc6;
 const id_t light7 = 0xc7;
 const id_t empty = 0xc8;
+const id_t error = 0xc9;
 }
 
-namespace Generation {
+namespace Generation { //0xc0-ff
 const id_t air = 0xc0;
 const id_t tempAir = 0xc1;
 const id_t dirt = 0xc2;
@@ -100,7 +101,7 @@ const id_t sandstone = 0xcd;
 const id_t grass = 0xce;
 }
 
-namespace Update {
+namespace Update { //0xe0-0xff
 const id_t deletedWater0 = 0xe0;
 const id_t deletedWater1 = 0xe1;
 const id_t deletedWater2 = 0xe2;
@@ -111,7 +112,7 @@ const id_t deletedWater6 = 0xe6;
 const id_t deletedWater7 = 0xe7;
 }
 }
-namespace Storage { 
+namespace Storage { //0xc0-ff
 const id_t threeByteFlag = 0xfa; //Indicates that the next 2 bytes are compressed
 const id_t fourByteFlag  = 0xfb; //Indicates that the next 3 bytes are compressed
 const id_t comma = 0xfc; //Separates two similar saved items, such as two chests or two mobs
