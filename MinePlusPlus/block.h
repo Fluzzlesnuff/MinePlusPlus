@@ -25,6 +25,7 @@ class Block { //Not used in the object sense. Instead, this is just a set of fun
     bool isOpaque(id_t id);
     bool isSolid(id_t id);
     bool isWater(id_t id);
+    bool isDeletedWater(id_t id);
     bool isLava(id_t id);
     bool isFlammable(id_t id);
     bool isFarmland(id_t id);
@@ -55,6 +56,8 @@ class Block { //Not used in the object sense. Instead, this is just a set of fun
     */
     uint16_t isNear(const CoordPair& coords, id_t id, byte distance, MeasurementType measurementType);
     bool isOpenToSky(xcoord_t x, ycoord_t y, id_t ignoreBlock1 = Blocks::air, id_t ignoreBlock2 = Blocks::air);
+    id_t convertToDeleted (id_t id);
+    id_t convertFromDeleted (id_t id);
     void createBlockDB (worldWidth_t width, worldHeight_t height);
 };
 

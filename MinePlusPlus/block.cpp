@@ -106,6 +106,17 @@ bool Block::isWater(id_t id) {
   for (byte i = 0; i < 9; i++)
     if (waterBlocks[i] == id)
       return true;
+  return isDeletedWater(id);
+}
+bool Block::isDeletedWater(id_t id) {
+  using namespace Blocks;
+  id_t waterBlocks[] {
+    Update::deletedWater0, Update::deletedWater1, Update::deletedWater2, Update::deletedWater3, 
+    Update::deletedWater4, Update::deletedWater5, Update::deletedWater6, Update::deletedWater7
+  };
+  for (byte i = 0; i < 8; i++)
+    if (waterBlocks[i] == id)
+      return true;
   return false;
 }
 bool Block::isLava(id_t id) {
@@ -248,6 +259,34 @@ bool Block::isOpenToSky(xcoord_t x, ycoord_t y, id_t ignoreBlock1, id_t ignoreBl
   return true;
 }
 
+id_t Block::convertToDeleted (id_t id) {
+  using namespace Blocks;
+  switch (id) {
+    case water0: return Update::deletedWater0;
+    case water1: return Update::deletedWater1;
+    case water2: return Update::deletedWater2;
+    case water3: return Update::deletedWater3;
+    case water4: return Update::deletedWater4;
+    case water5: return Update::deletedWater5;
+    case water6: return Update::deletedWater6;
+    case water7: return Update::deletedWater7;
+    default: return Runtime::error;
+  }
+}
+id_t Block::convertFromDeleted (id_t id) {
+  using namespace Blocks;
+  switch (id) {
+    case Update::deletedWater0: return water0;
+    case Update::deletedWater1: return water1;
+    case Update::deletedWater2: return water2;
+    case Update::deletedWater3: return water3;
+    case Update::deletedWater4: return water4;
+    case Update::deletedWater5: return water5;
+    case Update::deletedWater6: return water6;
+    case Update::deletedWater7: return water7;
+    default: return Runtime::error;
+  }
+}
 void Block::createBlockDB (worldWidth_t width, worldHeight_t height) {
   uint16_t totalSize = width * height;
   blockDB = new id_t[totalSize];

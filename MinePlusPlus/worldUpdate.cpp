@@ -6,7 +6,7 @@ bool World::tryUpdate() {
   leftmostXCoordinate = max(player.getCoords().x - UPDATE_DISTANCE, -xLimit);
   rightmostXCoordinate = min(player.getCoords().x + UPDATE_DISTANCE, xLimit);
   updateMadeChanges = false;
-  
+
   update(Constant);
   if (millis() - lastTickTime >= msPerTick) {
     lastTickTime += msPerTick;
@@ -14,10 +14,10 @@ bool World::tryUpdate() {
     update(Tick);
     if (ticksDone % 2 == 0)
       update(Two_Tick);
-      if (ticksDone % 4 == 0) //Nested because a number divisible by 4 will always also be divisible by 2
-        update(Four_Tick);
-        if (ticksDone % 8 == 0) //Nested because a number divisible by 8 will always also be divisible by 4
-          update(Eight_Tick);
+    if (ticksDone % 4 == 0) //Nested because a number divisible by 4 will always also be divisible by 2
+      update(Four_Tick);
+    if (ticksDone % 8 == 0) //Nested because a number divisible by 8 will always also be divisible by 4
+      update(Eight_Tick);
     if (ticksDone % 5 == 0)
       update(Five_Tick);
   }
@@ -46,52 +46,52 @@ void World::update5Tick() {
   updateWater();
 }
 void World::World::update8Tick() {
-  
+
 }
 
 void World::updateWater () {
-  { //Delete water that shouldn't exist
-    for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Schedule water that doesn't have water to the sides for deletion
-      for (ycoord_t y = 0; y <= yLimit; y++) {
-        if (block.isWater(block.get(x, y)) && block.get(x, y) != Blocks::waterSource) { //Check whether the block is even water
-          bool validWaterToLeft = false;
-          bool validWaterToRight = false;
-          bool validWaterAbove = false;
-          for (uint8_t side = 0; side < 2; side++) {
-            if (x == (side ? xLimit : -xLimit)) //There's no water to the side if there's C_VOID to the set.
-              (side ? validWaterToRight : validWaterToLeft) = false;
-            else { //If it's not void, what is it?
-              id_t blockToCheck = block.get(x + (side ? 1 : -1), y);
-              if (block.isWater(blockToCheck) && (blockToCheck == Blocks::waterSource ? Blocks::water7 : blockToCheck) > (block.isWater(block.get(x, y)) ? block.get(x, y) : Blocks::water0)) { //If the block is water larger than the block current block, it's valid
-                (side ? validWaterToRight : validWaterToLeft) = true;
-              }
-            }
-          }
-          if (y != yLimit && block.isWater(block.get(x, y + 1)))
-            validWaterAbove = true;
-          if (!(validWaterToLeft || validWaterToRight || validWaterAbove))
-            block.set(x, y, Blocks::air);
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Schedule water that doesn't have water to the sides for deletion
+    for (ycoord_t y = 0; y <= yLimit; y++) {
+      const id_t blockToCheck = block.get(x, y);
+      if (block.isWater(blockToCheck) && blockToCheck != Blocks::waterSource) { //Check whether the block is even water
+        bool validWaterToLeft = false;
+        bool validWaterToRight = false;
+        bool validWaterAbove = false;
+        id_t sideBlock = block.get(x + 1, y);
+        if (block.isWater(sideBlock) && (sideBlock > blockToCheck)) { //If the block is water larger than the block current block, it's valid
+          validWaterToRight = true;
+        }
+        sideBlock = block.get(x - 1, y);
+        if (block.isWater(sideBlock) && (sideBlock > blockToCheck)) { //If the block is water larger than the block current block, it's valid
+          validWaterToLeft = true;
+        }
+        if (y != yLimit && block.isWater(block.get(x, y + 1)))
+          validWaterAbove = true;
+
+        if (!(validWaterToLeft || validWaterToRight || validWaterAbove)) {
+          block.set(x, y, block.convertToDeleted(blockToCheck));
         }
       }
-  }
+    }
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Truly delete water
+    for (ycoord_t y = 0; y <= yLimit; y++)
+      if (block.isDeletedWater(block.get(x, y)))
+        block.set(x, y, Blocks::air);
+
   for (uint8_t side = 0; side < 2; side++) { //Flow water to sides
     for (xcoord_t x = (side ? leftmostXCoordinate : rightmostXCoordinate); side ? (x <= rightmostXCoordinate) : (x >= leftmostXCoordinate); side ? x++ : x--) //Water flowing to the sides
       for (ycoord_t y = 0; y <= yLimit; y++) {
         bool validWaterToSide = false;
         if (block.isBrokenByFluid(block.get(x, y))) { //Check whether the block is even elligible to become water
-          if (x == (side ? xLimit : -xLimit)) //There's no water to the side if there's C_VOID to the left.
-            validWaterToSide = false;
-          else { //If it's not void, what is it?
-            id_t blockToCheck = block.get(x + (side ? 1 : -1), y);
-            if (block.isWater(blockToCheck) && (blockToCheck == Blocks::waterSource ? Blocks::water7 : blockToCheck) > (block.isWater(block.get(x, y)) ? block.get(x, y) + 1 : Blocks::water0)) { //If the block is water larger than the block current block, continue
-              //Now, to check if there is a block under the water to the side
-              if (y == 0) //If it's void, it's good
-                validWaterToSide = true;
-              else {
-                id_t blockToCheckUnderSide = block.get(x + (side ? 1 : -1), y - 1);
-                validWaterToSide = (!block.isBrokenByFluid(blockToCheckUnderSide) && !block.isWater(blockToCheckUnderSide));
-                //If the block under the block to the left is solid, there's valid water to the left!
-              }
+          id_t blockToCheck = block.get(x + (side ? 1 : -1), y);
+          if (block.isWater(blockToCheck) && (blockToCheck == Blocks::waterSource ? Blocks::water7 : blockToCheck) > (block.isWater(block.get(x, y)) ? block.get(x, y) + 1 : Blocks::water0)) { //If the block is water larger than the block current block, continue
+            //Now, to check if there is a block under the water to the side
+            if (y == 0) //If it's void, it's good
+              validWaterToSide = true;
+            else {
+              id_t blockToCheckUnderSide = block.get(x + (side ? 1 : -1), y - 1);
+              validWaterToSide = (!block.isBrokenByFluid(blockToCheckUnderSide) && !block.isWater(blockToCheckUnderSide));
+              //If the block under the block to the left is solid, there's valid water to the left!
             }
           }
           id_t blockOnSide = 0;

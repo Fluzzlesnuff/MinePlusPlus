@@ -16,13 +16,11 @@ enum Direction {
   right,
   up
 };
-
 enum WorldSize {
   Default,   //Default 256*32
   Tall,      //Tall    128*64
   Wide,      //Wide    512*16
 };
-
 enum WorldUpdateType {
   Constant,
   Tick,
@@ -31,7 +29,6 @@ enum WorldUpdateType {
   Five_Tick,
   Eight_Tick
 };
-
 enum Error {
   UNKNOWN_ERROR = -1,
   XCOORD_OOB    = -2,
@@ -39,12 +36,10 @@ enum Error {
   PARAM_OOB     = -4,
   PROB_SUM_ERR  = -5
 };
-
 enum MeasurementType {
   Chebyshev = 1,
   Taxicab = 2
 };
-
 enum ButtonReadMode {
   Normal,
   Push,
@@ -52,7 +47,6 @@ enum ButtonReadMode {
   Release,
   Change
 };
-
 enum CommandType {
   NoCommand,
   CommandError,
@@ -68,7 +62,6 @@ enum CommandType {
   GetMemory,
   ShowOverview
 };
-
 enum class ArgumentType {
   Other,
   XCoord,
@@ -76,13 +69,11 @@ enum class ArgumentType {
   TargetSelector,
   ID
 };
-
 enum class FunctionCallContext {
   Generic,
   Update,
   Generation
 };
-
 enum IOStreamFlag {
   endl,
   prefix
@@ -95,11 +86,9 @@ struct CoordPair {
   xcoord_t x;
   ycoord_t y;
 };
-
 struct ExactCoordPair {
   double x, y;
 };
-
 struct CommandData {
   CommandType type;
   int16_t args[8];
