@@ -21,6 +21,8 @@ bool World::tryUpdate() {
     if (ticksDone % 5 == 0)
       update(Five_Tick);
   }
+  if (updateMadeChanges)
+    updateLighting();
   return updateMadeChanges;
 }
 void World::update (WorldUpdateType updateType) {
@@ -49,6 +51,21 @@ void World::World::update8Tick() {
 
 }
 
+void World::updateLighting () {
+  using namespace Blocks::Runtime;
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++)
+      for (ycoord_t y = 0; y <= yLimit; y++) {
+        if (block.isAir(block.get(x, y)) && block.isOpenToSky(x, y))
+          block.set(x, y, light7);
+      }
+      
+  for (id_t lightIndex = light6; lightIndex >= light0; --lightIndex)
+    for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++)
+      for (ycoord_t y = 0; y <= yLimit; y++) {
+        if (block.isAir(block.get(x, y)) && block.isTouching(x, y, lightIndex + 1))
+          block.set(x, y, lightIndex);
+      }
+}
 void World::updateWater () {
   for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Schedule water that doesn't have water to the sides for deletion
     for (ycoord_t y = 0; y <= yLimit; y++) {
