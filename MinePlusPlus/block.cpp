@@ -15,6 +15,7 @@ id_t Block::get (const CoordPair& coords) {
 }
 void Block::set (xcoord_t x, ycoord_t y, id_t id) {
   blockDB[coordsToAddress(x, y)] = id;
+  world.lightingUpdateNeeded = true;
 #ifdef BLOCK_SET_LOGGING
   cout << prefix << F("Set block at (") << x << F(", ") << y << F(") with ID: ") << id << endl;
 #endif

@@ -13,6 +13,7 @@ extern xcoord_t xLimit; //Inclusive. Make negative to use negative x limit.
 extern ycoord_t yLimit; //Inclusive. Bottom limit is 0.
 
 class World { //One instance only, but used as a proper object.
+    friend class Block;
     WorldSize size;
     double ticksPerSecond;
     uint16_t msPerTick;
@@ -22,6 +23,7 @@ class World { //One instance only, but used as a proper object.
     xcoord_t leftmostXCoordinate; //Valid area for updates
     xcoord_t rightmostXCoordinate; //Valid area for updates
     bool updateMadeChanges;
+    bool lightingUpdateNeeded;
     
     void update (WorldUpdateType updateType); //Flows water, grows crops, drops gravel, etc.
     uint8_t updateAll ();

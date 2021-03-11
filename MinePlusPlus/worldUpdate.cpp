@@ -53,6 +53,11 @@ uint8_t World::updateAll () {
   return passes;
 }
 void World::updateConstant() {
+  if (lightingUpdateNeeded) {
+    updateLighting();
+    lightingUpdateNeeded = false;
+    updateMadeChanges = true;
+  }
 }
 void World::updateTick() {
   updateFallingBlocks();
