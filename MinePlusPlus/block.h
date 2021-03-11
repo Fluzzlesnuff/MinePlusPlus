@@ -27,6 +27,7 @@ class Block { //Not used in the object sense. Instead, this is just a set of fun
     bool isWater(id_t id);
     bool isDeletedWater(id_t id);
     bool isLava(id_t id);
+    bool isDeletedLava(id_t id);
     bool isFlammable(id_t id);
     bool isFarmland(id_t id);
     bool isAir(id_t id);

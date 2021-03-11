@@ -63,6 +63,7 @@ void World::update4Tick() {
 }
 void World::update5Tick() {
   updateWater();
+  updateLava();
 }
 void World::World::update8Tick() {
 
@@ -159,6 +160,72 @@ void World::updateWater () {
           block.set(x, y, Blocks::waterSource);
           updateMadeChanges = true;
         }
+      }
+}
+void World::updateLava () {
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Schedule lava that doesn't have lava to the sides for deletion
+    for (ycoord_t y = 0; y <= yLimit; y++) {
+      const id_t blockToCheck = block.get(x, y);
+      if (block.isLava(blockToCheck) && blockToCheck != Blocks::lavaSource) { //Check whether the block is even lava
+        bool validLavaToLeft = false;
+        bool validLavaToRight = false;
+        bool validLavaAbove = false;
+        id_t sideBlock = block.get(x + 1, y);
+        if (block.isLava(sideBlock) && (sideBlock > blockToCheck)) { //If the block is lava larger than the block current block, it's valid
+          validLavaToRight = true;
+        }
+        sideBlock = block.get(x - 1, y);
+        if (block.isLava(sideBlock) && (sideBlock > blockToCheck)) { //If the block is lava larger than the block current block, it's valid
+          validLavaToLeft = true;
+        }
+        if (y != yLimit && block.isLava(block.get(x, y + 1)))
+          validLavaAbove = true;
+
+        if (!(validLavaToLeft || validLavaToRight || validLavaAbove)) {
+          block.set(x, y, block.convertToDeleted(blockToCheck));
+        }
+      }
+    }
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Truly delete lava
+    for (ycoord_t y = 0; y <= yLimit; y++)
+      if (block.isDeletedLava(block.get(x, y))) {
+        block.set(x, y, Blocks::air);
+      }
+
+  for (uint8_t side = 0; side < 2; side++) { //Flow lava to sides
+    for (xcoord_t x = (side ? leftmostXCoordinate : rightmostXCoordinate); side ? (x <= rightmostXCoordinate) : (x >= leftmostXCoordinate); side ? x++ : x--) //Lava flowing to the sides
+      for (ycoord_t y = 0; y <= yLimit; y++) {
+        bool validLavaToSide = false;
+        if (block.isBrokenByFluid(block.get(x, y))) { //Check whether the block is even elligible to become lava
+          id_t blockToCheck = block.get(x + (side ? 1 : -1), y);
+          if (block.isLava(blockToCheck) && (blockToCheck == Blocks::lavaSource ? Blocks::lava3 : blockToCheck) > (block.isLava(block.get(x, y)) ? block.get(x, y) + 1 : Blocks::lava0)) { //If the block is lava larger than the block current block, continue
+            //Now, to check if there is a block under the lava to the side
+            if (y == 0) //If it's void, it's good
+              validLavaToSide = true;
+            else {
+              id_t blockToCheckUnderSide = block.get(x + (side ? 1 : -1), y - 1);
+              validLavaToSide = (!block.isBrokenByFluid(blockToCheckUnderSide) && !block.isLava(blockToCheckUnderSide));
+              //If the block under the block to the left is solid, there's valid lava to the left!
+            }
+          }
+          id_t blockOnSide = 0;
+          if (validLavaToSide) {
+            blockOnSide = block.get(x +  (side ? 1 : -1), y);
+            if (blockOnSide == Blocks::lavaSource)
+              blockOnSide = Blocks::lava3;
+          }
+          if (validLavaToSide) {
+            block.set(x, y, blockOnSide - 1);
+            updateMadeChanges = true;
+          }
+        }
+      }
+  }
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Flow lava down
+    for (ycoord_t y = 0; y <= yLimit; y++)
+      if (block.isBrokenByFluid(block.get(x, y)) && (y == yLimit ? false : block.isLava(block.get(x, y + 1)))) {
+        block.set(x, y, Blocks::lava3);
+        updateMadeChanges = true;
       }
 }
 void World::updateFallingBlocks () {

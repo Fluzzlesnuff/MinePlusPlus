@@ -107,7 +107,10 @@ bool Block::isDeletedWater(id_t id) {
   return id >= Blocks::Update::deletedWater0 && id <= Blocks::Update::deletedWater7;
 }
 bool Block::isLava(id_t id) {
-  return id >= Blocks::lava0 && id <= Blocks::lava3;
+  return (id >= Blocks::lava0 && id <= Blocks::lava3) || id == Blocks::lavaSource || isDeletedLava(id);
+}
+bool Block::isDeletedLava(id_t id) {
+  return id >= Blocks::Update::deletedLava0 && id <= Blocks::Update::deletedLava3;
 }
 bool Block::isFlammable(id_t id) {
   using namespace Blocks;
@@ -245,6 +248,12 @@ id_t Block::convertToDeleted (id_t id) {
     case water5: return Update::deletedWater5;
     case water6: return Update::deletedWater6;
     case water7: return Update::deletedWater7;
+
+    case lava0: return Update::deletedLava0;
+    case lava1: return Update::deletedLava1;
+    case lava2: return Update::deletedLava2;
+    case lava3: return Update::deletedLava3;
+
     default: return Runtime::error;
   }
 }

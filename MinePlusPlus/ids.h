@@ -110,6 +110,14 @@ const id_t deletedWater4 = 0xe4;
 const id_t deletedWater5 = 0xe5;
 const id_t deletedWater6 = 0xe6;
 const id_t deletedWater7 = 0xe7;
+const id_t deletedLava0 = 0xe8;
+const id_t deletedLava1 = 0xe9;
+const id_t deletedLava2 = 0xea;
+const id_t deletedLava3 = 0xeb;
+const id_t deletedLava4 = 0xec;
+const id_t deletedLava5 = 0xed;
+const id_t deletedLava6 = 0xee;
+const id_t deletedLava7 = 0xef;
 }
 }
 namespace Storage { //0xc0-ff

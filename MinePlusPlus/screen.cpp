@@ -178,6 +178,8 @@ const byte* Screen::idToBitmap (id_t id, byte version, FunctionCallContext conte
       case sapling:   return Textures::Blocks::sapling;
       case flower:    return Textures::Blocks::flower;
       case tnt:     return Textures::Blocks::tnt;
+      case waterSource: return Textures::Blocks::water_7;
+      case lavaSource: return Textures::Blocks::lava_3;
 
       case Runtime::light0:    return Textures::Blocks::light_0;
       case Runtime::light1:    return Textures::Blocks::light_1;
@@ -187,7 +189,6 @@ const byte* Screen::idToBitmap (id_t id, byte version, FunctionCallContext conte
       case Runtime::light5:    return Textures::Blocks::light_5;
       case Runtime::light6:    return Textures::Blocks::light_6;
       case Runtime::light7:    return Textures::Blocks::light_7;
-      case waterSource: return Textures::Blocks::water_7;
       default:          return Textures::Blocks::error;
     }
   } else if (context == FunctionCallContext::Generation) {

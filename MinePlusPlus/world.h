@@ -34,6 +34,7 @@ class World { //One instance only, but used as a proper object.
 
     void updateLighting ();
     void updateWater ();
+    void updateLava ();
     void updateFallingBlocks ();
     
     void generateAir ();
