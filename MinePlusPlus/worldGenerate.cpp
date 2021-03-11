@@ -97,6 +97,8 @@ void World::generate (WorldSize sizeParam) {
   screen.renderWorldOverview();
 #endif
   Serial.println(freeMemory());
+  cout << prefix << F("Updating Everything") << endl;
+  cout << prefix << F("\tFinished (") << updateAll() << F(" passes)") << endl;
   start();
   cout << prefix << F("\tFinished") << endl;
 }
@@ -560,7 +562,7 @@ void World::generateTrees () {
         block.set(x, y, Blocks::wood);
 }
 void World::generateLeaves () {
-  cout << prefix << F("Generation Stage 16: Leaves") << endl << F("\tPass 1") << endl;
+  cout << prefix << F("Generation Stage 16: Leaves") << endl << prefix << F("\tPass 1") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++)
     for (ycoord_t y = 0; y <= yLimit; y++)
       if (block.get(x, y) == Blocks::air && block.isTouchingWide(x, y, Blocks::wood) && ((!block.isTouchingWide(x, y, Blocks::dirt) && !block.isTouchingWide(x, y, Blocks::stone) && !block.isTouchingWide(x, y, Blocks::sand) && !block.isTouchingWide(x, y, Blocks::waterSource)) || (x <= -xLimit + 1 ? false : block.get(x - 2, y) == Blocks::Generation::leaves) || (x >= xLimit - 1 ? false : block.get(x + 2, y) == Blocks::Generation::leaves)))

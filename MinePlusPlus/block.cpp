@@ -123,6 +123,9 @@ bool Block::isFarmland(id_t id) {
 bool Block::isAir(id_t id) {
   return (id >= Blocks::Runtime::light0 && id <= Blocks::Runtime::light7) || id == Blocks::air;
 }
+bool Block::isLight(id_t id) {
+  return (id >= Blocks::Runtime::light0 && id <= Blocks::Runtime::light7);
+}
 bool Block::isBrokenByFluid(id_t id) {
   using namespace Blocks;
   const id_t fluidBreakableBlocks[] {torch, grass, flower};

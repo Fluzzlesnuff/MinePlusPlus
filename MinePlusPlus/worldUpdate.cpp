@@ -35,6 +35,23 @@ void World::update (WorldUpdateType updateType) {
     case WorldUpdateType::Eight_Tick: update8Tick();    break;
   }
 }
+uint8_t World::updateAll () {
+  leftmostXCoordinate = -xLimit;
+  rightmostXCoordinate = xLimit;
+
+  uint8_t passes;
+  do {
+    updateMadeChanges = false;
+    updateTick();
+    update2Tick();
+    update4Tick();
+    update5Tick();
+    update8Tick();
+    ++passes;
+  } while (updateMadeChanges);
+  updateLighting();
+  return passes;
+}
 void World::updateConstant() {
 }
 void World::updateTick() {
@@ -55,14 +72,19 @@ void World::updateLighting () {
   using namespace Blocks::Runtime;
   for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++)
       for (ycoord_t y = 0; y <= yLimit; y++) {
+        if (block.isAir(block.get(x, y)))
+          block.set(x, y, light0);
+      }
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++)
+      for (ycoord_t y = 0; y <= yLimit; y++) {
         if (block.isAir(block.get(x, y)) && block.isOpenToSky(x, y))
           block.set(x, y, light7);
       }
-      
   for (id_t lightIndex = light6; lightIndex >= light0; --lightIndex)
     for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++)
       for (ycoord_t y = 0; y <= yLimit; y++) {
-        if (block.isAir(block.get(x, y)) && block.isTouching(x, y, lightIndex + 1))
+        const id_t currentBlock = block.get(x, y);
+        if (block.isAir(currentBlock) && block.isTouching(x, y, lightIndex + 1) && ((!block.isLight(currentBlock)) || currentBlock < lightIndex))
           block.set(x, y, lightIndex);
       }
 }

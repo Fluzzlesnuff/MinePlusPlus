@@ -24,6 +24,7 @@ class World { //One instance only, but used as a proper object.
     bool updateMadeChanges;
     
     void update (WorldUpdateType updateType); //Flows water, grows crops, drops gravel, etc.
+    uint8_t updateAll ();
     void updateConstant();
     void updateTick();
     void update2Tick();
