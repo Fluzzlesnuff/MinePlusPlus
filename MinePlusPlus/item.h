@@ -1,6 +1,5 @@
 #ifndef item_h
 #define item_h
-
 #include "datatypes.h"
 
 class ItemObject { //A proper object. Used in arrays. This is under the-hood functionality, and is not usable outside of the Item class.
@@ -11,7 +10,6 @@ class ItemObject { //A proper object. Used in arrays. This is under the-hood fun
     unsigned long timeOfCreation; //The time in milliseconds, from system start, that the item was dropped.
     ItemObject (xcoord_t xParam, ycoord_t yParam, id_t idParam);
 };
-
 extern ItemObject *items[]; //A list of pointers to ItemObjects.
 
 class Item { //A set of functions for interacting with the items array.
@@ -21,7 +19,6 @@ class Item { //A set of functions for interacting with the items array.
     bool despawn (); //Removes the oldest item. Used when the maximum number of items is reached.
     void list (); //Lists the items currently in existence via serialLog.
 };
-
 extern Item item; //The item object for the item.xxx functions.
 
 #endif

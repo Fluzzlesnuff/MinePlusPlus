@@ -81,11 +81,9 @@ bool Block::dropsItem (id_t id, id_t toolUsed) {
 bool Block::isAnimated(id_t id) {
   return id == Blocks::fire;
 }
-
 bool Block::place (const CoordPair& coords, id_t blockType) {
   return true;
 }
-
 bool Block::isOpaque(id_t id) {
   return true;
 }
@@ -150,7 +148,6 @@ bool Block::isBrokenByFallingBlocks(id_t id) {
       return true;
   return false;
 }
-
 byte Block::isTouching(xcoord_t x, ycoord_t y, id_t id) {
   // Scans blocks starting from the top and going clockwise
   id_t count{0};
@@ -193,7 +190,6 @@ uint16_t Block::isNear(xcoord_t x, ycoord_t y, id_t id, byte distance, Measureme
 #ifdef BLOCK_NEAR_TOUCHING_LOGGING
   cout << prefix << F("Block::isNear Started with args ") << x << F(", ") << y << F(", ") << id << F(", ") << distance << F(", ") << (measurementType == Chebyshev ? F("Chebyshev") : F("Taxicab")) << endl;
 #endif
-
   uint16_t count{0};
   if (distance < 2 || distance > 10) {
     cout << PARAM_OOB;
@@ -228,7 +224,6 @@ uint16_t Block::isNear(xcoord_t x, ycoord_t y, id_t id, byte distance, Measureme
 uint16_t Block::isNear(const CoordPair& coordPair, id_t id, byte distance, MeasurementType measurementType) {
   return isNear(coordPair.x, coordPair.y, id, distance, measurementType);
 }
-
 bool Block::isOpenToSky(xcoord_t x, ycoord_t y, id_t ignoreBlock1, id_t ignoreBlock2) {
   for (ycoord_t yIndex = y + 1; yIndex <= yLimit; yIndex++) {
     id_t idToTest = get(x, yIndex);
@@ -237,7 +232,6 @@ bool Block::isOpenToSky(xcoord_t x, ycoord_t y, id_t ignoreBlock1, id_t ignoreBl
   }
   return true;
 }
-
 id_t Block::convertToDeleted (id_t id) {
   using namespace Blocks;
   switch (id) {
@@ -249,12 +243,10 @@ id_t Block::convertToDeleted (id_t id) {
     case water5: return Update::deletedWater5;
     case water6: return Update::deletedWater6;
     case water7: return Update::deletedWater7;
-
     case lava0: return Update::deletedLava0;
     case lava1: return Update::deletedLava1;
     case lava2: return Update::deletedLava2;
     case lava3: return Update::deletedLava3;
-
     default: return Runtime::error;
   }
 }
@@ -279,16 +271,13 @@ void Block::createBlockDB (worldWidth_t width, worldHeight_t height) {
   cout << prefix << F("Created blockDB with dimensions: ") << width << F(", ") << height << endl;
 #endif
 }
-
 blockDBAddress_t Block::coordsToAddress (xcoord_t x, ycoord_t y) {
   return (worldWidth * y) + x + ((worldWidth - 1) / 2);
 }
-
 bool Block::scanToolTable (const id_t table[TT_ARRAY_SIZE], const id_t& tool) {
   for (byte i = 0; i < TT_ARRAY_SIZE; i++)
     if (table[i] == tool)
       return true;
   return false;
 }
-
 Block block;

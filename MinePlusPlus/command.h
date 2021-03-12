@@ -1,6 +1,5 @@
 #ifndef command_h
 #define command_h
-
 #include "includes.h"
 
 class CommandManager {
@@ -8,7 +7,6 @@ class CommandManager {
     CommandData parseCommand (const String& string);
     bool runCommands(); //reads com.in, parses, and runs commands. Should be called as often as possible.
     //Returns true if a command was recieved and run without errors.
-
     class Command {
         CommandType thisCommandType;
         String communicationName; //The name used in messages relating to the command, before the colon.
@@ -27,8 +25,6 @@ class CommandManager {
     const Command mem{CommandType::GetMemory, "Memory"};
     const Command map{CommandType::ShowOverview, "Map"};
 };
-
-
 extern CommandManager command;
 
 #endif

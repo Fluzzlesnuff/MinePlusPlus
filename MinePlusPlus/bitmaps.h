@@ -53,7 +53,6 @@ const static PROGMEM byte upArrow[8 * 1] {
 };
 }
 }
-
 namespace Textures {
 namespace Blocks {
 const static PROGMEM byte fire1[] {
@@ -91,7 +90,6 @@ const static PROGMEM byte dirt[] {
   B10101, B01010,
   B01010, B10101,
   B10101, B01010
-
   /* Alternative (No Border)
     B01010, B10101,
     B10101, B01010,
@@ -971,5 +969,4 @@ const static PROGMEM byte error[] {
 };
 }
 }
-
 #endif

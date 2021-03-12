@@ -3,7 +3,6 @@
 void IOStream::init(long bitrate) {
   Serial.begin(bitrate);
 }
-
 IStream& operator>> (IStream& in, String& var) {
   String out;
   while (Serial.available()) {
@@ -15,7 +14,6 @@ IStream& operator>> (IStream& in, String& var) {
     out += c;
   }
 }
-
 OStream& operator<< (OStream& out, const String& input) {
   Serial.print(input);
   return out;
@@ -59,7 +57,6 @@ OStream& operator<< (OStream& out, Error error) {
   exit(1);
   return out;
 }
-
 OStream& operator<< (OStream& out, IOStreamFlag flag) {
   switch (flag) {
     case endl:

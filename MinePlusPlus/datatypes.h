@@ -1,14 +1,11 @@
 #ifndef datatypes_h
 #define datatypes_h
 
-//For all enums, structs, and typedefs. #include in *header files* that need them. Already included in .cpp files due to includes.h
-
 typedef int16_t   ycoord_t;
 typedef int8_t    xcoord_t;
 typedef uint16_t  blockDBAddress_t;
 typedef uint16_t  worldWidth_t;
 typedef uint8_t   worldHeight_t;
-
 typedef byte id_t;
 
 enum Direction {
@@ -78,10 +75,10 @@ enum IOStreamFlag {
   endl,
   prefix
 };
+
 struct ArgTypeList {
   ArgumentType argTypes[8];
 };
-
 struct CoordPair {
   xcoord_t x;
   ycoord_t y;

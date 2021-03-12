@@ -5,11 +5,9 @@ class IOStream {
   public:
     void init(long bitrate = 1000000);
 };
-
 class IStream : public IOStream {
   friend IStream& operator>> (IStream& in, String& var);
 };
-
 class OStream : public IOStream {
     void prefix ();
     template <typename T>

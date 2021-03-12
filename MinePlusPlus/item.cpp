@@ -7,11 +7,8 @@ ItemObject::ItemObject (xcoord_t xParam, ycoord_t yParam, id_t idParam) {
   id = idParam;
   timeOfCreation = millis();
 }
-
 void Item::pickUp (xcoord_t x, ycoord_t y) {
-
 }
-
 void Item::spawn (xcoord_t x, ycoord_t y, id_t id) {
   for (uint8_t i = 0; i < (sizeof(items) / sizeof(items[0])); i++) { //find the first NULL pointer in the array and assign it the value of the new item
     if (items[i] == NULL) {
@@ -22,7 +19,6 @@ void Item::spawn (xcoord_t x, ycoord_t y, id_t id) {
   despawn(); //If no pointers were NULL (i.e. return; didn't get called), despawn an item and try again.
   spawn(x, y, id); //recurse
 }
-
 bool Item::despawn () {
   unsigned long oldestTime = millis();
   id_t oldestItemIndex = 255;
@@ -40,16 +36,4 @@ bool Item::despawn () {
   items[oldestItemIndex] = NULL;
   return true;
 }
-
-/*void Item::list () {
-  com.out.log(F("LISTING ITEMS..."));
-  for (int i = 0; i < (sizeof(items) / sizeof(items[0])); i++) {
-    serialLogPrefix();
-    if (items[i] == NULL)
-      Serial.println(F("-"));
-    else
-      Serial.println(items[i]->id);
-  }
-  }*/
-
 Item item;

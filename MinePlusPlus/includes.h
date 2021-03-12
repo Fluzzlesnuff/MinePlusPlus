@@ -1,6 +1,5 @@
 #ifndef includes_h
 #define includes_h
-
 #include "Arduino.h"
 #include "ids.h"
 #include "bitmaps.h"
@@ -18,5 +17,4 @@
 #include "button.h"
 #include <openGLCD.h>
 #include <EEPROM.h>
-
 #endif

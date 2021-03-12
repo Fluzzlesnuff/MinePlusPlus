@@ -3,7 +3,6 @@
 void Player::move (xcoord_t xParam, ycoord_t yParam) {
   move(double(xParam), double(yParam));
 }
-
 void Player::move (double xParam, double yParam) {
 #ifdef PLAYER_MOVE_LOGGING
   cout << F("Moving player to (") << xParam << F(", ") << yParam << ')' << endl;
@@ -15,15 +14,12 @@ void Player::move (double xParam, double yParam) {
   x = xParam;
   y = yParam;
 }
-
 void Player::move (const ExactCoordPair& coords) {
   move(coords.x, coords.y);
 }
-
 void Player::move (const CoordPair& coords) {
   move(coords.x, coords.y);
 }
-
 bool Player::walk (Direction dir, double distance) {
   switch (dir) {
     case left:
@@ -47,13 +43,10 @@ bool Player::walk (Direction dir, double distance) {
      default: return false;
   }
 }
-
 CoordPair Player::getCoords(xcoord_t xOffset, ycoord_t yOffset) {
   return CoordPair{xcoord_t(round(x + xOffset)), ycoord_t(round(y + yOffset))};
 }
-
 ExactCoordPair Player::getExactCoords(double xOffset, double yOffset) {
   return ExactCoordPair{x + xOffset, y + yOffset};
 }
-
 Player player;

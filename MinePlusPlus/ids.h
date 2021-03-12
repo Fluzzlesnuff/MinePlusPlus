@@ -1,6 +1,5 @@
 #ifndef ids_h
 #define ids_h
-
 #include "datatypes.h"
 namespace Blocks { //0x00-0xbf
 const id_t air = 0x00;
@@ -82,7 +81,6 @@ const id_t light7 = 0xc7;
 const id_t empty = 0xc8;
 const id_t error = 0xc9;
 }
-
 namespace Generation { //0xc0-ff
 const id_t air = 0xc0;
 const id_t tempAir = 0xc1;
@@ -100,7 +98,6 @@ const id_t leaves = 0xcc;
 const id_t sandstone = 0xcd;
 const id_t grass = 0xce;
 }
-
 namespace Update { //0xe0-0xff
 const id_t deletedWater0 = 0xe0;
 const id_t deletedWater1 = 0xe1;
@@ -128,7 +125,6 @@ const id_t semicolon = 0xfd; //Separates two saving sections, such as pigs and z
 const id_t period = 0xfe; //Separates two world save sections, such as between blocks and items
 const id_t end = 0xff; //Will be deprecated once a map of the filesystem is added
 }
-
 namespace Items {
 const id_t none = 0x00;
 const id_t gunpowder = 0x01;

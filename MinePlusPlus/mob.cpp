@@ -7,11 +7,8 @@ void Mob::damage (id_t hearts) {
     health -= hearts;
   }
 }
-
 void Mob::kill () {
-
 }
-
 bool Mob::walk (Direction dir) {
   if (dir == right) {
     if (!block.isSolid(block.get(x + 1, y)) && !block.isSolid(block.get(x + 1, y - 1))) {
@@ -36,25 +33,15 @@ bool Mob::walk (Direction dir) {
     }
   }
 }
-
 int Mob::drop (id_t id, id_t num) {
-
 }
-
 int Mob::dropRand (id_t id1, id_t num1, float chance1, id_t num2, float chance2, id_t num3, float chance3) {
-
 }
-
 void Mob::follow (bool safety) {
-
 }
-
 void Hostile::attackMelee (id_t hearts) {
-
 }
-
 void Hostile::attackRanged (id_t hearts, id_t projectileId) {
-
 }
 
 void Zombie::kill () {

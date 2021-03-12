@@ -103,9 +103,6 @@ void World::generate (WorldSize sizeParam) {
   cout << prefix << F("\tFinished") << endl;
 }
 
-//########################
-//# GENERATION FUNCTIONS #
-//########################
 void World::generateAir () {
   cout << prefix << F("Generation Stage 0: Air") << endl;
   for (xcoord_t x = -xLimit; x <= xLimit; x++)

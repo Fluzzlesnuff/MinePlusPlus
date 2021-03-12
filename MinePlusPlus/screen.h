@@ -13,7 +13,6 @@ class Screen { //A set of functions, not a proper object
     void renderWorldOverview (xcoord_t center);
     void updateAnimations (); //Public function to update animations. Only runs if the last update was more than a certain period  ago.
 };
-
 extern Screen screen;
 
 #endif

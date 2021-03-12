@@ -1,12 +1,11 @@
 #include "includes.h"
+
 bool World::tryUpdate() {
   static uint32_t lastTickTime;
   static uint32_t ticksDone;
-
   leftmostXCoordinate = max(player.getCoords().x - UPDATE_DISTANCE, -xLimit);
   rightmostXCoordinate = min(player.getCoords().x + UPDATE_DISTANCE, xLimit);
   updateMadeChanges = false;
-
   update(Constant);
   if (millis() - lastTickTime >= msPerTick) {
     lastTickTime += msPerTick;
@@ -38,7 +37,6 @@ void World::update (WorldUpdateType updateType) {
 uint8_t World::updateAll () {
   leftmostXCoordinate = -xLimit;
   rightmostXCoordinate = xLimit;
-
   uint8_t passes;
   do {
     updateMadeChanges = false;
@@ -74,7 +72,6 @@ void World::update5Tick() {
 void World::World::update8Tick() {
 
 }
-
 void World::updateLighting () {
   using namespace Blocks::Runtime;
   for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++)
@@ -113,7 +110,6 @@ void World::updateWater () {
         }
         if (y != yLimit && block.isWater(block.get(x, y + 1)))
           validWaterAbove = true;
-
         if (!(validWaterToLeft || validWaterToRight || validWaterAbove)) {
           block.set(x, y, block.convertToDeleted(blockToCheck));
         }
@@ -123,7 +119,6 @@ void World::updateWater () {
     for (ycoord_t y = 0; y <= yLimit; y++)
       if (block.isDeletedWater(block.get(x, y)))
         block.set(x, y, Blocks::air);
-
   for (uint8_t side = 0; side < 2; side++) { //Flow water to sides
     for (xcoord_t x = (side ? leftmostXCoordinate : rightmostXCoordinate); side ? (x <= rightmostXCoordinate) : (x >= leftmostXCoordinate); side ? x++ : x--) //Water flowing to the sides
       for (ycoord_t y = 0; y <= yLimit; y++) {
@@ -197,7 +192,6 @@ void World::updateLava () {
       if (block.isDeletedLava(block.get(x, y))) {
         block.set(x, y, Blocks::air);
       }
-
   for (uint8_t side = 0; side < 2; side++) { //Flow lava to sides
     for (xcoord_t x = (side ? leftmostXCoordinate : rightmostXCoordinate); side ? (x <= rightmostXCoordinate) : (x >= leftmostXCoordinate); side ? x++ : x--) //Lava flowing to the sides
       for (ycoord_t y = 0; y <= yLimit; y++) {

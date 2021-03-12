@@ -3,7 +3,6 @@
 byte animationFrame2;
 byte animationFrame3;
 byte animationFrame4;
-
 const uint16_t animationFramePeriod = 5000;
 
 void Screen::renderBitmap (const byte bitmap[], uint8_t rows, uint8_t columns, byte xPixel, byte yPixel) {
@@ -194,7 +193,6 @@ const byte* Screen::idToBitmap (id_t id, byte version, FunctionCallContext conte
   } else if (context == FunctionCallContext::Generation) {
     switch (id) {
       case Generation::air:     return Textures::Blocks::light_7;
-
       default:          return Textures::Blocks::error;
     }
   } else if (context == FunctionCallContext::Update) {

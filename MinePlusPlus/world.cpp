@@ -6,7 +6,6 @@
 #define EE_VERSION_HIGH_BYTE        25
 #define EE_VERSION_LOW_BYTE         26
 #define EE_DEFAULT_ICON_BYTE        27
-
 #define EE_WORLD_SIZE_BYTE          32
 #define EE_PLAYER_X_HIGH_BYTE       33
 #define EE_PLAYER_LOW_X_Y_BYTE      34
@@ -19,7 +18,6 @@
 
 worldWidth_t worldWidth;
 worldHeight_t worldHeight;
-
 xcoord_t xLimit; //Inclusive. Make negative to use negative x limit.
 ycoord_t yLimit; //Inclusive. Bottom limit is 0.
 
@@ -105,10 +103,6 @@ void World::load () {
 #endif
 }
 void World::save () {
-  /*for (int j = 0; j < 16; j++) {
-    for (int i = 0; i < 256; i++)
-    EEPROM.update(i + (j * 256), i);
-    }*/
   byte worldSizeByte = 0x00;
   bitWrite(worldSizeByte, 7, bitRead(size, 3));
   bitWrite(worldSizeByte, 6, bitRead(size, 2));
@@ -179,7 +173,5 @@ void World::save () {
   }
   EEPROM.update(EEPROMAddress, Storage::end);
   EEPROM.update(EEPROMAddress + 1, Storage::end);
-
 }
-
 World world;

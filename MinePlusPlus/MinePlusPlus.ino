@@ -1,5 +1,4 @@
 //VERSION: development version
-
 #include "includes.h"
 bool selectedGenerateButton = false;
 
@@ -29,7 +28,6 @@ void setup() {
   screen.renderBitmap(Bitmaps::UI::upArrow, 8, 1, 35, 40);
 #endif
 }
-
 void loop() {
   if (world.isRunning)
     worldLoop();

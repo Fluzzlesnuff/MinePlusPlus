@@ -1,14 +1,11 @@
 #ifndef world_h
 #define world_h
-
 #include "datatypes.h"
 
-#define UPDATE_DISTANCE 10 //The horizontal distance from the player in which updates occur. Inclusive, so
-                            //a value of 1 updates the player's block and those to the left and right
+#define UPDATE_DISTANCE 10 //The horizontal distance from the player in which updates occur. Inclusive, so a value of 1 updates the player's block and those to the left and right
 
 extern worldWidth_t worldWidth;
 extern worldHeight_t worldHeight;
-
 extern xcoord_t xLimit; //Inclusive. Make negative to use negative x limit.
 extern ycoord_t yLimit; //Inclusive. Bottom limit is 0.
 
@@ -33,7 +30,7 @@ class World { //One instance only, but used as a proper object.
     void update4Tick();
     void update5Tick();
     void update8Tick();
-
+    
     void updateLighting ();
     void updateWater ();
     void updateLava ();
@@ -58,7 +55,6 @@ class World { //One instance only, but used as a proper object.
     void generateTrees ();
     void generateLeaves ();
     void generatePlants ();
-
   public:
     bool isRunning = false;
     bool tryUpdate();
@@ -67,7 +63,6 @@ class World { //One instance only, but used as a proper object.
     void load (); //Loads a world from EEPROM into ram.
     void save (); //Saves the world in RAM to EEPROM, overwriting any older saves.
 };
-
 extern World world; //The world object for world.xx functions.
 
 #endif

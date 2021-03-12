@@ -7,7 +7,6 @@ CommandManager::Command::Command (CommandType commandTypeParam, const String& na
   for (uint8_t i = 0; i < 8; i++)
     argumentTypes[i] = argTypeListParam.argTypes[i];
 }
-
 CommandData CommandManager::parseCommand (const String& string) {
   if (string == "") {
     CommandData failCommand;
@@ -53,7 +52,6 @@ CommandData CommandManager::parseCommand (const String& string) {
   }
   return outputCommand;
 }
-
 CommandData CommandManager::Command::parsePerCommand (const String* args, uint8_t inputArgsCount) const {
   CommandData outputCommand;
   outputCommand.type = thisCommandType;
@@ -67,9 +65,7 @@ CommandData CommandManager::Command::parsePerCommand (const String* args, uint8_
     for (uint8_t i = 0; i < numberOfArguments; i++) {
       if (args[i + 1] == "0") { //to differentiate between toInt() returning an error and an intentional 0, parsing of 0 is done here.
         outputCommand.args[i] = 0;
-      }
-
-      else if ((args[i + 1].charAt(0) == 'B' || args[i + 1].charAt(0) == 'b') && (args[i + 1].charAt(1) == '0' || args[i + 1].charAt(1) == '1')) { //binary to decimal parsing
+      } else if ((args[i + 1].charAt(0) == 'B' || args[i + 1].charAt(0) == 'b') && (args[i + 1].charAt(1) == '0' || args[i + 1].charAt(1) == '1')) { //binary to decimal parsing
         int16_t parsedDecimal = 0;
         for (uint8_t binaryParseIndex = args[i + 1].length() - 1; binaryParseIndex > 0; binaryParseIndex--) {
           if (args[i + 1].charAt(binaryParseIndex) == '1')
@@ -78,14 +74,11 @@ CommandData CommandManager::Command::parsePerCommand (const String* args, uint8_
             cout << prefix << communicationName << F(": Argument ") << i + 1 << F(" is invalid.") << endl;
         }
         outputCommand.args[i] = parsedDecimal;
-      }
-
-      else if (args[i + 1].charAt(0) == '~') { //relative coordinates to exact coordinates parsing
+      } else if (args[i + 1].charAt(0) == '~') { //relative coordinates to exact coordinates parsing
         if (!(argumentTypes[i] == ArgumentType::XCoord || argumentTypes[i] == ArgumentType::YCoord)) {
           cout << prefix << communicationName << F(": Argument ") << i + 1 << F(" is invalid.") << endl;
           outputCommand.type = CommandType::CommandError;
         }
-
         int16_t parsedCoordinate = 0;
         int16_t numberPart = 0;
         if (args[i + 1].charAt(1) == '0' || args[i + 1].length() == 1)
@@ -96,23 +89,17 @@ CommandData CommandManager::Command::parsePerCommand (const String* args, uint8_
             cout << prefix << communicationName << F(": Argument ") << i + 1 << F(" is invalid.") << endl;
             outputCommand.type = CommandType::CommandError;
           }
-
         }
         if (argumentTypes[i] == ArgumentType::XCoord)
           outputCommand.args[i] = player.getCoords().x + numberPart;
         else if (argumentTypes[i] == ArgumentType::YCoord)
           outputCommand.args[i] = player.getCoords().y + numberPart;
-      }
-
-      else if (args[i + 1].toInt() != 0) {//regular parsing
+      } else if (args[i + 1].toInt() != 0) {//regular parsing
         outputCommand.args[i] = args[i + 1].toInt();
-      }
-
-      else {
+      } else {
         cout << prefix << communicationName << F(": Argument ") << i + 1 << F(" is invalid.") << endl;
         outputCommand.type = CommandType::CommandError;
       }
-
       if ((argumentTypes[i] == ArgumentType::XCoord) && (outputCommand.args[i] < -xLimit || outputCommand.args[i] > xLimit)) {
         cout << prefix << communicationName << F(": Argument ") << i + 1 << F(" is outside of the world.") << endl;
         outputCommand.type = CommandType::CommandError;
@@ -124,7 +111,6 @@ CommandData CommandManager::Command::parsePerCommand (const String* args, uint8_
   }
   return outputCommand;
 }
-
 bool CommandManager::runCommands() {
   String stringToParse;
   cin >> stringToParse;
