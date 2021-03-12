@@ -1,7 +1,7 @@
 # Contributor Information
 As an open-source project, contributions to Mine++ are greatly appreciated. Here's some information to help you contribute in a helpful manner.
 ## Permissions
-Force pushing to higher-level branches is not available, due to the potential risks. However, pull requests are allowed and encouraged.
+Force pushing to higher-level branches is not permitted, for the sake of code integrity. However, pull requests are allowed and encouraged.
 ## Code Life-Cycle
 The code in the `main` branch should be release-ready, so there is an efficient process to get code from the early development and testing stages to release.
 
