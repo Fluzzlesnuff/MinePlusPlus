@@ -178,9 +178,16 @@ bool CommandManager::runCommands() {
   }
   if (parsedCommand.type == CommandType::ShowOverview) {
     cout << prefix << F("Showing World Map") << endl;
-    GLCD.ClearScreen();
-    screen.renderWorldOverview();
-    while (!leftButton.read() && !jumpButton.read() && !rightButton.read() && !leftMouseButton.read() && !leftMouseButton.read());
+    xcoord_t center = 0;
+    do {
+      GLCD.ClearScreen();
+      screen.renderWorldOverview(center);
+      while (!leftButton.read() && !rightButton.read() && !jumpButton.read());
+      if (leftButton.read())
+        center = max(-xLimit + 64, center - 32);
+      else if (rightButton.read())
+        center = min(xLimit - 63, center + 32);
+    } while (!jumpButton.read());
     GLCD.ClearScreen();
     screen.forceRenderWorld();
     return true;

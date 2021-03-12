@@ -10,7 +10,7 @@ class Screen { //A set of functions, not a proper object
     void renderBlock (const CoordPair& coords, int8_t xPixelOffset = 0, int8_t yPixelOffset = 0);
     void renderWorld (bool reRenderAnimatedBlocks = false);
     void forceRenderWorld ();
-    void renderWorldOverview ();
+    void renderWorldOverview (xcoord_t center);
     void updateAnimations (); //Public function to update animations. Only runs if the last update was more than a certain period  ago.
 };
 

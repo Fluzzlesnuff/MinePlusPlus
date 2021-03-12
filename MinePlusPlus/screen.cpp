@@ -103,11 +103,11 @@ void Screen::forceRenderWorld () {
   cout << prefix << F("\tFinished") << endl;
 #endif
 }
-void Screen::renderWorldOverview () {
-  for (uint8_t x = 0; x < 128; x++) {
-    for (uint8_t y = 0; y < 33; y++) {
-      id_t id = block.get(x - 64, 32 - y);
-      bool pixelColour = !(id == Blocks::air || id == Blocks::Generation::air);
+void Screen::renderWorldOverview (xcoord_t center) {
+  for (uint8_t y = 0; y < 33; y++) {
+    for (uint8_t x = 0; x < 128; x++) {
+      id_t id = block.get(x - 64 + center, 32 - y);
+      bool pixelColour = !(block.isAir(id) || id == Blocks::Generation::air || id == Blocks::Runtime::empty);
       GLCD.SetDot(x, y + 16, (pixelColour ? BLACK : WHITE));
     }
   }
