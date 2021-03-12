@@ -53,6 +53,7 @@ uint8_t World::updateAll () {
   return passes;
 }
 void World::updateConstant() {
+  updateFloatingItems();
   if (lightingUpdateNeeded) {
     updateLighting();
     lightingUpdateNeeded = false;
@@ -247,4 +248,17 @@ void World::updateFallingBlocks () {
           updateMadeChanges = true;
         }
       }
+}
+void World::updateFloatingItems () {
+  using namespace Blocks;
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x)
+    for (ycoord_t y = 1; y <= yLimit - 1; y++) { //Starts at 1 because blocks sitting on void will not break
+      const id_t blockToCheck = block.get(x, y);
+      const id_t unstableBlocks[] = {grass, flower, torch, sapling};
+      for (int i = 0; i < 4; ++i)
+        if (blockToCheck == unstableBlocks[i] && !block.isSolid(block.get(x, y-1))) {
+          block.set(x, y, air);
+          updateMadeChanges = true;
+        }
+    }
 }
