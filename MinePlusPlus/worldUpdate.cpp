@@ -74,27 +74,27 @@ void World::World::update8Tick() {
 }
 void World::updateLighting () {
   using namespace Blocks::Runtime;
-  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++)
-    for (ycoord_t y = 0; y <= yLimit; y++) {
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x)
+    for (ycoord_t y = 0; y <= yLimit; ++y) {
       if (block.isAir(block.get(x, y)))
         block.set(x, y, light0);
     }
-  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++)
-    for (ycoord_t y = 0; y <= yLimit; y++) {
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x)
+    for (ycoord_t y = 0; y <= yLimit; ++y) {
       if (block.isAir(block.get(x, y)) && block.isOpenToSky(x, y))
         block.set(x, y, light7);
     }
   for (id_t lightIndex = light6; lightIndex >= light0; --lightIndex)
-    for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++)
-      for (ycoord_t y = 0; y <= yLimit; y++) {
+    for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x)
+      for (ycoord_t y = 0; y <= yLimit; ++y) {
         const id_t currentBlock = block.get(x, y);
         if (block.isAir(currentBlock) && block.isTouching(x, y, lightIndex + 1) && ((!block.isLight(currentBlock)) || currentBlock < lightIndex))
           block.set(x, y, lightIndex);
       }
 }
 void World::updateWater () {
-  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Schedule water that doesn't have water to the sides for deletion
-    for (ycoord_t y = 0; y <= yLimit; y++) {
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x) //Schedule water that doesn't have water to the sides for deletion
+    for (ycoord_t y = 0; y <= yLimit; ++y) {
       const id_t blockToCheck = block.get(x, y);
       if (block.isWater(blockToCheck) && blockToCheck != Blocks::waterSource) { //Check whether the block is even water
         bool validWaterToLeft = false;
@@ -115,13 +115,13 @@ void World::updateWater () {
         }
       }
     }
-  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Truly delete water
-    for (ycoord_t y = 0; y <= yLimit; y++)
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x) //Truly delete water
+    for (ycoord_t y = 0; y <= yLimit; ++y)
       if (block.isDeletedWater(block.get(x, y)))
         block.set(x, y, Blocks::air);
-  for (uint8_t side = 0; side < 2; side++) { //Flow water to sides
-    for (xcoord_t x = (side ? leftmostXCoordinate : rightmostXCoordinate); side ? (x <= rightmostXCoordinate) : (x >= leftmostXCoordinate); side ? x++ : x--) //Water flowing to the sides
-      for (ycoord_t y = 0; y <= yLimit; y++) {
+  for (uint8_t side = 0; side < 2; ++side) { //Flow water to sides
+    for (xcoord_t x = (side ? leftmostXCoordinate : rightmostXCoordinate); side ? (x <= rightmostXCoordinate) : (x >= leftmostXCoordinate); side ? ++x : x--) //Water flowing to the sides
+      for (ycoord_t y = 0; y <= yLimit; ++y) {
         bool validWaterToSide = false;
         if (block.isBrokenByFluid(block.get(x, y))) { //Check whether the block is even elligible to become water
           id_t blockToCheck = block.get(x + (side ? 1 : -1), y);
@@ -148,14 +148,14 @@ void World::updateWater () {
         }
       }
   }
-  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Flow water down
-    for (ycoord_t y = 0; y <= yLimit; y++)
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x) //Flow water down
+    for (ycoord_t y = 0; y <= yLimit; ++y)
       if (block.isBrokenByFluid(block.get(x, y)) && (y == yLimit ? false : block.isWater(block.get(x, y + 1)))) {
         block.set(x, y, Blocks::water7);
         updateMadeChanges = true;
       }
-  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Generate source blocks between other source blocks
-    for (ycoord_t y = 0; y <= yLimit; y++)
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x) //Generate source blocks between other source blocks
+    for (ycoord_t y = 0; y <= yLimit; ++y)
       if (block.isBrokenByFluid(block.get(x, y)) && (x == -xLimit ? false : block.get(x - 1, y) == Blocks::waterSource) && (x == xLimit ? false : block.get(x + 1, y) == Blocks::waterSource)) { //If the block in question has source blocks on both sides
         if (y == 0 || (!block.isBrokenByFluid(block.get(x - 1, y - 1)) && block.isSolid(block.get(x - 1, y - 1)) && !block.isBrokenByFluid(block.get(x + 1, y - 1)) && block.isSolid(block.get(x + 1, y - 1)))) { //If the source blocks have blocks beneath them
           block.set(x, y, Blocks::waterSource);
@@ -164,8 +164,8 @@ void World::updateWater () {
       }
 }
 void World::updateLava () {
-  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Schedule lava that doesn't have lava to the sides for deletion
-    for (ycoord_t y = 0; y <= yLimit; y++) {
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x) //Schedule lava that doesn't have lava to the sides for deletion
+    for (ycoord_t y = 0; y <= yLimit; ++y) {
       const id_t blockToCheck = block.get(x, y);
       if (block.isLava(blockToCheck) && blockToCheck != Blocks::lavaSource) { //Check whether the block is even lava
         bool validLavaToLeft = false;
@@ -187,14 +187,14 @@ void World::updateLava () {
         }
       }
     }
-  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Truly delete lava
-    for (ycoord_t y = 0; y <= yLimit; y++)
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x) //Truly delete lava
+    for (ycoord_t y = 0; y <= yLimit; ++y)
       if (block.isDeletedLava(block.get(x, y))) {
         block.set(x, y, Blocks::air);
       }
-  for (uint8_t side = 0; side < 2; side++) { //Flow lava to sides
-    for (xcoord_t x = (side ? leftmostXCoordinate : rightmostXCoordinate); side ? (x <= rightmostXCoordinate) : (x >= leftmostXCoordinate); side ? x++ : x--) //Lava flowing to the sides
-      for (ycoord_t y = 0; y <= yLimit; y++) {
+  for (uint8_t side = 0; side < 2; ++side) { //Flow lava to sides
+    for (xcoord_t x = (side ? leftmostXCoordinate : rightmostXCoordinate); side ? (x <= rightmostXCoordinate) : (x >= leftmostXCoordinate); side ? ++x : --x) //Lava flowing to the sides
+      for (ycoord_t y = 0; y <= yLimit; ++y) {
         bool validLavaToSide = false;
         if (block.isBrokenByFluid(block.get(x, y))) { //Check whether the block is even elligible to become lava
           id_t blockToCheck = block.get(x + (side ? 1 : -1), y);
@@ -221,16 +221,16 @@ void World::updateLava () {
         }
       }
   }
-  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++) //Flow lava down
-    for (ycoord_t y = 0; y <= yLimit; y++)
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x) //Flow lava down
+    for (ycoord_t y = 0; y <= yLimit; ++y)
       if (block.isBrokenByFluid(block.get(x, y)) && (y == yLimit ? false : block.isLava(block.get(x, y + 1)))) {
         block.set(x, y, Blocks::lava3);
         updateMadeChanges = true;
       }
 }
 void World::updateFallingBlocks () {
-  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++)
-    for (ycoord_t y = 0; y <= yLimit - 1; y++)
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x)
+    for (ycoord_t y = 0; y <= yLimit - 1; ++y)
       if (block.isBrokenByFallingBlocks(block.get(x, y))) {
         if (block.get(x, y + 1) == Blocks::sand) {
           block.set(x, y, Blocks::sand);
@@ -246,7 +246,7 @@ void World::updateFallingBlocks () {
 void World::updateFloatingItems () {
   using namespace Blocks;
   for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x)
-    for (ycoord_t y = 1; y <= yLimit - 1; y++) { //Starts at 1 because blocks sitting on void will not break
+    for (ycoord_t y = 1; y <= yLimit - 1; ++y) { //Starts at 1 because blocks sitting on void will not break
       const id_t blockToCheck = block.get(x, y);
       const id_t unstableBlocks[] = {grass, flower, torch, sapling};
       for (int i = 0; i < 4; ++i)
@@ -259,7 +259,7 @@ void World::updateFloatingItems () {
 void World::updateFarmland () {
   using namespace Blocks;
   for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x)
-    for (ycoord_t y = 0; y < yLimit; y++) {
+    for (ycoord_t y = 0; y < yLimit; ++y) {
       const id_t blockToCheck = block.get(x, y);
       if (block.isFarmland(blockToCheck)) {
         if (block.isSolid(block.get(x, y+1))) { //Crush farmland

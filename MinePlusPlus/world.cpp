@@ -68,7 +68,7 @@ void World::load () {
       cout << F("F 3\t\t# ") << numberToLoad << F("\t\tI ") << blockToLoad << F("\tB ") << blockDBAddress << '-' << (blockDBAddress + numberToLoad - 1) << F("\t\tE ") << EEPROMAddress << '-' << (EEPROMAddress + 2) << endl;
 #endif
       EEPROMAddress += 3;
-      for (uint8_t i = 0; i < numberToLoad; i++)
+      for (uint8_t i = 0; i < numberToLoad; ++i)
         blockDB[blockDBAddress + i] = blockToLoad;
       blockDBAddress += numberToLoad - 1;
     } else if (byteRead == Storage::fourByteFlag) {
@@ -78,7 +78,7 @@ void World::load () {
       cout << F("F 4\t\t# ") << numberToLoad << F("\t\tI ") << blockToLoad << F("\tB ") << blockDBAddress << '-' << (blockDBAddress + numberToLoad - 1) << F("\t\tE ") << EEPROMAddress << '-' << (EEPROMAddress + 3) << endl;
 #endif
       EEPROMAddress += 4;
-      for (uint16_t i = 0; i < numberToLoad; i++)
+      for (uint16_t i = 0; i < numberToLoad; ++i)
         blockDB[blockDBAddress + i] = blockToLoad;
       blockDBAddress += numberToLoad - 1;
     } else if (byteRead == Storage::end) {
@@ -92,9 +92,9 @@ void World::load () {
       cout << F("\t\t\t\tI ") << byteRead << F("\tB ") << blockDBAddress << F("\t\t\tE ") << EEPROMAddress << endl;
 #endif
       blockDB[blockDBAddress] = byteRead;
-      EEPROMAddress++;
+      ++EEPROMAddress;
     }
-    blockDBAddress++;
+    ++blockDBAddress;
   }
   player.move(EEPROM.read(EE_PLAYER_X_HIGH_BYTE), EEPROM.read(EE_PLAYER_LOW_X_Y_BYTE));
   start();
@@ -115,9 +115,9 @@ void World::save () {
   uint16_t EEPROMAddress = EE_WORLD_DATA_START_BYTE;
   id_t currentBlockID = blockDB[0];
   uint16_t i;
-  for (i = 0; i < worldWidth * worldHeight; i++) {
+  for (i = 0; i < worldWidth * worldHeight; ++i) {
     if (currentBlockID == blockDB[i]) {
-      numberFound++;
+      ++numberFound;
     } else {
       if (numberFound == 1) {
         EEPROM.update(EEPROMAddress, currentBlockID);
@@ -152,7 +152,7 @@ void World::save () {
 #ifdef SAVE_LOAD_BYTE_LOGGING
     cout << F("\t\t\t\tI ") << currentBlockID << F("\tB ") << i - 1 << F("\t\t\tE ") << EEPROMAddress << endl;
 #endif
-    EEPROMAddress++;
+    ++EEPROMAddress;
   } else if (numberFound < 256) {
     EEPROM.update(EEPROMAddress, Storage::threeByteFlag);
     EEPROM.update(EEPROMAddress + 1, lowByte(numberFound));

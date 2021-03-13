@@ -4,7 +4,7 @@ CommandManager::Command::Command (CommandType commandTypeParam, const String& na
   thisCommandType = commandTypeParam;
   numberOfArguments = numArgsParam;
   communicationName = nameParam;
-  for (uint8_t i = 0; i < 8; i++)
+  for (uint8_t i = 0; i < 8; ++i)
     argumentTypes[i] = argTypeListParam.argTypes[i];
 }
 CommandData CommandManager::parseCommand (const String& string) {
@@ -19,13 +19,13 @@ CommandData CommandManager::parseCommand (const String& string) {
   uint8_t partIndex = 0;
   String currentPart;
   uint8_t numArgs = 0;
-  for (uint8_t i = 0; i < string.length(); i++) {
+  for (uint8_t i = 0; i < string.length(); ++i) {
     char c = string.charAt(i);
     if (c == ' ') {
       commandArgs[partIndex] = currentPart;
       currentPart = "";
-      partIndex++;
-      numArgs++;
+      ++partIndex;
+      ++numArgs;
     } else
       currentPart += c;
   }
@@ -62,7 +62,7 @@ CommandData CommandManager::Command::parsePerCommand (const String* args, uint8_
     cout << prefix << communicationName << F(": Too many arguments.") << endl;
     outputCommand.type = CommandType::CommandError;
   } else {
-    for (uint8_t i = 0; i < numberOfArguments; i++) {
+    for (uint8_t i = 0; i < numberOfArguments; ++i) {
       if (args[i + 1] == "0") { //to differentiate between toInt() returning an error and an intentional 0, parsing of 0 is done here.
         outputCommand.args[i] = 0;
       } else if ((args[i + 1].charAt(0) == 'B' || args[i + 1].charAt(0) == 'b') && (args[i + 1].charAt(1) == '0' || args[i + 1].charAt(1) == '1')) { //binary to decimal parsing
@@ -135,8 +135,8 @@ bool CommandManager::runCommands() {
   }
   if (parsedCommand.type == CommandType::Fill) {
     id_t blockIDToFill = parsedCommand.args[4]; //The name is so long to prevent name conflicts, as blockID, id, etc. may already be used.
-    for (int8_t xIndex = parsedCommand.args[0]; xIndex <= parsedCommand.args[2]; xIndex++) {
-      for (uint8_t yIndex = parsedCommand.args[1]; yIndex <= parsedCommand.args[3]; yIndex++) {
+    for (int8_t xIndex = parsedCommand.args[0]; xIndex <= parsedCommand.args[2]; ++xIndex) {
+      for (uint8_t yIndex = parsedCommand.args[1]; yIndex <= parsedCommand.args[3]; ++yIndex) {
         block.set(xIndex, yIndex, blockIDToFill);
       }
     }

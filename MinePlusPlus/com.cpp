@@ -64,7 +64,7 @@ OStream& operator<< (OStream& out, IOStreamFlag flag) {
       break;
     case prefix:
       Serial.print(F("[At"));
-      for (byte i = log10(millis()); i < 7; i++)
+      for (byte i = log10(millis()); i < 7; ++i)
         Serial.print(F(" "));
       Serial.print(millis());
       Serial.print(F(" ms]:  "));

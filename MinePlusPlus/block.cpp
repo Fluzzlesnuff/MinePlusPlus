@@ -94,7 +94,7 @@ bool Block::isSolid(id_t id) {
   if (block.isFarmland(id))
     return true;
   id_t otherSolidBlocks[] {dirt, cobblestone, coalOre, ironOre, goldOre, diamondOre, closedDoor, closedTrapdoor, stone, sandstone, gravel, sand, wood, planks, leaves, obsidian, glass, stoneBricks, wool, goldBlock, sponge, tnt};
-  for (byte i = 0; i < 22; i++)
+  for (byte i = 0; i < 22; ++i)
     if (otherSolidBlocks[i] == id)
       return true;
   return false;
@@ -114,7 +114,7 @@ bool Block::isDeletedLava(id_t id) {
 bool Block::isFlammable(id_t id) {
   using namespace Blocks;
   id_t flammableBlocks[] {closedDoor, openDoor, closedTrapdoor, openTrapdoor, wood, planks, leaves, wool, ladder, grass, sapling, flower};
-  for (byte i = 0; i < 12; i++)
+  for (byte i = 0; i < 12; ++i)
     if (flammableBlocks[i] == id)
       return true;
   return false;
@@ -133,7 +133,7 @@ bool Block::isBrokenByFluid(id_t id) {
   const id_t fluidBreakableBlocks[] {torch, grass, flower};
   if (isAir(id))
     return true;
-  for (byte i = 0; i < 3; i++)
+  for (byte i = 0; i < 3; ++i)
     if (fluidBreakableBlocks[i] == id)
       return true;
   return (id >= Blocks::water0 && id <= Blocks::water6); //Check for water(0-6) if array scan returns false
@@ -143,7 +143,7 @@ bool Block::isBrokenByFallingBlocks(id_t id) {
   const id_t fallingBlockBreakableBlocks[] {torch, grass, flower};
   if (isAir(id))
     return true;
-  for (byte i = 0; i < 3; i++)
+  for (byte i = 0; i < 3; ++i)
     if (fallingBlockBreakableBlocks[i] == id)
       return true;
   return false;
@@ -198,8 +198,8 @@ uint16_t Block::isNear(xcoord_t x, ycoord_t y, id_t id, byte distance, Measureme
   if (measurementType == Chebyshev) {
 #ifdef BLOCK_NEAR_TOUCHING_LOGGING
 #endif
-    for (int8_t i = -distance; i <= distance; i++) {
-      for (int8_t j = -distance; j <= distance; j++) {
+    for (int8_t i = -distance; i <= distance; ++i) {
+      for (int8_t j = -distance; j <= distance; ++j) {
         if (x + i >= -xLimit && x + i <= xLimit && y + j >= 0 && y + j <= yLimit && !(i == 0 && j == 0)) { //Prevent checking for out-of-bounds blocks.
           if (block.get(x + i, y + j) == id) {
             count++;
@@ -209,8 +209,8 @@ uint16_t Block::isNear(xcoord_t x, ycoord_t y, id_t id, byte distance, Measureme
     }
   }
   if (measurementType == Taxicab) {
-    for (int8_t i = -distance; i <= distance; i++) {
-      for (int8_t j = ((i == 0) ? -distance : ((i < 0) ? (-distance - i) : (i - distance))); j <= ((i == 0) ? distance : ((i < 0) ? (distance + i) : (distance - i))); j++) {
+    for (int8_t i = -distance; i <= distance; ++i) {
+      for (int8_t j = ((i == 0) ? -distance : ((i < 0) ? (-distance - i) : (i - distance))); j <= ((i == 0) ? distance : ((i < 0) ? (distance + i) : (distance - i))); ++j) {
         if (x + i >= -xLimit && x + i <= xLimit && y + j >= 0 && y + j <= yLimit && !(i == 0 && j == 0)) { //Prevent checking for out-of-bounds blocks.
           if (block.get(x + i, y + j) == id) {
             count++;
@@ -225,7 +225,7 @@ uint16_t Block::isNear(const CoordPair& coordPair, id_t id, byte distance, Measu
   return isNear(coordPair.x, coordPair.y, id, distance, measurementType);
 }
 bool Block::isOpenToSky(xcoord_t x, ycoord_t y, id_t ignoreBlock1, id_t ignoreBlock2) {
-  for (ycoord_t yIndex = y + 1; yIndex <= yLimit; yIndex++) {
+  for (ycoord_t yIndex = y + 1; yIndex <= yLimit; ++yIndex) {
     id_t idToTest = get(x, yIndex);
     if (!isAir(idToTest) && idToTest != ignoreBlock1 && idToTest != ignoreBlock2)
       return false;
@@ -275,7 +275,7 @@ blockDBAddress_t Block::coordsToAddress (xcoord_t x, ycoord_t y) {
   return (worldWidth * y) + x + ((worldWidth - 1) / 2);
 }
 bool Block::scanToolTable (const id_t table[TT_ARRAY_SIZE], const id_t& tool) {
-  for (byte i = 0; i < TT_ARRAY_SIZE; i++)
+  for (byte i = 0; i < TT_ARRAY_SIZE; ++i)
     if (table[i] == tool)
       return true;
   return false;

@@ -12,7 +12,7 @@ void Mob::kill () {
 bool Mob::walk (Direction dir) {
   if (dir == right) {
     if (!block.isSolid(block.get(x + 1, y)) && !block.isSolid(block.get(x + 1, y - 1))) {
-      x++;
+      ++x;
       return true;
     } else {
       return false;
@@ -26,7 +26,7 @@ bool Mob::walk (Direction dir) {
     }
   } else if (dir == up) {
     if (!block.isSolid(block.get(x, y + 1))) {
-      y++;
+      ++y;
       return true;
     } else {
       return false;

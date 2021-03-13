@@ -9,10 +9,10 @@ void Screen::renderBitmap (const byte bitmap[], uint8_t rows, uint8_t columns, b
   const byte bitMasks[8] {
     B10000000, B1000000, B100000, B10000, B1000, B100, B10, B1
   };
-  for (int rowIndex = 0; rowIndex < rows; rowIndex++) {
-    for (int columnIndex = 0; columnIndex < columns; columnIndex++) {
+  for (int rowIndex = 0; rowIndex < rows; ++rowIndex) {
+    for (int columnIndex = 0; columnIndex < columns; ++columnIndex) {
       byte byteToRender = pgm_read_byte_near(bitmap + (rowIndex * columns + columnIndex));
-      for (int bitIndex = 0; bitIndex < 8; bitIndex++) {
+      for (int bitIndex = 0; bitIndex < 8; ++bitIndex) {
         GLCD.SetDot(xPixel + (columnIndex * 8) + bitIndex, yPixel + rowIndex, ((byteToRender & bitMasks[bitIndex]) ? BLACK : WHITE));
       }
     }
@@ -38,8 +38,8 @@ void Screen::renderBlock (xcoord_t x, ycoord_t y, int8_t xPixelOffset, int8_t yP
   cout << prefix << F("Rendering block at relative coordinates (") << xRel << F(", ") << yRel << F(")   \t[Top-left corner at pixel (") << xPixel << F(", ") << yPixel << F("),\tID: ") << id << ']' << endl;
 #endif
   ycoord_t yPixelOffsetForLoop = 0;
-  for (uint8_t i{0}; i < 20; i++) {
-    for (uint8_t j{0}; j < 5; j++) {
+  for (uint8_t i{0}; i < 20; ++i) {
+    for (uint8_t j{0}; j < 5; ++j) {
       int16_t specificPixelXCoord = (i % 2 ? j + 5 : j) + xPixel;
       int8_t specificPixelYCoord = yPixelOffsetForLoop + yPixel;
       byte byteToRender = pgm_read_byte_near(bitmapToRender + i);
@@ -58,10 +58,10 @@ void Screen::renderWorld (bool reRenderAnimatedBlocks) {
 #ifdef RENDER_LOGGING
   cout << prefix << F("Rendering World") << endl;
 #endif
-  for (int8_t xIndex = 0; xIndex <= 6; xIndex++) {
-    for (int8_t yIndex = 0; yIndex <= 3; yIndex++) {
-      for (int8_t ySign = 0; ySign <= 1; ySign++) {
-        for (int8_t xSign = 0; xSign <= 1; xSign++) {
+  for (int8_t xIndex = 0; xIndex <= 6; ++xIndex) {
+    for (int8_t yIndex = 0; yIndex <= 3; ++yIndex) {
+      for (int8_t ySign = 0; ySign <= 1; ++ySign) {
+        for (int8_t xSign = 0; xSign <= 1; ++xSign) {
           xcoord_t relX = xSign ? xIndex : -xIndex;
           ycoord_t relY = ySign ? yIndex : -yIndex;
           CoordPair blockCoords = player.getCoords(relX, relY);
@@ -87,10 +87,10 @@ void Screen::forceRenderWorld () {
 #ifdef RENDER_LOGGING
   cout << prefix << F("Rendering World") << endl;
 #endif
-  for (int8_t xIndex = 0; xIndex <= 6; xIndex++) {
-    for (int8_t yIndex = 0; yIndex <= 3; yIndex++) {
-      for (int8_t ySign = 0; ySign <= 1; ySign++) {
-        for (int8_t xSign = 0; xSign <= 1; xSign++) {
+  for (int8_t xIndex = 0; xIndex <= 6; ++xIndex) {
+    for (int8_t yIndex = 0; yIndex <= 3; ++yIndex) {
+      for (int8_t ySign = 0; ySign <= 1; ++ySign) {
+        for (int8_t xSign = 0; xSign <= 1; ++xSign) {
           xcoord_t relX = xSign ? xIndex : -xIndex;
           ycoord_t relY = ySign ? yIndex : -yIndex;
           renderBlock(player.getCoords(relX, relY));
@@ -103,8 +103,8 @@ void Screen::forceRenderWorld () {
 #endif
 }
 void Screen::renderWorldOverview (xcoord_t center) {
-  for (uint8_t y = 0; y < 33; y++) {
-    for (uint8_t x = 0; x < 128; x++) {
+  for (uint8_t y = 0; y < 33; ++y) {
+    for (uint8_t x = 0; x < 128; ++x) {
       id_t id = block.get(x - 64 + center, 32 - y);
       bool pixelColour = !(block.isAir(id) || id == Blocks::Generation::air || id == Blocks::Runtime::empty);
       GLCD.SetDot(x, y + 16, (pixelColour ? BLACK : WHITE));
