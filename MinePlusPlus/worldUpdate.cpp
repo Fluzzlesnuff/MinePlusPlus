@@ -250,7 +250,7 @@ void World::updateFloatingItems () {
       const id_t blockToCheck = block.get(x, y);
       const id_t unstableBlocks[] = {grass, flower, torch, sapling};
       for (int i = 0; i < 4; ++i)
-        if (blockToCheck == unstableBlocks[i] && !block.isSolid(block.get(x, y - 1))) {
+        if (blockToCheck == unstableBlocks[i] && (!block.isSolid(block.get(x, y - 1)) || block.isFarmland(block.get(x, y - 1)))) {
           block.set(x, y, air);
           updateMadeChanges = true;
         }

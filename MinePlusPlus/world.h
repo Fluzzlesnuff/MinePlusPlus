@@ -6,8 +6,8 @@
 
 extern worldWidth_t worldWidth;
 extern worldHeight_t worldHeight;
-extern xcoord_t xLimit; //Inclusive. Make negative to use negative x limit.
-extern ycoord_t yLimit; //Inclusive. Bottom limit is 0.
+extern xcoord_t xLimit; //Inclusive; the x coordinate of the rightmost blocks. `-xLimit` is the x coordinate of the leftmost blocks
+extern ycoord_t yLimit; //Inclusive; the y coordinate of the topmost blocks. Bottom limit is 0.
 
 class World {
     friend class Block;
@@ -15,13 +15,13 @@ class World {
     double ticksPerSecond;
     uint16_t msPerTick;
     void setWorldDimensions(WorldSize sizeParam);
-    void start (); //Sets starts the necessary world services *after* a world has been either loaded or generated.
-
+    void start (); //Starts the necessary world services *after* a world has been either loaded or generated.
+    //Update variables
     xcoord_t leftmostXCoordinate; //Valid area for updates
     xcoord_t rightmostXCoordinate; //Valid area for updates
     bool updateMadeChanges;
     bool lightingUpdateNeeded;
-    
+    //Update Functions
     void update (WorldUpdateType updateType); //Flows water, grows crops, drops gravel, etc.
     uint8_t updateAll ();
     void updateConstant();
@@ -37,7 +37,7 @@ class World {
     void updateFallingBlocks ();
     void updateFloatingItems ();
     void updateFarmland ();
-    
+    //Generation functions
     void generateAir ();
     void generateStone ();
     void generateDirtLayer ();
@@ -64,6 +64,6 @@ class World {
     void load (); //Loads a world from EEPROM into ram.
     void save (); //Saves the world in RAM to EEPROM, overwriting any older saves.
 };
-extern World world; //The world object for world.xx functions.
+extern World world;
 
 #endif

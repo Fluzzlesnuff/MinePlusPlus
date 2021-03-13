@@ -23,67 +23,10 @@ void Block::set (xcoord_t x, ycoord_t y, id_t id) {
 void Block::set (const CoordPair& coords, id_t id) {
   set(coords.x, coords.y, id);
 }
-
-bool Block::isMineable (id_t id) {
-  if (block.isAir(id))
-    return false;
-  if (block.isWater(id))
-    return false;
-  if (block.isLava(id))
-    return false;
-  if (id == Blocks::tnt)
-    return false;
-  return true;
-}
-bool Block::dropsItem (id_t id, id_t toolUsed) {
-  const id_t cobblestone[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
-  const id_t coalOre[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
-  const id_t ironOre[TT_ARRAY_SIZE] {Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
-  const id_t goldOre[TT_ARRAY_SIZE] {Items::ironPickaxe, Items::diamondPickaxe};
-  const id_t diamondOre[TT_ARRAY_SIZE] {Items::ironPickaxe, Items::diamondPickaxe};
-  const id_t stone[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
-  const id_t sandstone[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
-  const id_t obsidian[TT_ARRAY_SIZE] {Items::diamondPickaxe};
-  const id_t stoneBricks[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
-  const id_t goldBlock[TT_ARRAY_SIZE] {Items::ironPickaxe, Items::diamondPickaxe};
-  const id_t furnace[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
-  if (!isMineable(id))
-    return false;
-  switch (id) {
-    case Blocks::fire:
-      return false;
-    case Blocks::cobblestone:
-      return scanToolTable(cobblestone, toolUsed);
-    case Blocks::coalOre:
-      return scanToolTable(coalOre, toolUsed);
-    case Blocks::ironOre:
-      return scanToolTable(ironOre, toolUsed);
-    case Blocks::goldOre:
-      return scanToolTable(goldOre, toolUsed);
-    case Blocks::diamondOre:
-      return scanToolTable(diamondOre, toolUsed);
-    case Blocks::stone:
-      return scanToolTable(stone, toolUsed);
-    case Blocks::sandstone:
-      return scanToolTable(sandstone, toolUsed);
-    case Blocks::obsidian:
-      return scanToolTable(obsidian, toolUsed);
-    case Blocks::stoneBricks:
-      return scanToolTable(stoneBricks, toolUsed);
-    case Blocks::goldBlock:
-      return scanToolTable(goldBlock, toolUsed);
-    case Blocks::furnace:
-      return scanToolTable(furnace, toolUsed);
-    default:
-      return true;
-  }
-}
-bool Block::isAnimated(id_t id) {
-  return id == Blocks::fire;
-}
 bool Block::place (const CoordPair& coords, id_t blockType) {
   return true;
 }
+
 bool Block::isOpaque(id_t id) {
   return true;
 }
@@ -99,18 +42,6 @@ bool Block::isSolid(id_t id) {
       return true;
   return false;
 }
-bool Block::isWater(id_t id) {
-  return (id >= Blocks::water0 && id <= Blocks::waterSource) || isDeletedWater(id);
-}
-bool Block::isDeletedWater(id_t id) {
-  return id >= Blocks::Update::deletedWater0 && id <= Blocks::Update::deletedWater7;
-}
-bool Block::isLava(id_t id) {
-  return (id >= Blocks::lava0 && id <= Blocks::lavaSource) || isDeletedLava(id);
-}
-bool Block::isDeletedLava(id_t id) {
-  return id >= Blocks::Update::deletedLava0 && id <= Blocks::Update::deletedLava3;
-}
 bool Block::isFlammable(id_t id) {
   using namespace Blocks;
   id_t flammableBlocks[] {closedDoor, openDoor, closedTrapdoor, openTrapdoor, wood, planks, leaves, wool, ladder, grass, sapling, flower};
@@ -118,15 +49,6 @@ bool Block::isFlammable(id_t id) {
     if (flammableBlocks[i] == id)
       return true;
   return false;
-}
-bool Block::isFarmland(id_t id) {
-  return (id >= Blocks::dryFarmland && id <= Blocks::farmland3);
-}
-bool Block::isAir(id_t id) {
-  return (id >= Blocks::Runtime::light0 && id <= Blocks::Runtime::light7) || id == Blocks::air;
-}
-bool Block::isLight(id_t id) {
-  return (id >= Blocks::Runtime::light0 && id <= Blocks::Runtime::light7);
 }
 bool Block::isBrokenByFluid(id_t id) {
   using namespace Blocks;
@@ -148,6 +70,54 @@ bool Block::isBrokenByFallingBlocks(id_t id) {
       return true;
   return false;
 }
+bool Block::isMineable (id_t id) {
+  if (block.isAir(id))
+    return false;
+  if (block.isWater(id))
+    return false;
+  if (block.isLava(id))
+    return false;
+  if (id == Blocks::tnt)
+    return false;
+  return true;
+}
+bool Block::isAnimated(id_t id) {
+  return id == Blocks::fire;
+}
+bool Block::isAir(id_t id) {
+  return (id >= Blocks::Runtime::light0 && id <= Blocks::Runtime::light7) || id == Blocks::air;
+}
+bool Block::isLight(id_t id) {
+  return (id >= Blocks::Runtime::light0 && id <= Blocks::Runtime::light7);
+}
+bool Block::isWater(id_t id) {
+  return (id >= Blocks::water0 && id <= Blocks::waterSource) || isDeletedWater(id);
+}
+bool Block::isDeletedWater(id_t id) {
+  return id >= Blocks::Update::deletedWater0 && id <= Blocks::Update::deletedWater7;
+}
+bool Block::isLava(id_t id) {
+  return (id >= Blocks::lava0 && id <= Blocks::lavaSource) || isDeletedLava(id);
+}
+bool Block::isDeletedLava(id_t id) {
+  return id >= Blocks::Update::deletedLava0 && id <= Blocks::Update::deletedLava3;
+}
+bool Block::isFarmland(id_t id) {
+  return (id >= Blocks::dryFarmland && id <= Blocks::farmland3);
+}
+bool Block::isCrop(id_t id) {
+  return (id >= Blocks::wheat0 && id <= Blocks::potato3);
+}
+bool Block::isWheat(id_t id) {
+  return (id >= Blocks::wheat0 && id <= Blocks::wheat3);
+}
+bool Block::isCarrot(id_t id) {
+  return (id >= Blocks::carrot0 && id <= Blocks::carrot3);
+}
+bool Block::isPotato(id_t id) {
+  return (id >= Blocks::potato0 && id <= Blocks::potato3);
+}
+
 byte Block::isTouching(xcoord_t x, ycoord_t y, id_t id) {
   // Scans blocks starting from the top and going clockwise
   id_t count{0};
@@ -232,6 +202,49 @@ bool Block::isOpenToSky(xcoord_t x, ycoord_t y, id_t ignoreBlock1, id_t ignoreBl
   }
   return true;
 }
+bool Block::dropsItem (id_t id, id_t toolUsed) {
+  const id_t cobblestone[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t coalOre[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t ironOre[TT_ARRAY_SIZE] {Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t goldOre[TT_ARRAY_SIZE] {Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t diamondOre[TT_ARRAY_SIZE] {Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t stone[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t sandstone[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t obsidian[TT_ARRAY_SIZE] {Items::diamondPickaxe};
+  const id_t stoneBricks[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t goldBlock[TT_ARRAY_SIZE] {Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t furnace[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
+  if (!isMineable(id))
+    return false;
+  switch (id) {
+    case Blocks::fire:
+      return false;
+    case Blocks::cobblestone:
+      return scanToolTable(cobblestone, toolUsed);
+    case Blocks::coalOre:
+      return scanToolTable(coalOre, toolUsed);
+    case Blocks::ironOre:
+      return scanToolTable(ironOre, toolUsed);
+    case Blocks::goldOre:
+      return scanToolTable(goldOre, toolUsed);
+    case Blocks::diamondOre:
+      return scanToolTable(diamondOre, toolUsed);
+    case Blocks::stone:
+      return scanToolTable(stone, toolUsed);
+    case Blocks::sandstone:
+      return scanToolTable(sandstone, toolUsed);
+    case Blocks::obsidian:
+      return scanToolTable(obsidian, toolUsed);
+    case Blocks::stoneBricks:
+      return scanToolTable(stoneBricks, toolUsed);
+    case Blocks::goldBlock:
+      return scanToolTable(goldBlock, toolUsed);
+    case Blocks::furnace:
+      return scanToolTable(furnace, toolUsed);
+    default:
+      return true;
+  }
+}
 id_t Block::convertToDeleted (id_t id) {
   using namespace Blocks;
   switch (id) {
@@ -271,13 +284,14 @@ void Block::createBlockDB (worldWidth_t width, worldHeight_t height) {
   cout << prefix << F("Created blockDB with dimensions: ") << width << F(", ") << height << endl;
 #endif
 }
-blockDBAddress_t Block::coordsToAddress (xcoord_t x, ycoord_t y) {
-  return (worldWidth * y) + x + ((worldWidth - 1) / 2);
-}
+
 bool Block::scanToolTable (const id_t table[TT_ARRAY_SIZE], const id_t& tool) {
   for (byte i = 0; i < TT_ARRAY_SIZE; ++i)
     if (table[i] == tool)
       return true;
   return false;
+}
+blockDBAddress_t Block::coordsToAddress (xcoord_t x, ycoord_t y) {
+  return (worldWidth * y) + x + ((worldWidth - 1) / 2);
 }
 Block block;
