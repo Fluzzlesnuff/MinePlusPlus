@@ -30,21 +30,21 @@ CommandData CommandManager::parseCommand (const String& string) {
       currentPart += c;
   }
   commandArgs[partIndex] = currentPart;
-  if (commandArgs[0] == "setblock") {
+  if (commandArgs[0] == F("setblock")) {
     outputCommand = setblock.parsePerCommand(commandArgs, numArgs);
-  } else if (commandArgs[0] == "getblock") {
+  } else if (commandArgs[0] == F("getblock")) {
     outputCommand = getblock.parsePerCommand(commandArgs, numArgs);
-  } else if (commandArgs[0] == "tp") {
+  } else if (commandArgs[0] == F("tp")) {
     outputCommand = teleport.parsePerCommand(commandArgs, numArgs);
-  } else if (commandArgs[0] == "fill") {
+  } else if (commandArgs[0] == F("fill")) {
     outputCommand = fill.parsePerCommand(commandArgs, numArgs);
-  } else if (commandArgs[0] == "save") {
+  } else if (commandArgs[0] == F("save")) {
     outputCommand = save.parsePerCommand(commandArgs, numArgs);
-  } else if (commandArgs[0] == "load") {
+  } else if (commandArgs[0] == F("load")) {
     outputCommand = load.parsePerCommand(commandArgs, numArgs);
-  } else if (commandArgs[0] == "mem") {
+  } else if (commandArgs[0] == F("mem")) {
     outputCommand = mem.parsePerCommand(commandArgs, numArgs);
-  } else if (commandArgs[0] == "map") {
+  } else if (commandArgs[0] == F("map")) {
     outputCommand = map.parsePerCommand(commandArgs, numArgs);
   } else {
     cout << prefix << F("Invalid Command") << endl;
@@ -164,9 +164,9 @@ bool CommandManager::runCommands() {
   }
   if (parsedCommand.type == CommandType::ShowOverview) {
     cout << prefix << F("Showing World Map") << endl;
+    GLCD.ClearScreen();
     xcoord_t center = 0;
     do {
-      GLCD.ClearScreen();
       screen.renderWorldOverview(center);
       while (!leftButton.read() && !rightButton.read() && !jumpButton.read());
       if (leftButton.read())
