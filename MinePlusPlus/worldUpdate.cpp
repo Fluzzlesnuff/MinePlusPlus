@@ -70,20 +70,20 @@ void World::update5Tick() {
   updateLava();
 }
 void World::World::update8Tick() {
-
+  updateFarmland();
 }
 void World::updateLighting () {
   using namespace Blocks::Runtime;
   for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++)
-      for (ycoord_t y = 0; y <= yLimit; y++) {
-        if (block.isAir(block.get(x, y)))
-          block.set(x, y, light0);
-      }
+    for (ycoord_t y = 0; y <= yLimit; y++) {
+      if (block.isAir(block.get(x, y)))
+        block.set(x, y, light0);
+    }
   for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++)
-      for (ycoord_t y = 0; y <= yLimit; y++) {
-        if (block.isAir(block.get(x, y)) && block.isOpenToSky(x, y))
-          block.set(x, y, light7);
-      }
+    for (ycoord_t y = 0; y <= yLimit; y++) {
+      if (block.isAir(block.get(x, y)) && block.isOpenToSky(x, y))
+        block.set(x, y, light7);
+    }
   for (id_t lightIndex = light6; lightIndex >= light0; --lightIndex)
     for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; x++)
       for (ycoord_t y = 0; y <= yLimit; y++) {
@@ -250,9 +250,49 @@ void World::updateFloatingItems () {
       const id_t blockToCheck = block.get(x, y);
       const id_t unstableBlocks[] = {grass, flower, torch, sapling};
       for (int i = 0; i < 4; ++i)
-        if (blockToCheck == unstableBlocks[i] && !block.isSolid(block.get(x, y-1))) {
+        if (blockToCheck == unstableBlocks[i] && !block.isSolid(block.get(x, y - 1))) {
           block.set(x, y, air);
           updateMadeChanges = true;
         }
+    }
+}
+void World::updateFarmland () {
+  using namespace Blocks;
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x)
+    for (ycoord_t y = 0; y < yLimit; y++) {
+      const id_t blockToCheck = block.get(x, y);
+      if (block.isFarmland(blockToCheck)) {
+        if (block.isSolid(block.get(x, y+1))) { //Crush farmland
+          block.set(x, y, dirt);
+          updateMadeChanges = true;
+          continue;
+        }
+        id_t blockToLeft = block.get(x + 1, y);
+        id_t blockToRight = block.get(x - 1, y);
+        if (block.isWater(blockToRight) || block.isWater(blockToLeft)) { //Saturate farmland
+          if (blockToCheck != farmland3 && randomNumber()) {
+            block.set(x, y, farmland3);
+            updateMadeChanges = true;
+          }
+        } else if ((block.isFarmland(blockToRight) && blockToRight >= farmland1 && blockToRight > blockToCheck) || (block.isFarmland(blockToLeft) && blockToRight >= farmland1 && blockToLeft > blockToCheck)) { //Spread water
+          id_t blockToSet = max((block.isFarmland(blockToRight) ? blockToRight : 0), (block.isFarmland(blockToLeft) ? blockToLeft : 0)) - 1;
+          if (blockToSet != blockToCheck && randomNumber()) {
+            block.set(x, y, blockToSet);
+            updateMadeChanges = true;
+          }
+          continue;
+        } else if (blockToCheck == dryFarmland) { //Kill dry farmland
+          if (randomNumber(1, 0.1)) {
+            block.set(x, y, dirt);
+            updateMadeChanges = true;
+          }
+          continue;
+        } else { //Dry up farmland
+          if (randomNumber()) {
+            block.set(x, y, dryFarmland);
+            updateMadeChanges = true;
+          }
+        }
+      }
     }
 }

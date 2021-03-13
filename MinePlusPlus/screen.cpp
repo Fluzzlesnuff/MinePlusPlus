@@ -179,6 +179,7 @@ const byte* Screen::idToBitmap (id_t id, byte version, FunctionCallContext conte
       case tnt:     return Textures::Blocks::tnt;
       case waterSource: return Textures::Blocks::water_7;
       case lavaSource: return Textures::Blocks::lava_3;
+      case dryFarmland: return Textures::Blocks::dryFarmland;
 
       case Runtime::light0:    return Textures::Blocks::light_0;
       case Runtime::light1:    return Textures::Blocks::light_1;

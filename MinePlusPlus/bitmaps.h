@@ -272,7 +272,7 @@ const static PROGMEM byte water_7[] {
 };
 const static PROGMEM byte farmland[] {
   B11111, B11111,
-  B11011, B10111,
+  B11111, B11111,
   B10000, B00001,
   B11101, B11101,
   B10000, B00001,
@@ -855,6 +855,18 @@ const static PROGMEM byte tnt_flash[] {
   B10000, B00001,
   B11010, B01011,
   B11010, B01011,
+  B11111, B11111
+};
+const static PROGMEM byte dryFarmland[] {
+  B11111, B11111,
+  B11011, B10111,
+  B10000, B00001,
+  B11101, B11101,
+  B10000, B00001,
+  B10110, B11011,
+  B10000, B00001,
+  B11100, B11101,
+  B10000, B00001,
   B11111, B11111
 };
 

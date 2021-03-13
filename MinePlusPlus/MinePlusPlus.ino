@@ -97,6 +97,7 @@ void worldLoop() {
     }
   }
   if (rightMouseButton.read()) {
+    GLCD.ClearScreen();
     world.save();
     exit(0);
   }

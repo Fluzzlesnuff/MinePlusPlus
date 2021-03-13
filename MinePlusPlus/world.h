@@ -36,6 +36,7 @@ class World {
     void updateLava ();
     void updateFallingBlocks ();
     void updateFloatingItems ();
+    void updateFarmland ();
     
     void generateAir ();
     void generateStone ();
