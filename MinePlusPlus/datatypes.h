@@ -24,7 +24,8 @@ enum WorldUpdateType {
   Two_Tick,
   Four_Tick,
   Five_Tick,
-  Eight_Tick
+  Eight_Tick,
+  Sixteen_Tick
 };
 enum Error {
   UNKNOWN_ERROR = -1,

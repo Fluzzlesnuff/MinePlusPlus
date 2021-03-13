@@ -30,6 +30,7 @@ class World {
     void update4Tick();
     void update5Tick();
     void update8Tick();
+    void update16Tick();
     
     void updateLighting ();
     void updateWater ();
@@ -38,6 +39,7 @@ class World {
     void updateFloatingItems ();
     void updateFarmland ();
     void updateCrops ();
+    void updateSaplings ();
     //Generation functions
     void generateAir ();
     void generateStone ();

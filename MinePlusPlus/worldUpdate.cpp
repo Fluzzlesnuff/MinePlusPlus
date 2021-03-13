@@ -11,12 +11,18 @@ bool World::tryUpdate() {
     lastTickTime += msPerTick;
     ticksDone++;
     update(Tick);
-    if (ticksDone % 2 == 0)
+    if (ticksDone % 2 == 0) {
       update(Two_Tick);
-    if (ticksDone % 4 == 0) //Nested because a number divisible by 4 will always also be divisible by 2
-      update(Four_Tick);
-    if (ticksDone % 8 == 0) //Nested because a number divisible by 8 will always also be divisible by 4
-      update(Eight_Tick);
+      if (ticksDone % 4 == 0) { //Nested because a number divisible by 4 will always also be divisible by 2
+        update(Four_Tick);
+        if (ticksDone % 8 == 0) { //Nested because a number divisible by 8 will always also be divisible by 4
+          update(Eight_Tick);
+          if (ticksDone % 16 == 0) { //Nested because a number divisible by 8 will always also be divisible by 4
+          update(Sixteen_Tick);
+          }
+        }
+      }
+    }
     if (ticksDone % 5 == 0)
       update(Five_Tick);
   }
@@ -26,12 +32,13 @@ bool World::tryUpdate() {
 }
 void World::update (WorldUpdateType updateType) {
   switch (updateType) {
-    case WorldUpdateType::Constant:   updateConstant(); break;
-    case WorldUpdateType::Tick:       updateTick();     break;
-    case WorldUpdateType::Two_Tick:   update2Tick();    break;
-    case WorldUpdateType::Four_Tick:  update4Tick();    break;
-    case WorldUpdateType::Five_Tick:  update5Tick();    break;
-    case WorldUpdateType::Eight_Tick: update8Tick();    break;
+    case WorldUpdateType::Constant:     updateConstant(); break;
+    case WorldUpdateType::Tick:         updateTick();     break;
+    case WorldUpdateType::Two_Tick:     update2Tick();    break;
+    case WorldUpdateType::Four_Tick:    update4Tick();    break;
+    case WorldUpdateType::Five_Tick:    update5Tick();    break;
+    case WorldUpdateType::Eight_Tick:   update8Tick();    break;
+    case WorldUpdateType::Sixteen_Tick: update16Tick();   break;
   }
 }
 uint8_t World::updateAll () {
@@ -45,6 +52,7 @@ uint8_t World::updateAll () {
     update4Tick();
     update5Tick();
     update8Tick();
+    update16Tick();
     ++passes;
   } while (updateMadeChanges);
   updateLighting();
@@ -69,9 +77,12 @@ void World::update5Tick() {
   updateWater();
   updateLava();
 }
-void World::World::update8Tick() {
+void World::update8Tick() {
   updateFarmland();
   updateCrops();
+}
+void World::update16Tick() {
+  updateSaplings();
 }
 void World::updateLighting () {
   using namespace Blocks::Runtime;
@@ -311,6 +322,50 @@ void World::updateCrops () {
           updateMadeChanges = true;
         }
         
+      }
+    }
+}
+void World::updateSaplings () {
+  using namespace Blocks;
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x)
+    for (ycoord_t y = 1; y < yLimit - 5; ++y) { //Starts at 1 because saplings cannot grow on top of the void, and ends before yLimit because trees cannot grow into the void
+      if (block.get(x, y) == sapling && randomNumber(1, 0.5) && block.isOpenToSky(x, y)) {
+        bool saplingIsValid = true;
+        for (int8_t xOffset = -2; xOffset <= 2; ++xOffset) //Check that the area around the sapling is all air
+          for (uint8_t yOffset = 1; yOffset < 5; ++yOffset)
+            if (!block.isAir(block.get(x + xOffset, y + yOffset)))
+              saplingIsValid = false;
+        if (saplingIsValid) { //Build tree
+          for (uint8_t yOffset = 0; yOffset < 4; ++yOffset)
+            block.set(x, y + yOffset, Generation::wood);
+          if (randomNumber(1, 0.2))
+            block.set(x, y + 4, Generation::wood);
+          for (int8_t xOffset = -1; xOffset <= 1; ++xOffset) //Add branches
+            for (uint8_t yOffset = 2; yOffset < 4; ++yOffset)
+              if (block.isTouching(x + xOffset, y + yOffset, Generation::wood) && randomNumber(1, 0.1))
+                block.set(x + xOffset, y + yOffset, Generation::tempWood);
+          for (int8_t xOffset = -1; xOffset <= 1; ++xOffset) //Make branches non-temporary
+            for (uint8_t yOffset = 2; yOffset < 4; ++yOffset)
+              if (block.get(x + xOffset, y + yOffset) == Generation::tempWood)
+                block.set(x + xOffset, y + yOffset, Generation::wood);
+          for (int8_t xOffset = -2; xOffset <= 2; ++xOffset) //Leaves: pass 1
+            for (uint8_t yOffset = 1; yOffset < 5; ++yOffset)
+              if (block.isAir(block.get(x + xOffset, y + yOffset)) && block.isTouchingWide(x + xOffset, y + yOffset, Generation::wood))
+                block.set(x + xOffset, y + yOffset, Generation::leaves);
+          for (int8_t xOffset = -2; xOffset <= 2; ++xOffset) //Leaves: pass 2
+            for (uint8_t yOffset = 1; yOffset < 5; ++yOffset)
+              if (block.isAir(block.get(x + xOffset, y + yOffset)) && (block.get(x + xOffset - 1, y + yOffset) == Generation::leaves || block.get(x + xOffset + 1, y + yOffset) == Generation::leaves) && (block.get(x + xOffset - 2, y + yOffset) == Generation::wood || block.get(x + xOffset + 2, y + yOffset) == Generation::wood) && randomNumber(1, 0.8))
+                block.set(x + xOffset, y + yOffset, Generation::tempLeaves);
+          for (int8_t xOffset = -2; xOffset <= 2; ++xOffset) //Make leaves real
+            for (uint8_t yOffset = 1; yOffset < 5; ++yOffset)
+              if (block.get(x + xOffset, y + yOffset) == Generation::leaves || block.get(x + xOffset, y + yOffset) == Generation::tempLeaves)
+                block.set(x + xOffset, y + yOffset, leaves);
+          for (int8_t xOffset = -2; xOffset <= 2; ++xOffset) //Make wood real
+            for (uint8_t yOffset = 0; yOffset < 5; ++yOffset)
+              if (block.get(x + xOffset, y + yOffset) == Generation::tempWood || block.get(x + xOffset, y + yOffset) == Generation::wood)
+                block.set(x + xOffset, y + yOffset, wood);
+          updateMadeChanges = true;
+        }
       }
     }
 }

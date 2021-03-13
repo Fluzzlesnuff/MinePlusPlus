@@ -95,9 +95,11 @@ const id_t ironOre =    0xc8;
 const id_t goldOre =    0xc9;
 const id_t diamondOre = 0xca;
 const id_t wood =       0xcb;
-const id_t leaves =     0xcc;
-const id_t sandstone =  0xcd;
-const id_t grass =      0xce;
+const id_t tempWood =   0xcc;
+const id_t leaves =     0xcd;
+const id_t tempLeaves = 0xce;
+const id_t sandstone =  0xcf;
+const id_t grass =      0xd0;
 }
 namespace Update { //0xe0-0xff
 const id_t deletedWater0 =  0xe0;
