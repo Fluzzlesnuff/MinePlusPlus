@@ -71,6 +71,7 @@ void World::update5Tick() {
 }
 void World::World::update8Tick() {
   updateFarmland();
+  updateCrops();
 }
 void World::updateLighting () {
   using namespace Blocks::Runtime;
@@ -293,6 +294,23 @@ void World::updateFarmland () {
             updateMadeChanges = true;
           }
         }
+      }
+    }
+}
+void World::updateCrops () {
+  using namespace Blocks;
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x)
+    for (ycoord_t y = 1; y < yLimit; ++y) { //Starts at 1 because crops cannot grow on top of the void
+      const id_t blockToCheck = block.get(x, y);
+      if (block.isCrop(blockToCheck)) {
+        if (!block.isFarmland(block.get(x, y-1))) { //Kill crops when there's no farmland underneath them
+          block.set(x, y, air);
+          updateMadeChanges = true;
+        } else if (randomNumber(1, 0.1) && blockToCheck != wheat3 && blockToCheck != carrot3 && blockToCheck != potato3) {
+          block.set(x, y, blockToCheck + 1);
+          updateMadeChanges = true;
+        }
+        
       }
     }
 }
