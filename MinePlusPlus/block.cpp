@@ -100,13 +100,13 @@ bool Block::isSolid(id_t id) {
   return false;
 }
 bool Block::isWater(id_t id) {
-  return (id >= Blocks::water0 && id <= Blocks::water7) || id == Blocks::waterSource || isDeletedWater(id);
+  return (id >= Blocks::water0 && id <= Blocks::waterSource) || isDeletedWater(id);
 }
 bool Block::isDeletedWater(id_t id) {
   return id >= Blocks::Update::deletedWater0 && id <= Blocks::Update::deletedWater7;
 }
 bool Block::isLava(id_t id) {
-  return (id >= Blocks::lava0 && id <= Blocks::lava3) || id == Blocks::lavaSource || isDeletedLava(id);
+  return (id >= Blocks::lava0 && id <= Blocks::lavaSource) || isDeletedLava(id);
 }
 bool Block::isDeletedLava(id_t id) {
   return id >= Blocks::Update::deletedLava0 && id <= Blocks::Update::deletedLava3;
@@ -120,7 +120,7 @@ bool Block::isFlammable(id_t id) {
   return false;
 }
 bool Block::isFarmland(id_t id) {
-  return id >= Blocks::farmland0 && id <= Blocks::farmland3;
+  return (id >= Blocks::dryFarmland && id <= Blocks::farmland3);
 }
 bool Block::isAir(id_t id) {
   return (id >= Blocks::Runtime::light0 && id <= Blocks::Runtime::light7) || id == Blocks::air;
