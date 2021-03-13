@@ -9,7 +9,7 @@ extern worldHeight_t worldHeight;
 extern xcoord_t xLimit; //Inclusive. Make negative to use negative x limit.
 extern ycoord_t yLimit; //Inclusive. Bottom limit is 0.
 
-class World { //One instance only, but used as a proper object.
+class World {
     friend class Block;
     WorldSize size;
     double ticksPerSecond;

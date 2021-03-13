@@ -2,8 +2,8 @@
 #define item_h
 #include "datatypes.h"
 
-class ItemObject { //A proper object. Used in arrays. This is under the-hood functionality, and is not usable outside of the Item class.
-    friend class Item; //Only the Item class (and so the item.xxx functions) can access this class.
+class ItemObject {
+    friend class Item;
     xcoord_t x;
     ycoord_t y;
     id_t id;

@@ -2,7 +2,7 @@
 #define mob_h
 #include "datatypes.h"
 
-class Mob { //A proper object. Used in arrays to control each mob.
+class Mob {
   public:
     xcoord_t x; //x coordinate of the mob
     ycoord_t y; //y coordinate of the mob's HEAD

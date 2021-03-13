@@ -2,7 +2,7 @@
 #define player_h
 #include "datatypes.h"
 
-class Player { //One instance only, but used as a proper object.
+class Player {
     double x, y;
   public:
     void move (xcoord_t xParam, ycoord_t yParam); // Forcefully change the player's location to the given coordinates.

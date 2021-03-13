@@ -3,7 +3,7 @@
 #include "datatypes.h"
 #define TT_ARRAY_SIZE 5
 extern id_t* blockDB;
-class Block { //Not used in the object sense. Instead, this is just a set of functions.
+class Block {
     friend class World;
     bool scanToolTable (const id_t table[TT_ARRAY_SIZE], const id_t& tool);
     blockDBAddress_t coordsToAddress (xcoord_t x, ycoord_t y);
