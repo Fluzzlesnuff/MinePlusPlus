@@ -125,7 +125,7 @@ bool CommandManager::runCommands() {
     return true;
   }
   if (parsedCommand.type == CommandType::GetBlock) {
-    cout << prefix << F("Block at (") << parsedCommand.args[0] << F(", ") << parsedCommand.args[1] << F(") has ID ") << block.get(parsedCommand.args[0], parsedCommand.args[1]) << endl;
+    cout << prefix << F("Block at (") << parsedCommand.args[0] << F(", ") << parsedCommand.args[1] << F(") has ID ") << format16 << block.get(parsedCommand.args[0], parsedCommand.args[1]) << format10 << endl;
     return true;
   }
   if (parsedCommand.type == CommandType::Teleport) {
@@ -140,17 +140,17 @@ bool CommandManager::runCommands() {
         block.set(xIndex, yIndex, blockIDToFill);
       }
     }
-    cout << prefix << F("Filled ") << (abs(parsedCommand.args[0] - parsedCommand.args[2]) + 1) * (abs(parsedCommand.args[1] - parsedCommand.args[3]) + 1) << F(" blocks with ID ") << parsedCommand.args[4] << endl;
+    cout << prefix << F("Filled ") << (abs(parsedCommand.args[0] - parsedCommand.args[2]) + 1) * (abs(parsedCommand.args[1] - parsedCommand.args[3]) + 1) << F(" blocks with ID ") << format16 << parsedCommand.args[4] << format10 << endl;
     return true;
   }
   if (parsedCommand.type == CommandType::Save) {
-    world.save();
+    storage.save();
     cout << prefix << F("Saved World") << endl;
     return true;
   }
   if (parsedCommand.type == CommandType::Load) {
     if (!world.isRunning) {
-      world.load();
+      storage.load();
       cout << prefix << F("Loaded World") << endl;
       return true;
     } else {

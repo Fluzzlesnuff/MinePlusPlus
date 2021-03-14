@@ -10,8 +10,8 @@ class IStream : public IOStream {
 };
 class OStream : public IOStream {
     void prefix ();
-    template <typename T>
-    friend OStream& operator<< (OStream& out, T input);
+    uint8_t format = DEC;
+    friend OStream& operator<< (OStream& out, int input);
     friend OStream& operator<< (OStream& out, const String& input);
     friend OStream& operator<< (OStream& out, const __FlashStringHelper *input);
     friend OStream& operator<< (OStream& out, const CoordPair& coordPair);
@@ -25,5 +25,4 @@ extern IOStream iostream;
 extern OStream cout;
 extern IStream cin;
 
-#include "comT.h"
 #endif

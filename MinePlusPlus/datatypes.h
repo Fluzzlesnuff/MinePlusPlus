@@ -74,7 +74,10 @@ enum class FunctionCallContext {
 };
 enum IOStreamFlag {
   endl,
-  prefix
+  prefix,
+  format10,
+  format16,
+  format2
 };
 
 struct ArgTypeList {

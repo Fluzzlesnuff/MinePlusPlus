@@ -14,6 +14,10 @@ IStream& operator>> (IStream& in, String& var) {
     out += c;
   }
 }
+OStream& operator<< (OStream& out, int input) {
+  Serial.print(input, cout.format);
+  return out;
+}
 OStream& operator<< (OStream& out, const String& input) {
   Serial.print(input);
   return out;
@@ -68,6 +72,15 @@ OStream& operator<< (OStream& out, IOStreamFlag flag) {
         Serial.print(F(" "));
       Serial.print(millis());
       Serial.print(F(" ms]:  "));
+      break;
+    case format10:
+      cout.format = DEC;
+      break;
+    case format16:
+      cout.format = HEX;
+      break;
+    case format2:
+      cout.format = BIN;
       break;
   }
   return out;
