@@ -274,6 +274,10 @@ id_t Block::convertFromDeleted (id_t id) {
     case Update::deletedWater5: return water5;
     case Update::deletedWater6: return water6;
     case Update::deletedWater7: return water7;
+    case Update::deletedLava0: return lava0;
+    case Update::deletedLava1: return lava1;
+    case Update::deletedLava2: return lava2;
+    case Update::deletedLava3: return lava3;
     default: return Runtime::error;
   }
 }
