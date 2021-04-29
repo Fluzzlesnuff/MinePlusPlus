@@ -2,15 +2,15 @@
 
 id_t* blockDB;
 
-id_t Block::get (xcoord_t x, ycoord_t y) {
+id_t Block::get (xcoord_t x, ycoord_t y) const {
 #ifdef BLOCK_GET_LOGGING
-  cout << prefix << F("Getting block at (") << x << F(", ") << y << ')' << endl;
+  cout << prefix << F("Getting block at (") << x << F(", ") << y << F(")") << endl;
 #endif
   if (x < -xLimit || x > xLimit || y < 0 || y > yLimit)
     return Blocks::Runtime::empty;
   return blockDB[coordsToAddress(x, y)];
 }
-id_t Block::get (const CoordPair& coords) {
+id_t Block::get (const CoordPair& coords) const {
   return get(coords.x, coords.y);
 }
 void Block::set (xcoord_t x, ycoord_t y, id_t id) {
@@ -27,10 +27,10 @@ bool Block::place (const CoordPair& coords, id_t blockType) {
   return true;
 }
 
-bool Block::isOpaque(id_t id) {
+bool Block::isOpaque(id_t id) const {
   return true;
 }
-bool Block::isSolid(id_t id) {
+bool Block::isSolid(id_t id) const {
   using namespace Blocks;
   if (block.isWater(id) || block.isLava(id) || block.isAir(id))
     return false;
@@ -42,7 +42,7 @@ bool Block::isSolid(id_t id) {
       return true;
   return false;
 }
-bool Block::isFlammable(id_t id) {
+bool Block::isFlammable(id_t id) const {
   using namespace Blocks;
   id_t flammableBlocks[] {closedDoor, openDoor, closedTrapdoor, openTrapdoor, wood, planks, leaves, wool, ladder, grass, sapling, flower};
   for (byte i = 0; i < 12; ++i)
@@ -50,7 +50,7 @@ bool Block::isFlammable(id_t id) {
       return true;
   return false;
 }
-bool Block::isBrokenByFluid(id_t id) {
+bool Block::isBrokenByFluid(id_t id) const {
   using namespace Blocks;
   const id_t fluidBreakableBlocks[] {torch, grass, flower};
   if (isAir(id))
@@ -60,7 +60,7 @@ bool Block::isBrokenByFluid(id_t id) {
       return true;
   return (id >= Blocks::water0 && id <= Blocks::water6); //Check for water(0-6) if array scan returns false
 }
-bool Block::isBrokenByFallingBlocks(id_t id) {
+bool Block::isBrokenByFallingBlocks(id_t id) const {
   using namespace Blocks;
   const id_t fallingBlockBreakableBlocks[] {torch, grass, flower};
   if (isAir(id))
@@ -70,7 +70,7 @@ bool Block::isBrokenByFallingBlocks(id_t id) {
       return true;
   return false;
 }
-bool Block::isMineable (id_t id) {
+bool Block::isMineable (id_t id) const {
   if (block.isAir(id))
     return false;
   if (block.isWater(id))
@@ -81,44 +81,44 @@ bool Block::isMineable (id_t id) {
     return false;
   return true;
 }
-bool Block::isAnimated(id_t id) {
+bool Block::isAnimated(id_t id) const {
   return id == Blocks::fire;
 }
-bool Block::isAir(id_t id) {
+bool Block::isAir(id_t id) const {
   return (id >= Blocks::Runtime::light0 && id <= Blocks::Runtime::light7) || id == Blocks::air;
 }
-bool Block::isLight(id_t id) {
+bool Block::isLight(id_t id) const {
   return (id >= Blocks::Runtime::light0 && id <= Blocks::Runtime::light7);
 }
-bool Block::isWater(id_t id) {
+bool Block::isWater(id_t id) const {
   return (id >= Blocks::water0 && id <= Blocks::waterSource) || isDeletedWater(id);
 }
-bool Block::isDeletedWater(id_t id) {
+bool Block::isDeletedWater(id_t id) const {
   return id >= Blocks::Update::deletedWater0 && id <= Blocks::Update::deletedWater7;
 }
-bool Block::isLava(id_t id) {
+bool Block::isLava(id_t id) const {
   return (id >= Blocks::lava0 && id <= Blocks::lavaSource) || isDeletedLava(id);
 }
-bool Block::isDeletedLava(id_t id) {
+bool Block::isDeletedLava(id_t id) const {
   return id >= Blocks::Update::deletedLava0 && id <= Blocks::Update::deletedLava3;
 }
-bool Block::isFarmland(id_t id) {
+bool Block::isFarmland(id_t id) const {
   return (id >= Blocks::dryFarmland && id <= Blocks::farmland3);
 }
-bool Block::isCrop(id_t id) {
+bool Block::isCrop(id_t id) const {
   return (id >= Blocks::wheat0 && id <= Blocks::potato3);
 }
-bool Block::isWheat(id_t id) {
+bool Block::isWheat(id_t id) const {
   return (id >= Blocks::wheat0 && id <= Blocks::wheat3);
 }
-bool Block::isCarrot(id_t id) {
+bool Block::isCarrot(id_t id) const {
   return (id >= Blocks::carrot0 && id <= Blocks::carrot3);
 }
-bool Block::isPotato(id_t id) {
+bool Block::isPotato(id_t id) const {
   return (id >= Blocks::potato0 && id <= Blocks::potato3);
 }
 
-byte Block::isTouching(xcoord_t x, ycoord_t y, id_t id) {
+byte Block::isTouching(xcoord_t x, ycoord_t y, id_t id) const {
   // Scans blocks starting from the top and going clockwise
   id_t count{0};
   if (x >= -xLimit && x <= xLimit && y + 1 >= 0 && y + 1 <= yLimit && get(x, y + 1) == id)
@@ -131,10 +131,10 @@ byte Block::isTouching(xcoord_t x, ycoord_t y, id_t id) {
     count++;
   return count;
 }
-byte Block::isTouching(const CoordPair& coords, id_t id) {
+byte Block::isTouching(const CoordPair& coords, id_t id) const {
   return isTouching(coords.x, coords.y, id);
 }
-byte Block::isTouchingWide(xcoord_t x, ycoord_t y, id_t id) {
+byte Block::isTouchingWide(xcoord_t x, ycoord_t y, id_t id) const {
   id_t count{0};
   for (int8_t xOffset = -1; xOffset <= 1; xOffset++) {
     for (int8_t yOffset = -1; yOffset <= 1; yOffset++) {
@@ -145,10 +145,10 @@ byte Block::isTouchingWide(xcoord_t x, ycoord_t y, id_t id) {
   }
   return count;
 }
-byte Block::isTouchingWide(const CoordPair& coords, id_t id) {
+byte Block::isTouchingWide(const CoordPair& coords, id_t id) const {
   return isTouchingWide(coords.x, coords.y, id);
 }
-uint16_t Block::isNear(xcoord_t x, ycoord_t y, id_t id, byte distance, MeasurementType measurementType) {
+uint16_t Block::isNear(xcoord_t x, ycoord_t y, id_t id, byte distance, MeasurementType measurementType) const {
   if (x < -xLimit || x > xLimit) {
     cout << XCOORD_OOB;
     return 0;
@@ -191,10 +191,10 @@ uint16_t Block::isNear(xcoord_t x, ycoord_t y, id_t id, byte distance, Measureme
   }
   return count;
 }
-uint16_t Block::isNear(const CoordPair& coordPair, id_t id, byte distance, MeasurementType measurementType) {
+uint16_t Block::isNear(const CoordPair& coordPair, id_t id, byte distance, MeasurementType measurementType) const {
   return isNear(coordPair.x, coordPair.y, id, distance, measurementType);
 }
-bool Block::isOpenToSky(xcoord_t x, ycoord_t y, id_t ignoreBlock1, id_t ignoreBlock2) {
+bool Block::isOpenToSky(xcoord_t x, ycoord_t y, id_t ignoreBlock1, id_t ignoreBlock2) const {
   for (ycoord_t yIndex = y + 1; yIndex <= yLimit; ++yIndex) {
     id_t idToTest = get(x, yIndex);
     if (!isAir(idToTest) && idToTest != ignoreBlock1 && idToTest != ignoreBlock2)
@@ -202,7 +202,7 @@ bool Block::isOpenToSky(xcoord_t x, ycoord_t y, id_t ignoreBlock1, id_t ignoreBl
   }
   return true;
 }
-bool Block::dropsItem (id_t id, id_t toolUsed) {
+bool Block::dropsItem (id_t id, id_t toolUsed) const {
   const id_t cobblestone[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
   const id_t coalOre[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
   const id_t ironOre[TT_ARRAY_SIZE] {Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
@@ -245,7 +245,7 @@ bool Block::dropsItem (id_t id, id_t toolUsed) {
       return true;
   }
 }
-id_t Block::convertToDeleted (id_t id) {
+id_t Block::convertToDeleted (id_t id) const {
   using namespace Blocks;
   switch (id) {
     case water0: return Update::deletedWater0;
@@ -263,7 +263,7 @@ id_t Block::convertToDeleted (id_t id) {
     default: return Runtime::error;
   }
 }
-id_t Block::convertFromDeleted (id_t id) {
+id_t Block::convertFromDeleted (id_t id) const {
   using namespace Blocks;
   switch (id) {
     case Update::deletedWater0: return water0;
@@ -289,13 +289,13 @@ void Block::createBlockDB (worldWidth_t width, worldHeight_t height) {
 #endif
 }
 
-bool Block::scanToolTable (const id_t table[TT_ARRAY_SIZE], const id_t& tool) {
+bool Block::scanToolTable (const id_t table[TT_ARRAY_SIZE], const id_t& tool) const {
   for (byte i = 0; i < TT_ARRAY_SIZE; ++i)
     if (table[i] == tool)
       return true;
   return false;
 }
-blockDBAddress_t Block::coordsToAddress (xcoord_t x, ycoord_t y) {
+blockDBAddress_t Block::coordsToAddress (xcoord_t x, ycoord_t y) const {
   return (worldWidth * y) + x + ((worldWidth - 1) / 2);
 }
 Block block;

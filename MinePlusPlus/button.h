@@ -22,7 +22,7 @@ class ResistiveButton {
   public:
     ResistiveButton (byte pinParam);
     bool read (ButtonReadMode mode = Normal, uint16_t repeatRate = 0);
-    uint16_t readRaw();
+    uint16_t readRaw() const;
     void setSampleSize (uint16_t sampleSizeParam);
     void setThreshold (uint16_t thresholdParam);
 };

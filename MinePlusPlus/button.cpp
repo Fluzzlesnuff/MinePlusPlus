@@ -62,7 +62,7 @@ bool ResistiveButton::read (ButtonReadMode mode, uint16_t repeatRate) {
   }
   return output;
 }
-uint16_t ResistiveButton::readRaw() {
+uint16_t ResistiveButton::readRaw() const {
   return analogRead(pin);
 }
 void ResistiveButton::setSampleSize (uint16_t sampleSizeParam) {
