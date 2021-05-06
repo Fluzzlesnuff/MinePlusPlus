@@ -2,147 +2,123 @@
 
 id_t* blockDB;
 
-id_t Block::get (const xcoord_t x, const ycoord_t y) {
+id_t Block::get (xcoord_t x, ycoord_t y) const {
 #ifdef BLOCK_GET_LOGGING
-  com.out.log("Getting block at (" + String(x) + ", " + String(y) + ").");
+  cout << prefix << F("Getting block at (") << x << F(", ") << y << F(")") << endl;
 #endif
-  if (x < -xLimit || x > xLimit)
-    com.out.throwError(XCOORD_OOB);
-  else if (y < 0 || y > yLimit)
-    com.out.throwError(YCOORD_OOB);
-  else
-    return blockDB[coordsToAddress(x, y)];
+  if (x < -xLimit || x > xLimit || y < 0 || y > yLimit)
+    return Blocks::Runtime::empty;
+  return blockDB[coordsToAddress(x, y)];
 }
-id_t Block::get (const CoordPair coords) {
+id_t Block::get (const CoordPair& coords) const {
   return get(coords.x, coords.y);
 }
-
-bool Block::set (const xcoord_t x, const ycoord_t y, const id_t id) {
+void Block::set (xcoord_t x, ycoord_t y, id_t id) {
   blockDB[coordsToAddress(x, y)] = id;
+  world.lightingUpdateNeeded = true;
 #ifdef BLOCK_SET_LOGGING
-  com.out.log("Set block at (" + String(x) + ", " + String(y) + ") with ID: " + id);
+  cout << prefix << F("Set block at (") << x << F(", ") << y << F(") with ID: ") << id << endl;
 #endif
 }
-
-bool Block::set (const CoordPair coords, const id_t id) {
+void Block::set (const CoordPair& coords, id_t id) {
   set(coords.x, coords.y, id);
 }
+bool Block::place (const CoordPair& coords, id_t blockType) {
+  return true;
+}
 
-bool Block::isMineable (const id_t id) {
+bool Block::isOpaque(id_t id) const {
+  return true;
+}
+bool Block::isSolid(id_t id) const {
+  using namespace Blocks;
+  if (block.isWater(id) || block.isLava(id) || block.isAir(id))
+    return false;
+  if (block.isFarmland(id))
+    return true;
+  id_t otherSolidBlocks[] {dirt, cobblestone, coalOre, ironOre, goldOre, diamondOre, closedDoor, closedTrapdoor, stone, sandstone, gravel, sand, wood, planks, leaves, obsidian, glass, stoneBricks, wool, goldBlock, sponge, tnt};
+  for (byte i = 0; i < 22; ++i)
+    if (otherSolidBlocks[i] == id)
+      return true;
+  return false;
+}
+bool Block::isFlammable(id_t id) const {
+  using namespace Blocks;
+  id_t flammableBlocks[] {closedDoor, openDoor, closedTrapdoor, openTrapdoor, wood, planks, leaves, wool, ladder, grass, sapling, flower};
+  for (byte i = 0; i < 12; ++i)
+    if (flammableBlocks[i] == id)
+      return true;
+  return false;
+}
+bool Block::isBrokenByFluid(id_t id) const {
+  using namespace Blocks;
+  const id_t fluidBreakableBlocks[] {torch, grass, flower};
+  if (isAir(id))
+    return true;
+  for (byte i = 0; i < 3; ++i)
+    if (fluidBreakableBlocks[i] == id)
+      return true;
+  return (id >= Blocks::water0 && id <= Blocks::water6); //Check for water(0-6) if array scan returns false
+}
+bool Block::isBrokenByFallingBlocks(id_t id) const {
+  using namespace Blocks;
+  const id_t fallingBlockBreakableBlocks[] {torch, grass, flower};
+  if (isAir(id))
+    return true;
+  for (byte i = 0; i < 3; ++i)
+    if (fallingBlockBreakableBlocks[i] == id)
+      return true;
+  return false;
+}
+bool Block::isMineable (id_t id) const {
   if (block.isAir(id))
     return false;
   if (block.isWater(id))
     return false;
   if (block.isLava(id))
     return false;
-  if (id == B_TNT_L)
+  if (id == Blocks::tnt)
     return false;
   return true;
 }
-
-bool Block::dropsItem (const id_t id, const id_t toolUsed) {
-  const id_t cobbleTT[TT_ARRAY_SIZE] {I_PICK_WOOD, I_PICK_STONE, I_PICK_GOLD, I_PICK_IRON, I_PICK_DIA};
-  const id_t coal_oreTT[TT_ARRAY_SIZE] {I_PICK_WOOD, I_PICK_STONE, I_PICK_GOLD, I_PICK_IRON, I_PICK_DIA};
-  const id_t iron_oreTT[TT_ARRAY_SIZE] {I_PICK_STONE, I_PICK_GOLD, I_PICK_IRON, I_PICK_DIA};
-  const id_t gold_oreTT[TT_ARRAY_SIZE] {I_PICK_IRON, I_PICK_DIA};
-  const id_t dia_oreTT[TT_ARRAY_SIZE] {I_PICK_IRON, I_PICK_DIA};
-  const id_t stoneTT[TT_ARRAY_SIZE] {I_PICK_WOOD, I_PICK_STONE, I_PICK_GOLD, I_PICK_IRON, I_PICK_DIA};
-  const id_t sndstnTT[TT_ARRAY_SIZE] {I_PICK_WOOD, I_PICK_STONE, I_PICK_GOLD, I_PICK_IRON, I_PICK_DIA};
-  const id_t obsidianTT[TT_ARRAY_SIZE] {I_PICK_DIA};
-  const id_t bricksTT[TT_ARRAY_SIZE] {I_PICK_WOOD, I_PICK_STONE, I_PICK_GOLD, I_PICK_IRON, I_PICK_DIA};
-  const id_t gold_blockTT[TT_ARRAY_SIZE] {I_PICK_IRON, I_PICK_DIA};
-  const id_t furnaceTT[TT_ARRAY_SIZE] {I_PICK_WOOD, I_PICK_STONE, I_PICK_GOLD, I_PICK_IRON, I_PICK_DIA};
-  if (!isMineable(id))
-    return false;
-  switch (id) {
-    case B_FIRE:
-      return false;
-    case B_COBBLE:
-      return scanToolTable(cobbleTT, toolUsed);
-    case B_COAL_ORE:
-      return scanToolTable(coal_oreTT, toolUsed);
-    case B_IRON_ORE:
-      return scanToolTable(iron_oreTT, toolUsed);
-    case B_GOLD_ORE:
-      return scanToolTable(gold_oreTT, toolUsed);
-    case B_DIA_ORE:
-      return scanToolTable(dia_oreTT, toolUsed);
-    case B_STONE:
-      return scanToolTable(stoneTT, toolUsed);
-    case B_SNDSTN:
-      return scanToolTable(sndstnTT, toolUsed);
-    case B_OBSIDIAN:
-      return scanToolTable(obsidianTT, toolUsed);
-    case B_BRICKS:
-      return scanToolTable(bricksTT, toolUsed);
-    case B_GOLD_BLOCK:
-      return scanToolTable(gold_blockTT, toolUsed);
-    case B_FURNACE:
-      return scanToolTable(furnaceTT, toolUsed);
-    default:
-      return true;
-  }
+bool Block::isAnimated(id_t id) const {
+  return id == Blocks::fire;
+}
+bool Block::isAir(id_t id) const {
+  return (id >= Blocks::Runtime::light0 && id <= Blocks::Runtime::light7) || id == Blocks::air;
+}
+bool Block::isLight(id_t id) const {
+  return (id >= Blocks::Runtime::light0 && id <= Blocks::Runtime::light7);
+}
+bool Block::isWater(id_t id) const {
+  return (id >= Blocks::water0 && id <= Blocks::waterSource) || isDeletedWater(id);
+}
+bool Block::isDeletedWater(id_t id) const {
+  return id >= Blocks::Update::deletedWater0 && id <= Blocks::Update::deletedWater7;
+}
+bool Block::isLava(id_t id) const {
+  return (id >= Blocks::lava0 && id <= Blocks::lavaSource) || isDeletedLava(id);
+}
+bool Block::isDeletedLava(id_t id) const {
+  return id >= Blocks::Update::deletedLava0 && id <= Blocks::Update::deletedLava3;
+}
+bool Block::isFarmland(id_t id) const {
+  return (id >= Blocks::dryFarmland && id <= Blocks::farmland3);
+}
+bool Block::isCrop(id_t id) const {
+  return (id >= Blocks::wheat0 && id <= Blocks::potato3);
+}
+bool Block::isWheat(id_t id) const {
+  return (id >= Blocks::wheat0 && id <= Blocks::wheat3);
+}
+bool Block::isCarrot(id_t id) const {
+  return (id >= Blocks::carrot0 && id <= Blocks::carrot3);
+}
+bool Block::isPotato(id_t id) const {
+  return (id >= Blocks::potato0 && id <= Blocks::potato3);
 }
 
-bool Block::isAnimated(const id_t id) {
-  return id == B_FIRE;
-}
-
-bool Block::place (const CoordPair coords, const id_t blockType) {
-
-}
-
-bool Block::isOpaque(const id_t id) {
-
-}
-bool Block::isSolid(const id_t id) {
-  if (block.isWater(id) || block.isLava(id) || block.isAir(id))
-    return false;
-  if (block.isFarmland(id))
-    return true;
-  id_t otherSolidBlocks[] {B_DIRT, B_COBBLE, B_COAL_ORE, B_IRON_ORE, B_GOLD_ORE, B_DIA_ORE, B_DOOR_C, B_TRAP_C, B_STONE, B_SNDSTN, B_GRAVEL, B_SAND, B_WOOD, B_PLANKS, B_LEAVES, B_OBSIDIAN, B_GLASS, B_BRICKS, B_WOOL, B_GOLD_BLOCK, B_SPONGE, B_TNT_U};
-  for (byte i = 0; i < 22; i++)
-    if (otherSolidBlocks[i] == id)
-      return true;
-  return false;
-}
-bool Block::isWater(const id_t id) {
-  id_t waterBlocks[] {B_WATER0, B_WATER1, B_WATER2, B_WATER3, B_WATER4, B_WATER5, B_WATER6, B_WATER7};
-  for (byte i = 0; i < 8; i++)
-    if (waterBlocks[i] == id)
-      return true;
-  return false;
-}
-bool Block::isLava(const id_t id) {
-  id_t lavaBlocks[] {B_LAVA0, B_LAVA1, B_LAVA2, B_LAVA3};
-  for (byte i = 0; i < 4; i++)
-    if (lavaBlocks[i] == id)
-      return true;
-  return false;
-}
-bool Block::isFlammable(const id_t id) {
-  id_t flammableBlocks[] {B_DOOR_C, B_DOOR_O, B_TRAP_C, B_TRAP_O, B_WOOD, B_PLANKS, B_LEAVES, B_WOOL, B_LADDER, B_GRASS, B_SAPLING, B_FLOWER};
-  for (byte i = 0; i < 12; i++)
-    if (flammableBlocks[i] == id)
-      return true;
-  return false;
-}
-bool Block::isFarmland(const id_t id) {
-  id_t farmlandBlocks[] {B_FARM0, B_FARM1, B_FARM2, B_FARM3};
-  for (byte i = 0; i < 4; i++)
-    if (farmlandBlocks[i] == id)
-      return true;
-  return false;
-}
-bool Block::isAir(const id_t id) {
-  id_t airBlocks[] {B_AIR, C_LIGHT0, C_LIGHT1, C_LIGHT2, C_LIGHT3, C_LIGHT4, C_LIGHT5, C_LIGHT6, C_LIGHT7};
-  for (byte i = 0; i < 9; i++)
-    if (airBlocks[i] == id)
-      return true;
-  return false;
-}
-
-byte Block::isTouching(const xcoord_t x, const ycoord_t y, const id_t id) {
+byte Block::isTouching(xcoord_t x, ycoord_t y, id_t id) const {
   // Scans blocks starting from the top and going clockwise
   id_t count{0};
   if (x >= -xLimit && x <= xLimit && y + 1 >= 0 && y + 1 <= yLimit && get(x, y + 1) == id)
@@ -155,14 +131,13 @@ byte Block::isTouching(const xcoord_t x, const ycoord_t y, const id_t id) {
     count++;
   return count;
 }
-byte Block::isTouching(const CoordPair coords, const id_t id) {
+byte Block::isTouching(const CoordPair& coords, id_t id) const {
   return isTouching(coords.x, coords.y, id);
 }
-byte Block::isTouchingWide(const xcoord_t x, const ycoord_t y, const id_t id) {
-  // Scans blocks starting from the top and going clockwise
+byte Block::isTouchingWide(xcoord_t x, ycoord_t y, id_t id) const {
   id_t count{0};
-  for (int xOffset = -1; xOffset <= 1; xOffset++) {
-    for (int yOffset = -1; yOffset <= 1; yOffset++) {
+  for (int8_t xOffset = -1; xOffset <= 1; xOffset++) {
+    for (int8_t yOffset = -1; yOffset <= 1; yOffset++) {
       if (x + xOffset >= -xLimit && x + xOffset <= xLimit && y + yOffset >= 0 && y + yOffset <= yLimit)
         if (get(x + xOffset, y + yOffset) == id)
           count++;
@@ -170,32 +145,31 @@ byte Block::isTouchingWide(const xcoord_t x, const ycoord_t y, const id_t id) {
   }
   return count;
 }
-byte Block::isTouchingWide(const CoordPair coords, const id_t id) {
+byte Block::isTouchingWide(const CoordPair& coords, id_t id) const {
   return isTouchingWide(coords.x, coords.y, id);
 }
-uint16_t Block::isNear(const xcoord_t x, const ycoord_t y, const id_t id, const byte distance, const MeasurementType measurementType) {
+uint16_t Block::isNear(xcoord_t x, ycoord_t y, id_t id, byte distance, MeasurementType measurementType) const {
   if (x < -xLimit || x > xLimit) {
-    com.out.throwError(XCOORD_OOB);
+    cout << XCOORD_OOB;
     return 0;
   }
   if (y < 0 || y > yLimit) {
-    com.out.throwError(XCOORD_OOB);
+    cout << XCOORD_OOB;
     return 0;
   }
 #ifdef BLOCK_NEAR_TOUCHING_LOGGING
-  com.out.log("Block::isNear Started with args " + String(x) + ", " + String(y) + ", " + String(id) + ", " + String(distance) + ", " + (measurementType == Chebyshev ? "Chebyshev" : "Taxicab"));
+  cout << prefix << F("Block::isNear Started with args ") << x << F(", ") << y << F(", ") << id << F(", ") << distance << F(", ") << (measurementType == Chebyshev ? F("Chebyshev") : F("Taxicab")) << endl;
 #endif
-
   uint16_t count{0};
   if (distance < 2 || distance > 10) {
-    com.out.throwError(PARAM_OOB);
+    cout << PARAM_OOB;
     return 0;
   }
   if (measurementType == Chebyshev) {
 #ifdef BLOCK_NEAR_TOUCHING_LOGGING
 #endif
-    for (int8_t i = -distance; i <= distance; i++) {
-      for (int8_t j = -distance; j <= distance; j++) {
+    for (int8_t i = -distance; i <= distance; ++i) {
+      for (int8_t j = -distance; j <= distance; ++j) {
         if (x + i >= -xLimit && x + i <= xLimit && y + j >= 0 && y + j <= yLimit && !(i == 0 && j == 0)) { //Prevent checking for out-of-bounds blocks.
           if (block.get(x + i, y + j) == id) {
             count++;
@@ -205,8 +179,8 @@ uint16_t Block::isNear(const xcoord_t x, const ycoord_t y, const id_t id, const 
     }
   }
   if (measurementType == Taxicab) {
-    for (int8_t i = -distance; i <= distance; i++) {
-      for (int8_t j = ((i == 0) ? -distance : ((i < 0) ? (-distance - i) : (i - distance))); j <= ((i == 0) ? distance : ((i < 0) ? (distance + i) : (distance - i))); j++) {
+    for (int8_t i = -distance; i <= distance; ++i) {
+      for (int8_t j = ((i == 0) ? -distance : ((i < 0) ? (-distance - i) : (i - distance))); j <= ((i == 0) ? distance : ((i < 0) ? (distance + i) : (distance - i))); ++j) {
         if (x + i >= -xLimit && x + i <= xLimit && y + j >= 0 && y + j <= yLimit && !(i == 0 && j == 0)) { //Prevent checking for out-of-bounds blocks.
           if (block.get(x + i, y + j) == id) {
             count++;
@@ -217,36 +191,111 @@ uint16_t Block::isNear(const xcoord_t x, const ycoord_t y, const id_t id, const 
   }
   return count;
 }
-uint16_t Block::isNear(const CoordPair coordPair, const id_t id, const byte distance, const MeasurementType measurementType) {
+uint16_t Block::isNear(const CoordPair& coordPair, id_t id, byte distance, MeasurementType measurementType) const {
   return isNear(coordPair.x, coordPair.y, id, distance, measurementType);
 }
-
-bool Block::isOpenToSky(const xcoord_t x, const ycoord_t y, const id_t ignoreBlock1 = B_AIR, const id_t ignoreBlock2 = B_AIR) {
-  for (ycoord_t yIndex = y + 1; yIndex <= yLimit; yIndex++) {
+bool Block::isOpenToSky(xcoord_t x, ycoord_t y, id_t ignoreBlock1, id_t ignoreBlock2) const {
+  for (ycoord_t yIndex = y + 1; yIndex <= yLimit; ++yIndex) {
     id_t idToTest = get(x, yIndex);
     if (!isAir(idToTest) && idToTest != ignoreBlock1 && idToTest != ignoreBlock2)
       return false;
   }
   return true;
 }
-
-void Block::createBlockDB (const worldWidth_t width, const worldHeight_t height) {
+bool Block::dropsItem (id_t id, id_t toolUsed) const {
+  const id_t cobblestone[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t coalOre[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t ironOre[TT_ARRAY_SIZE] {Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t goldOre[TT_ARRAY_SIZE] {Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t diamondOre[TT_ARRAY_SIZE] {Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t stone[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t sandstone[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t obsidian[TT_ARRAY_SIZE] {Items::diamondPickaxe};
+  const id_t stoneBricks[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t goldBlock[TT_ARRAY_SIZE] {Items::ironPickaxe, Items::diamondPickaxe};
+  const id_t furnace[TT_ARRAY_SIZE] {Items::woodPickaxe, Items::stonePickaxe, Items::goldPickaxe, Items::ironPickaxe, Items::diamondPickaxe};
+  if (!isMineable(id))
+    return false;
+  switch (id) {
+    case Blocks::fire:
+      return false;
+    case Blocks::cobblestone:
+      return scanToolTable(cobblestone, toolUsed);
+    case Blocks::coalOre:
+      return scanToolTable(coalOre, toolUsed);
+    case Blocks::ironOre:
+      return scanToolTable(ironOre, toolUsed);
+    case Blocks::goldOre:
+      return scanToolTable(goldOre, toolUsed);
+    case Blocks::diamondOre:
+      return scanToolTable(diamondOre, toolUsed);
+    case Blocks::stone:
+      return scanToolTable(stone, toolUsed);
+    case Blocks::sandstone:
+      return scanToolTable(sandstone, toolUsed);
+    case Blocks::obsidian:
+      return scanToolTable(obsidian, toolUsed);
+    case Blocks::stoneBricks:
+      return scanToolTable(stoneBricks, toolUsed);
+    case Blocks::goldBlock:
+      return scanToolTable(goldBlock, toolUsed);
+    case Blocks::furnace:
+      return scanToolTable(furnace, toolUsed);
+    default:
+      return true;
+  }
+}
+id_t Block::convertToDeleted (id_t id) const {
+  using namespace Blocks;
+  switch (id) {
+    case water0: return Update::deletedWater0;
+    case water1: return Update::deletedWater1;
+    case water2: return Update::deletedWater2;
+    case water3: return Update::deletedWater3;
+    case water4: return Update::deletedWater4;
+    case water5: return Update::deletedWater5;
+    case water6: return Update::deletedWater6;
+    case water7: return Update::deletedWater7;
+    case lava0: return Update::deletedLava0;
+    case lava1: return Update::deletedLava1;
+    case lava2: return Update::deletedLava2;
+    case lava3: return Update::deletedLava3;
+    default: return Runtime::error;
+  }
+}
+id_t Block::convertFromDeleted (id_t id) const {
+  using namespace Blocks;
+  switch (id) {
+    case Update::deletedWater0: return water0;
+    case Update::deletedWater1: return water1;
+    case Update::deletedWater2: return water2;
+    case Update::deletedWater3: return water3;
+    case Update::deletedWater4: return water4;
+    case Update::deletedWater5: return water5;
+    case Update::deletedWater6: return water6;
+    case Update::deletedWater7: return water7;
+    case Update::deletedLava0: return lava0;
+    case Update::deletedLava1: return lava1;
+    case Update::deletedLava2: return lava2;
+    case Update::deletedLava3: return lava3;
+    default: return Runtime::error;
+  }
+}
+void Block::createBlockDB (worldWidth_t width, worldHeight_t height) {
   uint16_t totalSize = width * height;
   blockDB = new id_t[totalSize];
 #ifdef BLOCK_DB_CREATION_LOGGING
-  com.out.log("Created blockDB with dimensions: " + String(width) + ", " + String(height));
+  cout << prefix << F("Created blockDB with dimensions: ") << width << F(", ") << height << endl;
 #endif
 }
 
-blockDBAddress_t Block::coordsToAddress (const xcoord_t x, const ycoord_t y) {
-  return (worldWidth * y) + x + ((worldWidth - 1) / 2);
-}
-
-bool Block::scanToolTable (const id_t table[TT_ARRAY_SIZE], const id_t& tool) {
-  for (byte i = 0; i < TT_ARRAY_SIZE; i++)
+bool Block::scanToolTable (const id_t table[TT_ARRAY_SIZE], const id_t& tool) const {
+  for (byte i = 0; i < TT_ARRAY_SIZE; ++i)
     if (table[i] == tool)
       return true;
   return false;
 }
-
+blockDBAddress_t Block::coordsToAddress (xcoord_t x, ycoord_t y) const {
+  return (worldWidth * y) + x + ((worldWidth - 1) / 2);
+}
 Block block;

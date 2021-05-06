@@ -1,240 +1,232 @@
 #ifndef ids_h
 #define ids_h
+#include "datatypes.h"
+namespace Blocks { //0x00-0xbf
+const id_t air =            0x00;
+const id_t fire =           0x01;
+const id_t dirt =           0x02;
+const id_t cobblestone =    0x03;
+const id_t lava0 =          0x04;
+const id_t lava1 =          0x05;
+const id_t lava2 =          0x06;
+const id_t lava3 =          0x07;
+const id_t lavaSource =     0x08;
+const id_t water0 =         0x09;
+const id_t water1 =         0x0a;
+const id_t water2 =         0x0b;
+const id_t water3 =         0x0c;
+const id_t water4 =         0x0d;
+const id_t water5 =         0x0e;
+const id_t water6 =         0x0f;
+const id_t water7 =         0x10;
+const id_t waterSource =    0x11;
+const id_t dryFarmland =    0x12;
+const id_t farmland0 =      0x13;
+const id_t farmland1 =      0x14;
+const id_t farmland2 =      0x15;
+const id_t farmland3 =      0x16;
+const id_t wheat0 =         0x17;
+const id_t wheat1 =         0x18;
+const id_t wheat2 =         0x19;
+const id_t wheat3 =         0x1a;
+const id_t carrot0 =        0x1b;
+const id_t carrot1 =        0x1c;
+const id_t carrot2 =        0x1d;
+const id_t carrot3 =        0x1e;
+const id_t potato0 =        0x1f;
+const id_t potato1 =        0x20;
+const id_t potato2 =        0x21;
+const id_t potato3 =        0x22;
+const id_t coalOre =        0x23;
+const id_t ironOre =        0x24;
+const id_t goldOre =        0x25;
+const id_t diamondOre =     0x26;
+const id_t closedDoor =     0x27;
+const id_t openDoor =       0x28;
+const id_t closedTrapdoor = 0x29;
+const id_t openTrapdoor =   0x2a;
+const id_t stone =          0x2b;
+const id_t sandstone =      0x2c;
+const id_t gravel =         0x2d;
+const id_t sand =           0x2e;
+const id_t wood =           0x2f;
+const id_t planks =         0x30;
+const id_t leaves =         0x31;
+const id_t obsidian =       0x32;
+const id_t glass =          0x33;
+const id_t stoneBricks =    0x34;
+const id_t wool =           0x35;
+const id_t goldBlock =      0x36;
+const id_t bed =            0x37;
+const id_t ladder =         0x38;
+const id_t torch =          0x39;
+const id_t sponge =         0x3a;
+const id_t craftingTable =  0x3b;
+const id_t furnace =        0x3c;
+const id_t chest =          0x3d;
+const id_t grass =          0x3e;
+const id_t sapling =        0x3f;
+const id_t flower =         0x40;
+const id_t tnt =            0x41;
+const id_t litTnt =         0x42;
 
-// #############
-// # BLOCK IDS #
-// #############
-
-#define B_AIR           B0000000
-#define B_FIRE          B0000001
-#define B_DIRT          B0000010
-#define B_COBBLE        B0000011
-#define B_LAVA0         B0000100
-#define B_LAVA1         B0000101
-#define B_LAVA2         B0000110
-#define B_LAVA3         B0000111
-#define B_WATER0        B0001000
-#define B_WATER1        B0001001
-#define B_WATER2        B0001010
-#define B_WATER3        B0001011
-#define B_WATER4        B0001100
-#define B_WATER5        B0001101
-#define B_WATER6        B0001110
-#define B_WATER7        B0001111
-#define B_FARM0         B0010000
-#define B_FARM1         B0010001
-#define B_FARM2         B0010010
-#define B_FARM3         B0010011
-#define B_WHEAT0        B0010100
-#define B_WHEAT1        B0010101
-#define B_WHEAT2        B0010110
-#define B_WHEAT3        B0010111
-#define B_CARROT0       B0011000
-#define B_CARROT1       B0011001
-#define B_CARROT2       B0011010
-#define B_CARROT3       B0011011
-#define B_POTATO0       B0011100
-#define B_POTATO1       B0011101
-#define B_POTATO2       B0011110
-#define B_POTATO3       B0011111
-#define B_COAL_ORE      B0100000
-#define B_IRON_ORE      B0100001
-#define B_GOLD_ORE      B0100010
-#define B_DIA_ORE       B0100011
-#define B_DOOR_C        B0100100
-#define B_DOOR_O        B0100101
-#define B_TRAP_C        B0100110
-#define B_TRAP_O        B0100111
-#define B_STONE         B0101000
-#define B_SNDSTN        B0101001
-#define B_GRAVEL        B0101010
-#define B_SAND          B0101011
-#define B_WOOD          B0101100
-#define B_PLANKS        B0101101
-#define B_LEAVES        B0101110
-#define B_OBSIDIAN      B0101111
-#define B_GLASS         B0110000
-#define B_BRICKS        B0110001
-#define B_WOOL          B0110010
-#define B_GOLD_BLOCK    B0110011
-#define B_BED           B0110100
-#define B_LADDER        B0110101
-#define B_TORCH         B0110110
-#define B_SPONGE        B0110111
-#define B_CRAFT         B0111000
-#define B_FURNACE       B0111001
-#define B_CHEST         B0111010
-#define B_GRASS         B0111011
-#define B_SAPLING       B0111100
-#define B_FLOWER        B0111101
-#define B_TNT_U         B0111110
-#define B_TNT_L         B0111111
-
-// #####################
-// # CONTROL BLOCK IDS #
-// #####################
-
-#define C_LIGHT0      B1000000
-#define C_LIGHT1      B1000001
-#define C_LIGHT2      B1000010
-#define C_LIGHT3      B1000011
-#define C_LIGHT4      B1000100
-#define C_LIGHT5      B1000101
-#define C_LIGHT6      B1000110
-#define C_LIGHT7      B1000111
-#define C_VOID        B1001000
-
-#define GEN_AIR       B1010000
-#define GEN_T_AIR     B1010001
-#define GEN_DIRT      B1010010
-#define GEN_T_DIRT    B1010011
-#define GEN_GRAVEL    B1010100
-#define GEN_SAND      B1010110
-#define GEN_T_SAND    B1010111
-#define GEN_T_COAL    B1011000
-#define GEN_T_IRON    B1011001
-#define GEN_T_GOLD    B1011010
-#define GEN_T_DIA     B1011011
-#define GEN_T_WOOD    B1011100
-#define GEN_T_LEAVES  B1011101
-#define GEN_T_SNDSTN  B1011110
-#define GEN_T_GRASS   B1011111
-
-#define COMP_END      B1111101
-#define FLAG_4_BYTE   B1111110
-#define FLAG_3_BYTE   B1111111
-
-// ############
-// # ITEM IDS #
-// ############
-
-#define I_NONE                B00000000
-#define I_GUNPOWDER           B00000001
-#define I_DIRT                B00000010
-#define I_COBBLE              B00000011
-#define I_IDK                 B00000100
-#define I_IDK                 B00000101
-#define I_IDK                 B00000110
-#define I_IDK                 B00000111
-#define I_IDK                 B00001000
-#define I_IDK                 B00001001
-#define I_IDK                 B00001010
-#define I_IDK                 B00001011
-#define I_IDK                 B00001100
-#define I_IDK                 B00001101
-#define I_IDK                 B00001110
-#define I_IDK                 B00001111
-#define I_IDK                 B00010000
-#define I_IDK                 B00010001
-#define I_IDK                 B00010010
-#define I_IDK                 B00010011
-#define I_WHEAT               B00010100
-#define I_SEEDS               B00010101
-#define I_IDK                 B00010110
-#define I_IDK                 B00010111
-#define I_CARROT              B00011000
-#define I_IDK                 B00011001
-#define I_IDK                 B00011010
-#define I_IDK                 B00011011
-#define I_POTATO              B00011100
-#define I_FLESH               B00011101
-#define I_IDK                 B00011110
-#define I_IDK                 B00011111
-#define I_IDK                 B00100000
-#define I_IRON_ORE            B00100001
-#define I_GOLD_ORE            B00100010
-#define I_IDK                 B00100011
-#define I_DOOR                B00100100
-#define I_IDK                 B00100101
-#define I_TRAP                B00100110
-#define I_IDK                 B00100111
-#define I_STONE               B00101000
-#define I_SNDSTN              B00101001
-#define I_GRAVEL              B00101010
-#define I_SAND                B00101011
-#define I_WOOD                B00101100
-#define I_PLANKS              B00101101
-#define I_IDK                 B00101110
-#define I_OBSIDIAN            B00101111
-#define I_GLASS               B00110000
-#define I_BRICKS              B00110001
-#define I_WOOL                B00110010
-#define I_GOLD_BLOCK          B00110011
-#define I_BED                 B00110100
-#define I_LADDER              B00110101
-#define I_TORCH               B00110110
-#define I_SPONGE              B00110111
-#define I_CRAFT               B00111000
-#define I_FURNACE             B00111001
-#define I_CHEST               B00111010
-#define I_IDK                 B00111011
-#define I_SAPLING             B00111100
-#define I_FLOWER              B00111101
-#define I_TNT                 B00111110
-#define I_IDK                 B00111111
-#define I_SWORD_WOOD          B01000000
-#define I_PICK_WOOD           B01000001
-#define I_SHOVEL_WOOD         B01000010
-#define I_AXE_WOOD            B01000011
-#define I_HOE_WOOD            B01000100
-#define I_SWORD_STONE         B01000101
-#define I_PICK_STONE          B01000110
-#define I_SHOVEL_STONE        B01000111
-#define I_AXE_STONE           B01001000
-#define I_HOE_STONE           B01001001
-#define I_SWORD_GOLD          B01001010
-#define I_PICK_GOLD           B01001011
-#define I_SHOVEL_GOLD         B01001100
-#define I_AXE_GOLD            B01001101
-#define I_HOE_GOLD            B01001110
-#define I_SWORD_IRON          B01001111
-#define I_PICK_IRON           B01010000
-#define I_SHOVEL_IRON         B01010001
-#define I_AXE_IRON            B01010010
-#define I_HOE_IRON            B01010011
-#define I_SWORD_DIA           B01010100
-#define I_PICK_DIA            B01010101
-#define I_SHOVEL_DIA          B01010110
-#define I_AXE_DIA             B01010111
-#define I_HOE_DIA             B01011000
-#define I_BOW                 B01011001
-#define I_ARROW               B01011010
-#define I_FLINT               B01011011
-#define I_COAL                B01011100
-#define I_GOLD_INGOT          B01011101
-#define I_IRON_INGOT          B01011110
-#define I_DIAMOND             B01011111
-#define I_HELMET_LEATHER      B01100000
-#define I_CHESTPLATE_LEATHER  B01100001
-#define I_LEG_LEATHER         B01100010
-#define I_BOOT_LEATHER        B01100011
-#define I_HELMET_GOLD         B01100100
-#define I_CHESTPLATE_GOLD     B01100101
-#define I_LEG_GOLD            B01100110
-#define I_BOOT_GOLD           B01100111
-#define I_HELMET_IRON         B01101000
-#define I_CHESTPLATE_IRON     B01101001
-#define I_LEG_IRON            B01101010
-#define I_BOOT_IRON           B01101011
-#define I_HELMET_DIA          B01101100
-#define I_CHESTPLATE_DIA      B01101101
-#define I_LEG_DIA             B01101110
-#define I_BOOT_DIA            B001101111
-#define I_STICK               B01110000
-#define I_LEATHER             B01110001
-#define I_STRING              B01110010
-#define I_BUCKET_E            B01110011
-#define I_BUCKET_W            B01110100
-#define I_BUCKET_L            B01110101
-#define I_CHICKEN_R           B01110110
-#define I_CHICKEN_C           B01110111
-#define I_PORK_R              B01111000
-#define I_PORK_C              B01111001
-#define I_BEEF_R              B01111010
-#define I_BEEF_C              B01111011
-#define I_F_S                 B01111100
-#define I_CHARCOAL            B01111101
-#define I_BREAD               B01111110
-#define I_FEATHER             B01111111
+namespace Runtime { //0xc0-0xdf
+const id_t light0 = 0xc0;
+const id_t light1 = 0xc1;
+const id_t light2 = 0xc2;
+const id_t light3 = 0xc3;
+const id_t light4 = 0xc4;
+const id_t light5 = 0xc5;
+const id_t light6 = 0xc6;
+const id_t light7 = 0xc7;
+const id_t empty =  0xc8;
+const id_t error =  0xc9;
+}
+namespace Generation { //0xc0-ff
+const id_t air =        0xc0;
+const id_t tempAir =    0xc1;
+const id_t dirt =       0xc2;
+const id_t tempDirt =   0xc3;
+const id_t gravel =     0xc4;
+const id_t sand =       0xc5;
+const id_t tempSand =   0xc6;
+const id_t coalOre =    0xc7;
+const id_t ironOre =    0xc8;
+const id_t goldOre =    0xc9;
+const id_t diamondOre = 0xca;
+const id_t wood =       0xcb;
+const id_t tempWood =   0xcc;
+const id_t leaves =     0xcd;
+const id_t tempLeaves = 0xce;
+const id_t sandstone =  0xcf;
+const id_t grass =      0xd0;
+}
+namespace Update { //0xe0-0xff
+const id_t deletedWater0 =  0xe0;
+const id_t deletedWater1 =  0xe1;
+const id_t deletedWater2 =  0xe2;
+const id_t deletedWater3 =  0xe3;
+const id_t deletedWater4 =  0xe4;
+const id_t deletedWater5 =  0xe5;
+const id_t deletedWater6 =  0xe6;
+const id_t deletedWater7 =  0xe7;
+const id_t deletedLava0 =   0xe8;
+const id_t deletedLava1 =   0xe9;
+const id_t deletedLava2 =   0xea;
+const id_t deletedLava3 =   0xeb;
+const id_t deletedLava4 =   0xec;
+const id_t deletedLava5 =   0xed;
+const id_t deletedLava6 =   0xee;
+const id_t deletedLava7 =   0xef;
+}
+}
+namespace Storage { //0xc0-ff
+const id_t threeByteFlag =  0xfa; //Indicates that the next 2 bytes are compressed
+const id_t fourByteFlag  =  0xfb; //Indicates that the next 3 bytes are compressed
+const id_t comma =          0xfc; //Separates two similar saved items, such as two chests or two mobs
+const id_t semicolon =      0xfd; //Separates two saving sections, such as pigs and zombies
+const id_t period =         0xfe; //Separates two world save sections, such as between blocks and items
+const id_t end =            0xff; //Will be deprecated once a map of the filesystem is added
+}
+namespace Items {
+const id_t none =               0x00;
+const id_t gunpowder =          0x01;
+const id_t dirt =               0x02;
+const id_t cobblestone =        0x03;
+const id_t wheat =              0x04;
+const id_t seeds =              0x05;
+const id_t carrot =             0x06;
+const id_t potato =             0x07;
+const id_t rottenFlesh =        0x08;
+const id_t ironOre =            0x09;
+const id_t goldOre =            0x0a;
+const id_t door =               0x0b;
+const id_t trapdoor =           0x0c;
+const id_t stone =              0x0d;
+const id_t sandstone =          0x0e;
+const id_t gravel =             0x0f;
+const id_t sand =               0x10;
+const id_t wood =               0x11;
+const id_t planks =             0x12;
+const id_t obsidian =           0x13;
+const id_t glass =              0x14;
+const id_t stoneBricks =        0x15;
+const id_t wool =               0x16;
+const id_t goldBlock =          0x17;
+const id_t bed =                0x18;
+const id_t ladder =             0x19;
+const id_t torch =              0x1a;
+const id_t sponge =             0x1b;
+const id_t craftingTable =      0x1c;
+const id_t furnace =            0x1d;
+const id_t chest =              0x1e;
+const id_t sapling =            0x1f;
+const id_t flower =             0x20;
+const id_t tnt =                0x21;
+const id_t woodSword =          0x22;
+const id_t woodPickaxe =        0x23;
+const id_t woodShovel =         0x24;
+const id_t woodAxe =            0x25;
+const id_t woodHoe =            0x26;
+const id_t stoneSword =         0x27;
+const id_t stonePickaxe =       0x28;
+const id_t stoneShovel =        0x29;
+const id_t stoneAxe =           0x2a;
+const id_t stoneHoe =           0x2b;
+const id_t goldSword =          0x2c;
+const id_t goldPickaxe =        0x2d;
+const id_t goldShovel =         0x2e;
+const id_t goldAxe =            0x2f;
+const id_t goldHoe =            0x30;
+const id_t ironSword =          0x31;
+const id_t ironPickaxe =        0x32;
+const id_t ironShovel =         0x33;
+const id_t ironAxe =            0x34;
+const id_t ironHoe =            0x35;
+const id_t diamondSword =       0x36;
+const id_t diamondPickaxe =     0x37;
+const id_t diamondShovel =      0x38;
+const id_t diamondAxe =         0x39;
+const id_t diamondHoe =         0x3a;
+const id_t bow =                0x3b;
+const id_t arrow =              0x3c;
+const id_t charcoal =           0x3d;
+const id_t coal =               0x3e;
+const id_t goldIngot =          0x3f;
+const id_t ironIngot =          0x40;
+const id_t diamond =            0x41;
+const id_t leatherHelmet =      0x42;
+const id_t leatherChestplate =  0x43;
+const id_t leatherLeggings =    0x44;
+const id_t leatherBoots =       0x45;
+const id_t goldHelmet =         0x46;
+const id_t goldChestplate =     0x47;
+const id_t goldLeggings =       0x48;
+const id_t goldBoots =          0x49;
+const id_t ironHelmet =         0x4a;
+const id_t ironChestplate =     0x4b;
+const id_t ironLeggings =       0x4c;
+const id_t ironBoots =          0x4d;
+const id_t diamondHelmet =      0x4e;
+const id_t diamondChestplate =  0x4f;
+const id_t diamondLeggings =    0x50;
+const id_t diamondBoots =       0x51;
+const id_t stick =              0x52;
+const id_t leather =            0x53;
+const id_t string =             0x54;
+const id_t bucket =             0x55;
+const id_t waterBucket =        0x56;
+const id_t lavaBucket =         0x57;
+const id_t rawChicken =         0x58;
+const id_t cookedChicken =      0x59;
+const id_t rawPork =            0x5a;
+const id_t cookedPorkchop =     0x5b;
+const id_t rawBeef =            0x5c;
+const id_t steak =              0x5d;
+const id_t bread =              0x5e;
+const id_t feather =            0x5f;
+const id_t flint =              0x60;
+const id_t flintAndSteel =      0x61;
+}
 
 #endif

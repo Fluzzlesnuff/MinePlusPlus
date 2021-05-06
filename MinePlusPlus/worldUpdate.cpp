@@ -1,0 +1,371 @@
+#include "includes.h"
+
+bool World::tryUpdate() {
+  static uint32_t lastTickTime;
+  static uint32_t ticksDone;
+  leftmostXCoordinate = max(player.getCoords().x - UPDATE_DISTANCE, -xLimit);
+  rightmostXCoordinate = min(player.getCoords().x + UPDATE_DISTANCE, xLimit);
+  updateMadeChanges = false;
+  update(Constant);
+  if (millis() - lastTickTime >= msPerTick) {
+    lastTickTime += msPerTick;
+    ticksDone++;
+    update(Tick);
+    if (ticksDone % 2 == 0) {
+      update(Two_Tick);
+      if (ticksDone % 4 == 0) { //Nested because a number divisible by 4 will always also be divisible by 2
+        update(Four_Tick);
+        if (ticksDone % 8 == 0) { //Nested because a number divisible by 8 will always also be divisible by 4
+          update(Eight_Tick);
+          if (ticksDone % 16 == 0) { //Nested because a number divisible by 8 will always also be divisible by 4
+          update(Sixteen_Tick);
+          }
+        }
+      }
+    }
+    if (ticksDone % 5 == 0)
+      update(Five_Tick);
+  }
+  if (updateMadeChanges)
+    updateLighting();
+  return updateMadeChanges;
+}
+void World::update (WorldUpdateType updateType) {
+  switch (updateType) {
+    case WorldUpdateType::Constant:     updateConstant(); break;
+    case WorldUpdateType::Tick:         updateTick();     break;
+    case WorldUpdateType::Two_Tick:     update2Tick();    break;
+    case WorldUpdateType::Four_Tick:    update4Tick();    break;
+    case WorldUpdateType::Five_Tick:    update5Tick();    break;
+    case WorldUpdateType::Eight_Tick:   update8Tick();    break;
+    case WorldUpdateType::Sixteen_Tick: update16Tick();   break;
+  }
+}
+uint8_t World::updateAll () {
+  leftmostXCoordinate = -xLimit;
+  rightmostXCoordinate = xLimit;
+  uint8_t passes;
+  do {
+    updateMadeChanges = false;
+    updateTick();
+    update2Tick();
+    update4Tick();
+    update5Tick();
+    update8Tick();
+    update16Tick();
+    ++passes;
+  } while (updateMadeChanges);
+  updateLighting();
+  return passes;
+}
+void World::updateConstant() {
+  updateFloatingItems();
+  if (lightingUpdateNeeded) {
+    updateLighting();
+    lightingUpdateNeeded = false;
+    updateMadeChanges = true;
+  }
+}
+void World::updateTick() {
+  updateFallingBlocks();
+}
+void World::update2Tick() {
+}
+void World::update4Tick() {
+}
+void World::update5Tick() {
+  updateWater();
+  updateLava();
+}
+void World::update8Tick() {
+  updateFarmland();
+  updateCrops();
+}
+void World::update16Tick() {
+  updateSaplings();
+}
+void World::updateLighting () {
+  using namespace Blocks::Runtime;
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x)
+    for (ycoord_t y = 0; y <= yLimit; ++y) {
+      if (block.isAir(block.get(x, y)))
+        block.set(x, y, light0);
+    }
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x)
+    for (ycoord_t y = 0; y <= yLimit; ++y) {
+      if (block.isAir(block.get(x, y)) && block.isOpenToSky(x, y))
+        block.set(x, y, light7);
+    }
+  for (id_t lightIndex = light6; lightIndex >= light0; --lightIndex)
+    for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x)
+      for (ycoord_t y = 0; y <= yLimit; ++y) {
+        const id_t currentBlock = block.get(x, y);
+        if (block.isAir(currentBlock) && block.isTouching(x, y, lightIndex + 1) && ((!block.isLight(currentBlock)) || currentBlock < lightIndex))
+          block.set(x, y, lightIndex);
+      }
+}
+void World::updateWater () {
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x) //Schedule water that doesn't have water to the sides for deletion
+    for (ycoord_t y = 0; y <= yLimit; ++y) {
+      const id_t blockToCheck = block.get(x, y);
+      if (block.isWater(blockToCheck) && blockToCheck != Blocks::waterSource) { //Check whether the block is even water
+        bool validWaterToLeft = false;
+        bool validWaterToRight = false;
+        bool validWaterAbove = false;
+        id_t sideBlock = block.get(x + 1, y);
+        if (block.isWater(sideBlock) && (sideBlock > blockToCheck)) { //If the block is water larger than the block current block, it's valid
+          validWaterToRight = true;
+        }
+        sideBlock = block.get(x - 1, y);
+        if (block.isWater(sideBlock) && (sideBlock > blockToCheck)) { //If the block is water larger than the block current block, it's valid
+          validWaterToLeft = true;
+        }
+        if (y != yLimit && block.isWater(block.get(x, y + 1)))
+          validWaterAbove = true;
+        if (!(validWaterToLeft || validWaterToRight || validWaterAbove)) {
+          block.set(x, y, block.convertToDeleted(blockToCheck));
+        }
+      }
+    }
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x) //Truly delete water
+    for (ycoord_t y = 0; y <= yLimit; ++y)
+      if (block.isDeletedWater(block.get(x, y)))
+        block.set(x, y, Blocks::air);
+  for (uint8_t side = 0; side < 2; ++side) { //Flow water to sides
+    for (xcoord_t x = (side ? leftmostXCoordinate : rightmostXCoordinate); side ? (x <= rightmostXCoordinate) : (x >= leftmostXCoordinate); side ? ++x : x--) //Water flowing to the sides
+      for (ycoord_t y = 0; y <= yLimit; ++y) {
+        bool validWaterToSide = false;
+        if (block.isBrokenByFluid(block.get(x, y))) { //Check whether the block is even elligible to become water
+          id_t blockToCheck = block.get(x + (side ? 1 : -1), y);
+          if (block.isWater(blockToCheck) && (blockToCheck == Blocks::waterSource ? Blocks::water7 : blockToCheck) > (block.isWater(block.get(x, y)) ? block.get(x, y) + 1 : Blocks::water0)) { //If the block is water larger than the block current block, continue
+            //Now, to check if there is a block under the water to the side
+            if (y == 0) //If it's void, it's good
+              validWaterToSide = true;
+            else {
+              id_t blockToCheckUnderSide = block.get(x + (side ? 1 : -1), y - 1);
+              validWaterToSide = (!block.isBrokenByFluid(blockToCheckUnderSide) && !block.isWater(blockToCheckUnderSide));
+              //If the block under the block to the left is solid, there's valid water to the left!
+            }
+          }
+          id_t blockOnSide = 0;
+          if (validWaterToSide) {
+            blockOnSide = block.get(x +  (side ? 1 : -1), y);
+            if (blockOnSide == Blocks::waterSource)
+              blockOnSide = Blocks::water7;
+          }
+          if (validWaterToSide) {
+            block.set(x, y, blockOnSide - 1);
+            updateMadeChanges = true;
+          }
+        }
+      }
+  }
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x) //Flow water down
+    for (ycoord_t y = 0; y <= yLimit; ++y)
+      if (block.isBrokenByFluid(block.get(x, y)) && (y == yLimit ? false : block.isWater(block.get(x, y + 1)))) {
+        block.set(x, y, Blocks::water7);
+        updateMadeChanges = true;
+      }
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x) //Generate source blocks between other source blocks
+    for (ycoord_t y = 0; y <= yLimit; ++y)
+      if (block.isBrokenByFluid(block.get(x, y)) && (x == -xLimit ? false : block.get(x - 1, y) == Blocks::waterSource) && (x == xLimit ? false : block.get(x + 1, y) == Blocks::waterSource)) { //If the block in question has source blocks on both sides
+        if (y == 0 || (!block.isBrokenByFluid(block.get(x - 1, y - 1)) && block.isSolid(block.get(x - 1, y - 1)) && !block.isBrokenByFluid(block.get(x + 1, y - 1)) && block.isSolid(block.get(x + 1, y - 1)))) { //If the source blocks have blocks beneath them
+          block.set(x, y, Blocks::waterSource);
+          updateMadeChanges = true;
+        }
+      }
+}
+void World::updateLava () {
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x) //Schedule lava that doesn't have lava to the sides for deletion
+    for (ycoord_t y = 0; y <= yLimit; ++y) {
+      const id_t blockToCheck = block.get(x, y);
+      if (block.isLava(blockToCheck) && blockToCheck != Blocks::lavaSource) { //Check whether the block is even lava
+        bool validLavaToLeft = false;
+        bool validLavaToRight = false;
+        bool validLavaAbove = false;
+        id_t sideBlock = block.get(x + 1, y);
+        if (block.isLava(sideBlock) && (sideBlock > blockToCheck)) { //If the block is lava larger than the block current block, it's valid
+          validLavaToRight = true;
+        }
+        sideBlock = block.get(x - 1, y);
+        if (block.isLava(sideBlock) && (sideBlock > blockToCheck)) { //If the block is lava larger than the block current block, it's valid
+          validLavaToLeft = true;
+        }
+        if (y != yLimit && block.isLava(block.get(x, y + 1)))
+          validLavaAbove = true;
+
+        if (!(validLavaToLeft || validLavaToRight || validLavaAbove)) {
+          block.set(x, y, block.convertToDeleted(blockToCheck));
+        }
+      }
+    }
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x) //Truly delete lava
+    for (ycoord_t y = 0; y <= yLimit; ++y)
+      if (block.isDeletedLava(block.get(x, y))) {
+        block.set(x, y, Blocks::air);
+      }
+  for (uint8_t side = 0; side < 2; ++side) { //Flow lava to sides
+    for (xcoord_t x = (side ? leftmostXCoordinate : rightmostXCoordinate); side ? (x <= rightmostXCoordinate) : (x >= leftmostXCoordinate); side ? ++x : --x) //Lava flowing to the sides
+      for (ycoord_t y = 0; y <= yLimit; ++y) {
+        bool validLavaToSide = false;
+        if (block.isBrokenByFluid(block.get(x, y))) { //Check whether the block is even elligible to become lava
+          id_t blockToCheck = block.get(x + (side ? 1 : -1), y);
+          if (block.isLava(blockToCheck) && (blockToCheck == Blocks::lavaSource ? Blocks::lava3 : blockToCheck) > (block.isLava(block.get(x, y)) ? block.get(x, y) + 1 : Blocks::lava0)) { //If the block is lava larger than the block current block, continue
+            //Now, to check if there is a block under the lava to the side
+            if (y == 0) //If it's void, it's good
+              validLavaToSide = true;
+            else {
+              id_t blockToCheckUnderSide = block.get(x + (side ? 1 : -1), y - 1);
+              validLavaToSide = (!block.isBrokenByFluid(blockToCheckUnderSide) && !block.isLava(blockToCheckUnderSide));
+              //If the block under the block to the left is solid, there's valid lava to the left!
+            }
+          }
+          id_t blockOnSide = 0;
+          if (validLavaToSide) {
+            blockOnSide = block.get(x +  (side ? 1 : -1), y);
+            if (blockOnSide == Blocks::lavaSource)
+              blockOnSide = Blocks::lava3;
+          }
+          if (validLavaToSide) {
+            block.set(x, y, blockOnSide - 1);
+            updateMadeChanges = true;
+          }
+        }
+      }
+  }
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x) //Flow lava down
+    for (ycoord_t y = 0; y <= yLimit; ++y)
+      if (block.isBrokenByFluid(block.get(x, y)) && (y == yLimit ? false : block.isLava(block.get(x, y + 1)))) {
+        block.set(x, y, Blocks::lava3);
+        updateMadeChanges = true;
+      }
+}
+void World::updateFallingBlocks () {
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x)
+    for (ycoord_t y = 0; y <= yLimit - 1; ++y)
+      if (block.isBrokenByFallingBlocks(block.get(x, y))) {
+        if (block.get(x, y + 1) == Blocks::sand) {
+          block.set(x, y, Blocks::sand);
+          block.set(x, y + 1, Blocks::air);
+          updateMadeChanges = true;
+        } else if (block.get(x, y + 1) == Blocks::gravel) {
+          block.set(x, y, Blocks::gravel);
+          block.set(x, y + 1, Blocks::air);
+          updateMadeChanges = true;
+        }
+      }
+}
+void World::updateFloatingItems () {
+  using namespace Blocks;
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x)
+    for (ycoord_t y = 1; y <= yLimit - 1; ++y) { //Starts at 1 because blocks sitting on void will not break
+      const id_t blockToCheck = block.get(x, y);
+      const id_t unstableBlocks[] = {grass, flower, torch, sapling};
+      for (int i = 0; i < 4; ++i)
+        if (blockToCheck == unstableBlocks[i] && (!block.isSolid(block.get(x, y - 1)) || block.isFarmland(block.get(x, y - 1)))) {
+          block.set(x, y, air);
+          updateMadeChanges = true;
+        }
+    }
+}
+void World::updateFarmland () {
+  using namespace Blocks;
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x)
+    for (ycoord_t y = 0; y < yLimit; ++y) {
+      const id_t blockToCheck = block.get(x, y);
+      if (block.isFarmland(blockToCheck)) {
+        if (block.isSolid(block.get(x, y+1))) { //Crush farmland
+          block.set(x, y, dirt);
+          updateMadeChanges = true;
+          continue;
+        }
+        id_t blockToLeft = block.get(x + 1, y);
+        id_t blockToRight = block.get(x - 1, y);
+        if (block.isWater(blockToRight) || block.isWater(blockToLeft)) { //Saturate farmland
+          if (blockToCheck != farmland3 && randomNumber()) {
+            block.set(x, y, farmland3);
+            updateMadeChanges = true;
+          }
+        } else if ((block.isFarmland(blockToRight) && blockToRight >= farmland1 && blockToRight > blockToCheck) || (block.isFarmland(blockToLeft) && blockToRight >= farmland1 && blockToLeft > blockToCheck)) { //Spread water
+          id_t blockToSet = max((block.isFarmland(blockToRight) ? blockToRight : 0), (block.isFarmland(blockToLeft) ? blockToLeft : 0)) - 1;
+          if (blockToSet != blockToCheck && randomNumber()) {
+            block.set(x, y, blockToSet);
+            updateMadeChanges = true;
+          }
+          continue;
+        } else if (blockToCheck == dryFarmland) { //Kill dry farmland
+          if (randomNumber(1, 0.1)) {
+            block.set(x, y, dirt);
+            updateMadeChanges = true;
+          }
+          continue;
+        } else { //Dry up farmland
+          if (randomNumber()) {
+            block.set(x, y, dryFarmland);
+            updateMadeChanges = true;
+          }
+        }
+      }
+    }
+}
+void World::updateCrops () {
+  using namespace Blocks;
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x)
+    for (ycoord_t y = 1; y < yLimit; ++y) { //Starts at 1 because crops cannot grow on top of the void
+      const id_t blockToCheck = block.get(x, y);
+      if (block.isCrop(blockToCheck)) {
+        if (!block.isFarmland(block.get(x, y-1))) { //Kill crops when there's no farmland underneath them
+          block.set(x, y, air);
+          updateMadeChanges = true;
+        } else if (randomNumber(1, 0.1) && blockToCheck != wheat3 && blockToCheck != carrot3 && blockToCheck != potato3) {
+          block.set(x, y, blockToCheck + 1);
+          updateMadeChanges = true;
+        }
+        
+      }
+    }
+}
+void World::updateSaplings () {
+  using namespace Blocks;
+  for (xcoord_t x = leftmostXCoordinate; x <= rightmostXCoordinate; ++x)
+    for (ycoord_t y = 1; y < yLimit - 5; ++y) { //Starts at 1 because saplings cannot grow on top of the void, and ends before yLimit because trees cannot grow into the void
+      if (block.get(x, y) == sapling && randomNumber(1, 0.5) && block.isOpenToSky(x, y)) {
+        bool saplingIsValid = true;
+        for (int8_t xOffset = -2; xOffset <= 2; ++xOffset) //Check that the area around the sapling is all air
+          for (uint8_t yOffset = 1; yOffset < 5; ++yOffset)
+            if (!block.isAir(block.get(x + xOffset, y + yOffset)))
+              saplingIsValid = false;
+        if (saplingIsValid) { //Build tree
+          for (uint8_t yOffset = 0; yOffset < 4; ++yOffset)
+            block.set(x, y + yOffset, Generation::wood);
+          if (randomNumber(1, 0.2))
+            block.set(x, y + 4, Generation::wood);
+          for (int8_t xOffset = -1; xOffset <= 1; ++xOffset) //Add branches
+            for (uint8_t yOffset = 2; yOffset < 4; ++yOffset)
+              if (block.isTouching(x + xOffset, y + yOffset, Generation::wood) && randomNumber(1, 0.1))
+                block.set(x + xOffset, y + yOffset, Generation::tempWood);
+          for (int8_t xOffset = -1; xOffset <= 1; ++xOffset) //Make branches non-temporary
+            for (uint8_t yOffset = 2; yOffset < 4; ++yOffset)
+              if (block.get(x + xOffset, y + yOffset) == Generation::tempWood)
+                block.set(x + xOffset, y + yOffset, Generation::wood);
+          for (int8_t xOffset = -2; xOffset <= 2; ++xOffset) //Leaves: pass 1
+            for (uint8_t yOffset = 1; yOffset < 5; ++yOffset)
+              if (block.isAir(block.get(x + xOffset, y + yOffset)) && block.isTouchingWide(x + xOffset, y + yOffset, Generation::wood))
+                block.set(x + xOffset, y + yOffset, Generation::leaves);
+          for (int8_t xOffset = -2; xOffset <= 2; ++xOffset) //Leaves: pass 2
+            for (uint8_t yOffset = 1; yOffset < 5; ++yOffset)
+              if (block.isAir(block.get(x + xOffset, y + yOffset)) && (block.get(x + xOffset - 1, y + yOffset) == Generation::leaves || block.get(x + xOffset + 1, y + yOffset) == Generation::leaves) && (block.get(x + xOffset - 2, y + yOffset) == Generation::wood || block.get(x + xOffset + 2, y + yOffset) == Generation::wood) && randomNumber(1, 0.8))
+                block.set(x + xOffset, y + yOffset, Generation::tempLeaves);
+          for (int8_t xOffset = -2; xOffset <= 2; ++xOffset) //Make leaves real
+            for (uint8_t yOffset = 1; yOffset < 5; ++yOffset)
+              if (block.get(x + xOffset, y + yOffset) == Generation::leaves || block.get(x + xOffset, y + yOffset) == Generation::tempLeaves)
+                block.set(x + xOffset, y + yOffset, leaves);
+          for (int8_t xOffset = -2; xOffset <= 2; ++xOffset) //Make wood real
+            for (uint8_t yOffset = 0; yOffset < 5; ++yOffset)
+              if (block.get(x + xOffset, y + yOffset) == Generation::tempWood || block.get(x + xOffset, y + yOffset) == Generation::wood)
+                block.set(x + xOffset, y + yOffset, wood);
+          updateMadeChanges = true;
+        }
+      }
+    }
+}

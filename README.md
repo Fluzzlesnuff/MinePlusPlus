@@ -19,4 +19,5 @@ Once you have the code and it's running, you can look at the code to learn your 
 The development of Mine++ will follow the development of Minecraft as closely as possible. Since it is currently parallel to the first development version of Minecraft Java Edition, it may be a long time (perhaps an infinite amount of time) before the game catches up with Minecraft in features. I will keep working at it, though.
 
 -------
+
 *Version numbers will use Semantic Versioning*: https://semver.org/

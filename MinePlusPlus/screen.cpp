@@ -3,23 +3,22 @@
 byte animationFrame2;
 byte animationFrame3;
 byte animationFrame4;
-
 const uint16_t animationFramePeriod = 5000;
 
-void Screen::renderBitmap (const byte bitmap[], const uint8_t rows, const uint8_t columns, const byte xPixel, const byte yPixel) {
+void Screen::renderBitmap (const byte bitmap[], uint8_t rows, uint8_t columns, byte xPixel, byte yPixel) {
   const byte bitMasks[8] {
     B10000000, B1000000, B100000, B10000, B1000, B100, B10, B1
   };
-  for (int rowIndex = 0; rowIndex < rows; rowIndex++) {
-    for (int columnIndex = 0; columnIndex < columns; columnIndex++) {
+  for (int rowIndex = 0; rowIndex < rows; ++rowIndex) {
+    for (int columnIndex = 0; columnIndex < columns; ++columnIndex) {
       byte byteToRender = pgm_read_byte_near(bitmap + (rowIndex * columns + columnIndex));
-      for (int bitIndex = 0; bitIndex < 8; bitIndex++) {
+      for (int bitIndex = 0; bitIndex < 8; ++bitIndex) {
         GLCD.SetDot(xPixel + (columnIndex * 8) + bitIndex, yPixel + rowIndex, ((byteToRender & bitMasks[bitIndex]) ? BLACK : WHITE));
       }
     }
   }
 }
-void Screen::renderBlock (const xcoord_t x, ycoord_t y, const int8_t xPixelOffset = 0, const int8_t yPixelOffset = 0) {
+void Screen::renderBlock (xcoord_t x, ycoord_t y, int8_t xPixelOffset, int8_t yPixelOffset) {
   id_t id;
   int8_t xRel = x - player.getCoords().x;
   int8_t yRel = y - player.getCoords().y;
@@ -31,17 +30,17 @@ void Screen::renderBlock (const xcoord_t x, ycoord_t y, const int8_t xPixelOffse
     B10000, B01000, B00100, B00010, B00001
   };
   if (x < -xLimit || x > xLimit || y < 0 || y > yLimit)
-    id = B_AIR;
+    id = Blocks::air;
   else
     id = block.get(x, y);
-  byte* bitmapToRender = idToBitmap(id);
+  const byte* bitmapToRender = idToBitmap(id);
 #ifdef RENDER_BLOCK_LOGGING
-  com.out.log("Rendering block at relative coordinates (" + String(xRel) + ", " + String(yRel) + ")   \t[Top-left corner at pixel (" + String(xPixel) + ", " + String(yPixel) + "),\tID: " + String(id) + "].");
+  cout << prefix << F("Rendering block at relative coordinates (") << xRel << F(", ") << yRel << F(")   \t[Top-left corner at pixel (") << xPixel << F(", ") << yPixel << F("),\tID: ") << id << ']' << endl;
 #endif
   ycoord_t yPixelOffsetForLoop = 0;
-  for (index_t i{0}; i < 20; i++) {
-    for (index_t j{0}; j < 5; j++) {
-      int8_t specificPixelXCoord = (i % 2 ? j + 5 : j) + xPixel;
+  for (uint8_t i{0}; i < 20; ++i) {
+    for (uint8_t j{0}; j < 5; ++j) {
+      int16_t specificPixelXCoord = (i % 2 ? j + 5 : j) + xPixel;
       int8_t specificPixelYCoord = yPixelOffsetForLoop + yPixel;
       byte byteToRender = pgm_read_byte_near(bitmapToRender + i);
       if (specificPixelXCoord >= 0 && specificPixelXCoord <= 127 && specificPixelYCoord >= 0 && specificPixelYCoord <= 63)
@@ -51,24 +50,24 @@ void Screen::renderBlock (const xcoord_t x, ycoord_t y, const int8_t xPixelOffse
       yPixelOffsetForLoop++;
   }
 }
-void Screen::renderBlock (const CoordPair coords, const int8_t xPixelOffset = 0, const int8_t yPixelOffset = 0) {
+void Screen::renderBlock (const CoordPair& coords, int8_t xPixelOffset, int8_t yPixelOffset) {
   renderBlock(coords.x, coords.y, xPixelOffset, yPixelOffset);
 }
-void Screen::renderWorld (const bool reRenderAnimatedBlocks = false) {
+void Screen::renderWorld (bool reRenderAnimatedBlocks) {
   static id_t oldRenderMap[13][7];
 #ifdef RENDER_LOGGING
-  com.out.log(F("Rendering World"));
+  cout << prefix << F("Rendering World") << endl;
 #endif
-  for (int8_t xIndex = 0; xIndex <= 6; xIndex++) {
-    for (int8_t yIndex = 0; yIndex <= 3; yIndex++) {
-      for (int8_t ySign = 0; ySign <= 1; ySign++) {
-        for (int8_t xSign = 0; xSign <= 1; xSign++) {
+  for (int8_t xIndex = 0; xIndex <= 6; ++xIndex) {
+    for (int8_t yIndex = 0; yIndex <= 3; ++yIndex) {
+      for (int8_t ySign = 0; ySign <= 1; ++ySign) {
+        for (int8_t xSign = 0; xSign <= 1; ++xSign) {
           xcoord_t relX = xSign ? xIndex : -xIndex;
           ycoord_t relY = ySign ? yIndex : -yIndex;
           CoordPair blockCoords = player.getCoords(relX, relY);
           id_t blockIDToRender;
           if (blockCoords.x < -xLimit || blockCoords.x > xLimit || blockCoords.y < 0 || blockCoords.y > yLimit)
-            blockIDToRender = C_VOID;
+            blockIDToRender = Blocks::Runtime::empty;
           else
             blockIDToRender = block.get(blockCoords);
           if (blockIDToRender != oldRenderMap[relX + 6][relY + 3]) {
@@ -81,120 +80,128 @@ void Screen::renderWorld (const bool reRenderAnimatedBlocks = false) {
     }
   }
 #ifdef RENDER_LOGGING
-  com.out.log(F("\tFinished"));
+  cout << prefix << F("\tFinished") << endl;
 #endif
 }
 void Screen::forceRenderWorld () {
 #ifdef RENDER_LOGGING
-  com.out.log(F("Rendering World"));
+  cout << prefix << F("Rendering World") << endl;
 #endif
-  for (int8_t xIndex = 0; xIndex <= 6; xIndex++) {
-    for (int8_t yIndex = 0; yIndex <= 3; yIndex++) {
-      for (int8_t ySign = 0; ySign <= 1; ySign++) {
-        for (int8_t xSign = 0; xSign <= 1; xSign++) {
+  for (int8_t xIndex = 0; xIndex <= 6; ++xIndex) {
+    for (int8_t yIndex = 0; yIndex <= 3; ++yIndex) {
+      for (int8_t ySign = 0; ySign <= 1; ++ySign) {
+        for (int8_t xSign = 0; xSign <= 1; ++xSign) {
           xcoord_t relX = xSign ? xIndex : -xIndex;
           ycoord_t relY = ySign ? yIndex : -yIndex;
-          CoordPair blockCoords = player.getCoords(relX, relY);
-          id_t blockIDToRender;
-          if (blockCoords.x < -xLimit || blockCoords.x > xLimit || blockCoords.y < 0 || blockCoords.y > yLimit)
-            blockIDToRender = C_VOID;
-          else
-            blockIDToRender = block.get(blockCoords);
-          renderBlock(blockCoords);
+          renderBlock(player.getCoords(relX, relY));
         }
       }
     }
   }
 #ifdef RENDER_LOGGING
-  com.out.log(F("\tFinished"));
+  cout << prefix << F("\tFinished") << endl;
 #endif
 }
-void Screen::renderWorldOverview () {
-  for (index_t x = 0; x < 128; x++) {
-    for (index_t y = 0; y < 33; y++) {
-      id_t id = block.get(x - 64, 32 - y);
-      bool pixelColour = !(id == B_AIR || id == GEN_AIR);
+void Screen::renderWorldOverview (xcoord_t center) {
+  for (uint8_t y = 0; y < 33; ++y) {
+    for (uint8_t x = 0; x < 128; ++x) {
+      id_t id = block.get(x - 64 + center, 32 - y);
+      bool pixelColour = !(block.isAir(id) || id == Blocks::Generation::air || id == Blocks::Runtime::empty);
       GLCD.SetDot(x, y + 16, (pixelColour ? BLACK : WHITE));
     }
   }
 }
-byte* Screen::idToBitmap (const id_t id, const byte version = 0) {
-  switch (id) {
-    case B_AIR:       return Textures::Blocks::light_7;
-    case B_FIRE:      return (animationFrame2 ? Textures::Blocks::fire2 : Textures::Blocks::fire1);
-    case B_DIRT:      return Textures::Blocks::dirt;
-    case B_COBBLE:    return Textures::Blocks::cobblestone;
-    case B_LAVA0:     return Textures::Blocks::lava_0;
-    case B_LAVA1:     return Textures::Blocks::lava_1;
-    case B_LAVA2:     return Textures::Blocks::lava_2;
-    case B_LAVA3:     return Textures::Blocks::lava_3;
-    case B_WATER0:    return Textures::Blocks::water_0;
-    case B_WATER1:    return Textures::Blocks::water_1;
-    case B_WATER2:    return Textures::Blocks::water_2;
-    case B_WATER3:    return Textures::Blocks::water_3;
-    case B_WATER4:    return Textures::Blocks::water_4;
-    case B_WATER5:    return Textures::Blocks::water_5;
-    case B_WATER6:    return Textures::Blocks::water_6;
-    case B_WATER7:    return Textures::Blocks::water_7;
-    case B_FARM0:     //Allow to fall through to "return Textures::Blocks::farmland;"
-    case B_FARM1:
-    case B_FARM2:
-    case B_FARM3:     return Textures::Blocks::farmland;
-    case B_WHEAT0:    return Textures::Blocks::wheat_0;
-    case B_WHEAT1:    return Textures::Blocks::wheat_1;
-    case B_WHEAT2:    return Textures::Blocks::wheat_2;
-    case B_WHEAT3:    return Textures::Blocks::wheat_3;
-    case B_CARROT0:   return Textures::Blocks::carrots_0;
-    case B_CARROT1:   return Textures::Blocks::carrots_1;
-    case B_CARROT2:   return Textures::Blocks::carrots_2;
-    case B_CARROT3:   return Textures::Blocks::carrots_3;
-    case B_POTATO0:   return Textures::Blocks::potatoes_0;
-    case B_POTATO1:   return Textures::Blocks::potatoes_1;
-    case B_POTATO2:   return Textures::Blocks::potatoes_2;
-    case B_POTATO3:   return Textures::Blocks::potatoes_3;
-    case B_COAL_ORE:  return Textures::Blocks::coal_ore;
-    case B_IRON_ORE:  return Textures::Blocks::iron_ore;
-    case B_GOLD_ORE:  return Textures::Blocks::gold_ore;
-    case B_DIA_ORE:   return Textures::Blocks::diamond_ore;
-    case B_DOOR_C:    return (version ? Textures::Blocks::door_closed_top : Textures::Blocks::door_closed_bottom);
-    case B_DOOR_O:    return (version ? Textures::Blocks::door_open_top : Textures::Blocks::door_open_bottom);
-    case B_TRAP_C:    return Textures::Blocks::trapdoor_closed;
-    case B_TRAP_O:    return Textures::Blocks::trapdoor_open;
-    case B_STONE:     return Textures::Blocks::stone;
-    case B_SNDSTN:    return Textures::Blocks::sandstone;
-    case B_GRAVEL:    return Textures::Blocks::gravel;
-    case B_SAND:      return Textures::Blocks::sand;
-    case B_WOOD:      return Textures::Blocks::wood;
-    case B_PLANKS:    return Textures::Blocks::planks;
-    case B_LEAVES:    return Textures::Blocks::leaves;
-    case B_OBSIDIAN:  return Textures::Blocks::obsidian;
-    case B_GLASS:     return Textures::Blocks::glass;
-    case B_BRICKS:    return Textures::Blocks::bricks;
-    case B_WOOL:      return Textures::Blocks::wool;
-    case B_GOLD_BLOCK: return Textures::Blocks::gold_block;
-    case B_BED:       return (version ? Textures::Blocks::bed : Textures::Blocks::bed);
-    case B_LADDER:    return Textures::Blocks::ladder;
-    case B_TORCH:     if (version == 0) return Textures::Blocks::torch_straight; else if (version == 1) return Textures::Blocks::torch_left; return Textures::Blocks::torch_right;
-    case B_CRAFT:     return Textures::Blocks::crafting_table;
-    case B_FURNACE:   return Textures::Blocks::furnace;
-    case B_CHEST:     return Textures::Blocks::chest;
-    case B_GRASS:     return Textures::Blocks::grass;
-    case B_SAPLING:   return Textures::Blocks::sapling;
-    case B_FLOWER:    return Textures::Blocks::flower;
-    case B_TNT_U:     return Textures::Blocks::tnt;
+const byte* Screen::idToBitmap (id_t id, byte version, FunctionCallContext context) {
+	using namespace Blocks;
+  if (context == FunctionCallContext::Generic) {
+    switch (id) {
+      case air:       return Textures::Blocks::light_7;
+      case fire:      return (animationFrame2 ? Textures::Blocks::fire2 : Textures::Blocks::fire1);
+      case dirt:      return Textures::Blocks::dirt;
+      case cobblestone:    return Textures::Blocks::cobblestone;
+      case lava0:     return Textures::Blocks::lava_0;
+      case lava1:     return Textures::Blocks::lava_1;
+      case lava2:     return Textures::Blocks::lava_2;
+      case lava3:     return Textures::Blocks::lava_3;
+      case water0:    return Textures::Blocks::water_0;
+      case water1:    return Textures::Blocks::water_1;
+      case water2:    return Textures::Blocks::water_2;
+      case water3:    return Textures::Blocks::water_3;
+      case water4:    return Textures::Blocks::water_4;
+      case water5:    return Textures::Blocks::water_5;
+      case water6:    return Textures::Blocks::water_6;
+      case water7:    return Textures::Blocks::water_7;
+      case farmland0:     //Allow to fall through to "return Textures::Blocks::farmland;"
+      case farmland1:
+      case farmland2:
+      case farmland3:     return Textures::Blocks::farmland;
+      case wheat0:    return Textures::Blocks::wheat_0;
+      case wheat1:    return Textures::Blocks::wheat_1;
+      case wheat2:    return Textures::Blocks::wheat_2;
+      case wheat3:    return Textures::Blocks::wheat_3;
+      case carrot0:   return Textures::Blocks::carrots_0;
+      case carrot1:   return Textures::Blocks::carrots_1;
+      case carrot2:   return Textures::Blocks::carrots_2;
+      case carrot3:   return Textures::Blocks::carrots_3;
+      case potato0:   return Textures::Blocks::potatoes_0;
+      case potato1:   return Textures::Blocks::potatoes_1;
+      case potato2:   return Textures::Blocks::potatoes_2;
+      case potato3:   return Textures::Blocks::potatoes_3;
+      case coalOre:  return Textures::Blocks::coal_ore;
+      case ironOre:  return Textures::Blocks::iron_ore;
+      case goldOre:  return Textures::Blocks::gold_ore;
+      case diamondOre:   return Textures::Blocks::diamond_ore;
+      case closedDoor:    return (version ? Textures::Blocks::door_closed_top : Textures::Blocks::door_closed_bottom);
+      case openDoor:    return (version ? Textures::Blocks::door_open_top : Textures::Blocks::door_open_bottom);
+      case closedTrapdoor:    return Textures::Blocks::trapdoor_closed;
+      case openTrapdoor:    return Textures::Blocks::trapdoor_open;
+      case stone:     return Textures::Blocks::stone;
+      case sandstone:    return Textures::Blocks::sandstone;
+      case gravel:    return Textures::Blocks::gravel;
+      case sand:      return Textures::Blocks::sand;
+      case wood:      return Textures::Blocks::wood;
+      case planks:    return Textures::Blocks::planks;
+      case leaves:    return Textures::Blocks::leaves;
+      case obsidian:  return Textures::Blocks::obsidian;
+      case glass:     return Textures::Blocks::glass;
+      case stoneBricks:    return Textures::Blocks::bricks;
+      case wool:      return Textures::Blocks::wool;
+      case goldBlock: return Textures::Blocks::gold_block;
+      case bed:       return (version ? Textures::Blocks::bed : Textures::Blocks::bed);
+      case ladder:    return Textures::Blocks::ladder;
+      case torch:     if (version == 0) return Textures::Blocks::torch_straight; else if (version == 1) return Textures::Blocks::torch_left; return Textures::Blocks::torch_right;
+      case craftingTable:     return Textures::Blocks::crafting_table;
+      case furnace:   return Textures::Blocks::furnace;
+      case chest:     return Textures::Blocks::chest;
+      case grass:     return Textures::Blocks::grass;
+      case sapling:   return Textures::Blocks::sapling;
+      case flower:    return Textures::Blocks::flower;
+      case tnt:     return Textures::Blocks::tnt;
+      case waterSource: return Textures::Blocks::water_7;
+      case lavaSource: return Textures::Blocks::lava_3;
+      case dryFarmland: return Textures::Blocks::dryFarmland;
 
-    case GEN_AIR:     return Textures::Blocks::light_7;
-
-    case C_LIGHT0:    return Textures::Blocks::light_0;
-    case C_LIGHT1:    return Textures::Blocks::light_1;
-    case C_LIGHT2:    return Textures::Blocks::light_2;
-    case C_LIGHT3:    return Textures::Blocks::light_3;
-    case C_LIGHT4:    return Textures::Blocks::light_4;
-    case C_LIGHT5:    return Textures::Blocks::light_5;
-    case C_LIGHT6:    return Textures::Blocks::light_6;
-    case C_LIGHT7:    return Textures::Blocks::light_7;
-    default:          return Textures::Blocks::error;
+      case Runtime::light0:    return Textures::Blocks::light_0;
+      case Runtime::light1:    return Textures::Blocks::light_1;
+      case Runtime::light2:    return Textures::Blocks::light_2;
+      case Runtime::light3:    return Textures::Blocks::light_3;
+      case Runtime::light4:    return Textures::Blocks::light_4;
+      case Runtime::light5:    return Textures::Blocks::light_5;
+      case Runtime::light6:    return Textures::Blocks::light_6;
+      case Runtime::light7:    return Textures::Blocks::light_7;
+      default:          return Textures::Blocks::error;
+    }
+  } else if (context == FunctionCallContext::Generation) {
+    switch (id) {
+      case Generation::air:     return Textures::Blocks::light_7;
+      default:          return Textures::Blocks::error;
+    }
+  } else if (context == FunctionCallContext::Update) {
+    switch (id) {
+      default:          return Textures::Blocks::error;
+    }
   }
+  return Textures::Blocks::error;
 }
 void Screen::forceUpdateAnimations () {
   animationFrame2 = (animationFrame2 + 1) % 2;

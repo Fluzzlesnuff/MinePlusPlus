@@ -1,13 +1,10 @@
 //VERSION: development version
-
 #include "includes.h"
 bool selectedGenerateButton = false;
 
 void setup() {
-  com.init();
-  com.out.print(F("\n\n\n\n"));
-  com.out.log(F("Communication Channel(s) Initialized"));
-  Serial.println(freeMemory());
+  iostream.init();
+  cout << prefix << F("\n\nCommunication Channel(s) Initialized") << endl;
   leftButton.setSampleSize(10);
   jumpButton.setSampleSize(10);
   rightButton.setSampleSize(10);
@@ -22,17 +19,15 @@ void setup() {
 #ifndef PRESET_SEED
   randomSeed(analogRead(A15));
 #endif
-  com.out.log(F("Initializing Display"));
+  cout << prefix << F("Initializing Display") << endl;
   GLCD.Init();
-  com.out.log(F("\tComplete"));
+  cout << prefix << F("\tComplete") << endl;
 #ifndef GENERATE_ON_START
   screen.renderBitmap(Bitmaps::UI::loadIcon, 16, 2, 31, 23);
   screen.renderBitmap(Bitmaps::UI::generateIcon, 16, 2, 79, 23);
   screen.renderBitmap(Bitmaps::UI::upArrow, 8, 1, 35, 40);
 #endif
-  Serial.println(freeMemory());
 }
-
 void loop() {
   if (world.isRunning)
     worldLoop();
@@ -69,7 +64,7 @@ void loop() {
   }
 }
 void worldLoop() {
-  if (com.in.runCommands())
+  if (command.runCommands())
     screen.renderWorld();
   if(world.tryUpdate())
     screen.renderWorld();
@@ -102,6 +97,7 @@ void worldLoop() {
     }
   }
   if (rightMouseButton.read()) {
+    GLCD.ClearScreen();
     world.save();
     exit(0);
   }
