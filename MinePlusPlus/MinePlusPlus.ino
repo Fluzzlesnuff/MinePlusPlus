@@ -64,7 +64,7 @@ void loop() {
   }
 }
 void worldLoop() {
-  if (command.runCommands())
+  if (Command::runCommands())
     screen.renderWorld();
   if(world.tryUpdate())
     screen.renderWorld();
