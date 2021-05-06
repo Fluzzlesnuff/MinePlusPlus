@@ -5,7 +5,7 @@ void Player::move (xcoord_t xParam, ycoord_t yParam) {
 }
 void Player::move (double xParam, double yParam) {
 #ifdef PLAYER_MOVE_LOGGING
-  cout << F("Moving player to (") << xParam << F(", ") << yParam << ')' << endl;
+  cout << F("Moving player to (") << xParam << F(", ") << yParam << F(")") << endl;
 #endif
   if (x < -xLimit || x > xLimit)
     cout << XCOORD_OOB;

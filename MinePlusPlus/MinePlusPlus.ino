@@ -13,6 +13,7 @@ void setup() {
   leftMouseButton.setThreshold(990);
   rightMouseButton.setThreshold(990);
   world.setTickRate(10);
+  
 #ifdef PRESET_SEED
   randomSeed(PRESET_SEED);
 #endif
@@ -58,7 +59,7 @@ void loop() {
         world.generate(Default);
       } else {
         world.isRunning = true;
-        world.load();
+        storage.load();
       }
     }
   }
@@ -98,7 +99,7 @@ void worldLoop() {
   }
   if (rightMouseButton.read()) {
     GLCD.ClearScreen();
-    world.save();
+    storage.save();
     exit(0);
   }
   screen.updateAnimations();

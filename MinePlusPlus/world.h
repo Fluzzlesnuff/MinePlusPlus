@@ -11,6 +11,7 @@ extern ycoord_t yLimit; //Inclusive; the y coordinate of the topmost blocks. Bot
 
 class World {
     friend class Block;
+    friend class StorageSystem;
     WorldSize size;
     double ticksPerSecond;
     uint16_t msPerTick;
@@ -64,8 +65,6 @@ class World {
     bool tryUpdate();
     void setTickRate (double tickRateParam);
     void generate (WorldSize sizeParam); //Creates a new world in RAM.
-    void load (); //Loads a world from EEPROM into ram.
-    void save (); //Saves the world in RAM to EEPROM, overwriting any older saves.
 };
 extern World world;
 

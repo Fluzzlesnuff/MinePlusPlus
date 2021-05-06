@@ -6,6 +6,7 @@
 #include "world.h"
 #include "block.h"
 #include "item.h"
+#include "storage.h"
 #include "mob.h"
 #include "player.h"
 #include "screen.h"

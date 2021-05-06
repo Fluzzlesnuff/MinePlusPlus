@@ -13,7 +13,7 @@ CommandData CommandManager::parseCommand (const String& string) {
     failCommand.type = CommandType::NoCommand;
     return failCommand;
   }
-  cout << prefix << '"' + string << '"' << endl;
+  cout << prefix << F("\"") << string << F("\"") << endl;
   CommandData outputCommand;
   String commandArgs[8];
   uint8_t partIndex = 0;
@@ -121,7 +121,7 @@ bool CommandManager::runCommands() {
     return false;
   if (parsedCommand.type == CommandType::SetBlock) {
     block.set(parsedCommand.args[0], parsedCommand.args[1], parsedCommand.args[2]);
-    cout << prefix << F("Set block at (") << parsedCommand.args[0] << F(", ") << parsedCommand.args[1] << F(") with ID ") << parsedCommand.args[2] << endl;
+    cout << prefix << F("Set block at (") << parsedCommand.args[0] << F(", ") << parsedCommand.args[1] << F(") with ID ") << format16 << parsedCommand.args[2] << format10 << endl;
     return true;
   }
   if (parsedCommand.type == CommandType::GetBlock) {
@@ -130,7 +130,7 @@ bool CommandManager::runCommands() {
   }
   if (parsedCommand.type == CommandType::Teleport) {
     player.move(parsedCommand.args[0], parsedCommand.args[1]);
-    cout << prefix << F("Teleported to (") << parsedCommand.args[0] << F(", ") << parsedCommand.args[1] << ')' << endl;
+    cout << prefix << F("Teleported to (") << parsedCommand.args[0] << F(", ") << parsedCommand.args[1] << F(")") << endl;
     return true;
   }
   if (parsedCommand.type == CommandType::Fill) {
@@ -159,7 +159,7 @@ bool CommandManager::runCommands() {
     }
   }
   if (parsedCommand.type == CommandType::GetMemory) {
-    cout << prefix << F("Free Memory: ") << freeMemory() << 'B' << endl;
+    cout << prefix << F("Free Memory: ") << freeMemory() << F("B") << endl;
     return true;
   }
   if (parsedCommand.type == CommandType::ShowOverview) {
