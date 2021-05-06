@@ -17,7 +17,7 @@ class Item { //A set of functions for interacting with the items array.
     void spawn (xcoord_t x, ycoord_t y, id_t id); //Creates an item at the given coords.
     void pickUp (xcoord_t x, ycoord_t y); //Deletes an item at the given coords, and puts it into the player's inventory.
     bool despawn (); //Removes the oldest item. Used when the maximum number of items is reached.
-    void list (); //Lists the items currently in existence via serialLog.
+    void list () const; //Lists the items currently in existence via serialLog.
 };
 extern Item item; //The item object for the item.xxx functions.
 

@@ -43,10 +43,10 @@ bool Player::walk (Direction dir, double distance) {
      default: return false;
   }
 }
-CoordPair Player::getCoords(xcoord_t xOffset, ycoord_t yOffset) {
+CoordPair Player::getCoords(xcoord_t xOffset, ycoord_t yOffset) const {
   return CoordPair{xcoord_t(round(x + xOffset)), ycoord_t(round(y + yOffset))};
 }
-ExactCoordPair Player::getExactCoords(double xOffset, double yOffset) {
+ExactCoordPair Player::getExactCoords(double xOffset, double yOffset) const {
   return ExactCoordPair{x + xOffset, y + yOffset};
 }
 Player player;

@@ -5,7 +5,7 @@ byte animationFrame3;
 byte animationFrame4;
 const uint16_t animationFramePeriod = 5000;
 
-void Screen::renderBitmap (const byte bitmap[], uint8_t rows, uint8_t columns, byte xPixel, byte yPixel) {
+void Screen::renderBitmap (const byte bitmap[], uint8_t rows, uint8_t columns, byte xPixel, byte yPixel) const {
   const byte bitMasks[8] {
     B10000000, B1000000, B100000, B10000, B1000, B100, B10, B1
   };
@@ -18,7 +18,7 @@ void Screen::renderBitmap (const byte bitmap[], uint8_t rows, uint8_t columns, b
     }
   }
 }
-void Screen::renderBlock (xcoord_t x, ycoord_t y, int8_t xPixelOffset, int8_t yPixelOffset) {
+void Screen::renderBlock (xcoord_t x, ycoord_t y, int8_t xPixelOffset, int8_t yPixelOffset) const {
   id_t id;
   int8_t xRel = x - player.getCoords().x;
   int8_t yRel = y - player.getCoords().y;
@@ -50,7 +50,7 @@ void Screen::renderBlock (xcoord_t x, ycoord_t y, int8_t xPixelOffset, int8_t yP
       yPixelOffsetForLoop++;
   }
 }
-void Screen::renderBlock (const CoordPair& coords, int8_t xPixelOffset, int8_t yPixelOffset) {
+void Screen::renderBlock (const CoordPair& coords, int8_t xPixelOffset, int8_t yPixelOffset) const {
   renderBlock(coords.x, coords.y, xPixelOffset, yPixelOffset);
 }
 void Screen::renderWorld (bool reRenderAnimatedBlocks) {
@@ -102,7 +102,7 @@ void Screen::forceRenderWorld () {
   cout << prefix << F("\tFinished") << endl;
 #endif
 }
-void Screen::renderWorldOverview (xcoord_t center) {
+void Screen::renderWorldOverview (xcoord_t center) const {
   for (uint8_t y = 0; y < 33; ++y) {
     for (uint8_t x = 0; x < 128; ++x) {
       id_t id = block.get(x - 64 + center, 32 - y);
