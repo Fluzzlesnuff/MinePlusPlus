@@ -5,13 +5,6 @@ bool selectedGenerateButton = false;
 void setup() {
   iostream.init();
   cout << prefix << F("\n\nCommunication Channel(s) Initialized") << endl;
-  leftButton.setSampleSize(10);
-  jumpButton.setSampleSize(10);
-  rightButton.setSampleSize(10);
-  leftMouseButton.setSampleSize(10);
-  rightMouseButton.setSampleSize(10);
-  leftMouseButton.setThreshold(990);
-  rightMouseButton.setThreshold(990);
   world.setTickRate(10);
 #ifdef PRESET_SEED
   randomSeed(PRESET_SEED);

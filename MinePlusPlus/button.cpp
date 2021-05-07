@@ -1,4 +1,6 @@
 #include "includes.h"
+constexpr uint8_t sampleSize = 10;
+constexpr uint16_t threshold = 990;
 
 Button::Button (byte pinParam, const byte pinTypeParam) : pin {pinParam}, pinType {pinTypeParam} {
   pinMode(pin, pinType);
@@ -28,10 +30,6 @@ bool Button::read (ButtonReadMode mode, const uint16_t repeatRate) {
   }
   return output;
 }
-void Button::setSampleSize (uint16_t sampleSizeParam) {
-  sampleSize = sampleSizeParam;
-}
-
 ResistiveButton::ResistiveButton (byte pinParam) : Button (pinParam, INPUT_PULLUP) {}
 bool ResistiveButton::read (ButtonReadMode mode, uint16_t repeatRate) {
   uint8_t highs = 0;
@@ -61,9 +59,7 @@ bool ResistiveButton::read (ButtonReadMode mode, uint16_t repeatRate) {
 uint16_t ResistiveButton::readRaw() const {
   return analogRead(pin);
 }
-void ResistiveButton::setThreshold (uint16_t thresholdParam) {
-  threshold = thresholdParam;
-}
+
 Button leftButton(2, INPUT_PULLUP);
 Button jumpButton(3, INPUT_PULLUP);
 Button rightButton(4, INPUT_PULLUP);
