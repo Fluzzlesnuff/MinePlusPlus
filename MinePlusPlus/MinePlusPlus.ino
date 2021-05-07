@@ -64,33 +64,35 @@ void loop() {
   }
 }
 void worldLoop() {
+#ifdef COMMANDS_ENABLED
   if (Command::runCommands())
     screen.renderWorld();
-  if(world.tryUpdate())
+#endif
+  if (world.tryUpdate())
     screen.renderWorld();
   if (leftButton.read(Normal, PLAYER_SPEED) && !rightButton.read()) {
-    CoordPair newCoords = player.getCoords(-1);
+    CoordPair newCoords {player.getCoords(-1)};
     if (newCoords.x >= -xLimit) {
       player.move(newCoords);
       screen.renderWorld();
     }
   }
   if (rightButton.read(Normal, PLAYER_SPEED) && !leftButton.read()) {
-    CoordPair newCoords = player.getCoords(1);
+    CoordPair newCoords {player.getCoords(1)};
     if (newCoords.x <= xLimit) {
       player.move(newCoords);
       screen.renderWorld();
     }
   }
   if (jumpButton.read(Normal, PLAYER_SPEED)) {
-    CoordPair newCoords = player.getCoords(0, 1);
+    CoordPair newCoords {player.getCoords(0, 1)};
     if (newCoords.y <= yLimit) {
       player.move(newCoords);
       screen.renderWorld();
     }
   }
   if (leftMouseButton.read(Normal, PLAYER_SPEED)) {
-    CoordPair newCoords = player.getCoords(0, -1);
+    CoordPair newCoords {player.getCoords(0, -1)};
     if (newCoords.y >= 0) {
       player.move(newCoords);
       screen.renderWorld();

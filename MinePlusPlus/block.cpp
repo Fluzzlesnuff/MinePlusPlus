@@ -120,7 +120,7 @@ bool Block::isPotato(id_t id) const {
 
 byte Block::isTouching(xcoord_t x, ycoord_t y, id_t id) const {
   // Scans blocks starting from the top and going clockwise
-  id_t count{0};
+  id_t count = 0;
   if (x >= -xLimit && x <= xLimit && y + 1 >= 0 && y + 1 <= yLimit && get(x, y + 1) == id)
     count++;
   if (x + 1 >= -xLimit && x + 1 <= xLimit && y >= 0 && y <= yLimit && get(x + 1, y) == id)
@@ -135,7 +135,7 @@ byte Block::isTouching(const CoordPair& coords, id_t id) const {
   return isTouching(coords.x, coords.y, id);
 }
 byte Block::isTouchingWide(xcoord_t x, ycoord_t y, id_t id) const {
-  id_t count{0};
+  id_t count = 0;
   for (int8_t xOffset = -1; xOffset <= 1; xOffset++) {
     for (int8_t yOffset = -1; yOffset <= 1; yOffset++) {
       if (x + xOffset >= -xLimit && x + xOffset <= xLimit && y + yOffset >= 0 && y + yOffset <= yLimit)
@@ -160,7 +160,7 @@ uint16_t Block::isNear(xcoord_t x, ycoord_t y, id_t id, byte distance, Measureme
 #ifdef BLOCK_NEAR_TOUCHING_LOGGING
   cout << prefix << F("Block::isNear Started with args ") << x << F(", ") << y << F(", ") << id << F(", ") << distance << F(", ") << (measurementType == Chebyshev ? F("Chebyshev") : F("Taxicab")) << endl;
 #endif
-  uint16_t count{0};
+  uint16_t count = 0;
   if (distance < 2 || distance > 10) {
     cout << PARAM_OOB;
     return 0;

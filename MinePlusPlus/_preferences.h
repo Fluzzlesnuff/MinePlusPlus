@@ -5,10 +5,15 @@
 //#define PRESET_SEED 189 //Set a seed to generate from, or comment to create a seed
 //#define RENDER_WHILE_GENERATING //Show the map while generating. Slows down generation a lot.
 
-//###########
-//# GAMPLAY #
-//###########
+//############
+//# GAMEPLAY #
+//############
 #define PLAYER_SPEED 200
+
+//###############
+//# COMPILATION #
+//###############
+#define COMMANDS_ENABLED
 
 //###########
 //# LOGGING #

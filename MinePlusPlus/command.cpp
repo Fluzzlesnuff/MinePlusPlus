@@ -1,6 +1,6 @@
 #include "includes.h"
-
-Command::Command (const String& nameParam, const ParseFunction functionParam, uint8_t numArgsParam, const ArgumentType* argTypesParam) : 
+#ifdef COMMANDS_ENABLED
+Command::Command (const String& nameParam, const ParseFunction functionParam, uint8_t numArgsParam, const ArgumentType* argTypesParam) :
   commandName {nameParam}, function {functionParam}, numArgs {numArgsParam}, argTypes {argTypesParam}
 {}
 const String* Command::splitString (const String& string) {
@@ -192,3 +192,4 @@ Command save ("Save", Functions::save);
 Command load ("Load", Functions::load);
 Command mem ("Memory", Functions::mem);
 Command showMap ("Map", Functions::showMap);
+#endif

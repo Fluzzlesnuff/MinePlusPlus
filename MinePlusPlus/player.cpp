@@ -40,7 +40,7 @@ bool Player::walk (Direction dir, double distance) {
         return true;
       }
       return false;
-     default: return false;
+    default: return false;
   }
 }
 CoordPair Player::getCoords(xcoord_t xOffset, ycoord_t yOffset) const {
