@@ -1,10 +1,7 @@
 #include "includes.h"
 
 ItemObject *items[16];
-ItemObject::ItemObject (xcoord_t xParam, ycoord_t yParam, id_t idParam) {
-  x = xParam;
-  y = yParam;
-  id = idParam;
+ItemObject::ItemObject (xcoord_t xParam, ycoord_t yParam, id_t idParam) : x {xParam}, y {yParam}, id {idParam} {
   timeOfCreation = millis();
 }
 void Item::pickUp (xcoord_t x, ycoord_t y) {
