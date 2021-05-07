@@ -3,7 +3,7 @@
 #include "Arduino.h"
 #include <openGLCD.h>
 #include <EEPROM.h>
-#include "_preferences.h"
+#include "preferenceManager.h"
 #include "ids.h"
 #include "bitmaps.h"
 #include "world.h"
