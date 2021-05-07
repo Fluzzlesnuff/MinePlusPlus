@@ -18,7 +18,7 @@ bool World::tryUpdate() {
         if (ticksDone % 8 == 0) { //Nested because a number divisible by 8 will always also be divisible by 4
           update(Eight_Tick);
           if (ticksDone % 16 == 0) { //Nested because a number divisible by 8 will always also be divisible by 4
-          update(Sixteen_Tick);
+            update(Sixteen_Tick);
           }
         }
       }
@@ -274,7 +274,7 @@ void World::updateFarmland () {
     for (ycoord_t y = 0; y < yLimit; ++y) {
       const id_t blockToCheck = block.get(x, y);
       if (block.isFarmland(blockToCheck)) {
-        if (block.isSolid(block.get(x, y+1))) { //Crush farmland
+        if (block.isSolid(block.get(x, y + 1))) { //Crush farmland
           block.set(x, y, dirt);
           updateMadeChanges = true;
           continue;
@@ -314,14 +314,14 @@ void World::updateCrops () {
     for (ycoord_t y = 1; y < yLimit; ++y) { //Starts at 1 because crops cannot grow on top of the void
       const id_t blockToCheck = block.get(x, y);
       if (block.isCrop(blockToCheck)) {
-        if (!block.isFarmland(block.get(x, y-1))) { //Kill crops when there's no farmland underneath them
+        if (!block.isFarmland(block.get(x, y - 1))) { //Kill crops when there's no farmland underneath them
           block.set(x, y, air);
           updateMadeChanges = true;
         } else if (randomNumber(1, 0.1) && blockToCheck != wheat3 && blockToCheck != carrot3 && blockToCheck != potato3) {
           block.set(x, y, blockToCheck + 1);
           updateMadeChanges = true;
         }
-        
+
       }
     }
 }

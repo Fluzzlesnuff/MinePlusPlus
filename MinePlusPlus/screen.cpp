@@ -38,8 +38,8 @@ void Screen::renderBlock (xcoord_t x, ycoord_t y, int8_t xPixelOffset, int8_t yP
   cout << prefix << F("Rendering block at relative coordinates (") << xRel << F(", ") << yRel << F(")   \t[Top-left corner at pixel (") << xPixel << F(", ") << yPixel << F("),\tID: ") << id << F("]") << endl;
 #endif
   ycoord_t yPixelOffsetForLoop = 0;
-  for (uint8_t i{0}; i < 20; ++i) {
-    for (uint8_t j{0}; j < 5; ++j) {
+  for (uint8_t i = 0; i < 20; ++i) {
+    for (uint8_t j = 0; j < 5; ++j) {
       int16_t specificPixelXCoord = (i % 2 ? j + 5 : j) + xPixel;
       int8_t specificPixelYCoord = yPixelOffsetForLoop + yPixel;
       byte byteToRender = pgm_read_byte_near(bitmapToRender + i);
@@ -112,7 +112,7 @@ void Screen::renderWorldOverview (xcoord_t center) const {
   }
 }
 const byte* Screen::idToBitmap (id_t id, byte version, FunctionCallContext context) {
-	using namespace Blocks;
+  using namespace Blocks;
   if (context == FunctionCallContext::Generic) {
     switch (id) {
       case air:       return Textures::Blocks::light_7;

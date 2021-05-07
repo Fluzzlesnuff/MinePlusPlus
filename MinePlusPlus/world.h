@@ -32,7 +32,7 @@ class World {
     void update5Tick();
     void update8Tick();
     void update16Tick();
-    
+
     void updateLighting ();
     void updateWater ();
     void updateLava ();

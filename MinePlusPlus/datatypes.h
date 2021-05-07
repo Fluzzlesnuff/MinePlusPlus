@@ -45,21 +45,6 @@ enum ButtonReadMode {
   Release,
   Change
 };
-enum CommandType {
-  NoCommand,
-  CommandError,
-  Fill,
-  SetBlock,
-  GetBlock,
-  Summon,
-  SummonItem,
-  Give,
-  Teleport,
-  Save,
-  Load,
-  GetMemory,
-  ShowOverview
-};
 enum class ArgumentType {
   Other,
   XCoord,
@@ -80,19 +65,13 @@ enum IOStreamFlag {
   format2
 };
 
-struct ArgTypeList {
-  ArgumentType argTypes[8];
-};
+
 struct CoordPair {
   xcoord_t x;
   ycoord_t y;
 };
 struct ExactCoordPair {
   double x, y;
-};
-struct CommandData {
-  CommandType type;
-  int16_t args[8];
 };
 
 #endif
