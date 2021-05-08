@@ -52,7 +52,7 @@ void loop() {
         world.generate(Default);
       } else {
         world.isRunning = true;
-        storage.load();
+        storage.load(0);
       }
     }
   }

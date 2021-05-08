@@ -1,6 +1,6 @@
 #ifndef includes_h
 #define includes_h
-#include "Arduino.h"
+#include <Arduino.h>
 #include <openGLCD.h>
 #include <EEPROM.h>
 #include "preferenceManager.h"

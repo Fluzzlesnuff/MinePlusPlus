@@ -15,7 +15,7 @@ void StorageSystem::clearTable () {
   for (uint8_t i = worldTableStart; i <= worldTableEnd; ++i)
     EEPROM.update(i, 0xff);
 }
-void StorageSystem::load () {
+void StorageSystem::load (uint8_t worldIndex) {
 #ifdef SAVE_LOAD_LOGGING
   cout << prefix << F("Beginning World Loading") << endl;
 #endif

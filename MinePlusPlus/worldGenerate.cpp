@@ -191,12 +191,12 @@ void World::generateCaves () {
       }
   }
   for (int i = 0; i < 5; ++i) {
-    const byte chances[5][8] = {
-      {1,  1,  1,  1,  1,  1,  1,  1},  // An array of chance lists, one for each value of i.
-      {2,  2,  1,  1,  1,  1,  1,  1},  // Chance list: An array of values of x.
-      {5,  3,  2,  1,  1,  1,  1,  1},  // For each number of isTouchingWide blocks, there is a value of x,
-      {0, 0,  3,  2,  1,  1,  1,  1},  // where the odds of changing the block in question to air are 1/x.
-      {0,  0,  0,  0,  0,  0,  1,  1}   // 0 means no chance.
+    static const PROGMEM byte chances[5*8] = {
+      1,  1,  1,  1,  1,  1,  1,  1,  // An array of chance lists, one for each value of i.
+      2,  2,  1,  1,  1,  1,  1,  1,  // Chance list: An array of values of x.
+      5,  3,  2,  1,  1,  1,  1,  1,  // For each number of isTouchingWide blocks, there is a value of x,
+      0,  0,  3,  2,  1,  1,  1,  1,  // where the odds of changing the block in question to air are 1/x.
+      0,  0,  0,  0,  0,  0,  1,  1   // 0 means no chance.
     };
     cout << prefix << F("\tGrowing Caves:") << F(" Pass ") << i + 1 << endl;
     Serial.println(freeMemory());
@@ -205,7 +205,7 @@ void World::generateCaves () {
         byte numTouching = block.isTouchingWide(x, y, Blocks::Generation::air);
         if (numTouching == 0)
           continue;
-        byte chance = chances[i][numTouching - 1];
+        byte chance = pgm_read_byte_far(chances + (i*8) + numTouching - 1);
         if (chance == 0)
           continue;
         if (block.isTouching(x, y, Blocks::Generation::air) && (random() % chance) == 0)
@@ -232,11 +232,11 @@ void World::generateGravelVeins () {
         block.set(x, y, Blocks::gravel);
   }
   for (int i = 0; i < 4; ++i) {
-    const byte chances[4][8] = {
-      {1,  1,  1,  1,  1,  1,  1,  1},
-      {3,  2,  2,  2,  1,  1,  1,  1},
-      {0, 0,  5,  3,  3,  3,  2,  1},
-      {0,  0,  0,  0,  1,  1,  1,  1}
+    static const PROGMEM byte chances[4*8] = {
+      1,  1,  1,  1,  1,  1,  1,  1,
+      3,  2,  2,  2,  1,  1,  1,  1,
+      0,  0,  5,  3,  3,  3,  2,  1,
+      0,  0,  0,  0,  1,  1,  1,  1
     };
     cout << prefix << F("\tGrowing Gravel Veins: Pass ") << i + 1 << endl;
     for (xcoord_t x = -xLimit; x <= xLimit; ++x) {
@@ -244,7 +244,7 @@ void World::generateGravelVeins () {
         byte numTouching = block.isTouchingWide(x, y, Blocks::gravel);
         if (numTouching == 0)
           continue;
-        byte chance = chances[i][numTouching - 1];
+        byte chance = pgm_read_byte_far(chances + (i*8) + numTouching - 1);
         if (chance == 0)
           continue;
         if ((block.isTouching(x, y, Blocks::gravel) && (random() % chance) == 0) || block.isTouching(x, y, Blocks::gravel) >= 3)
@@ -268,10 +268,10 @@ void World::generateDirtVeins () {
         block.set(x, y, Blocks::Generation::dirt);
   }
   for (int i = 0; i < 3; ++i) {
-    const byte chances[3][8] = {
-      {1,  1,  1,  1,  1,  1,  1,  1},
-      {3,  2,  2,  2,  1,  1,  1,  1},
-      {0,  0,  0,  0,  1,  1,  1,  1}
+    const byte chances[3*8] = {
+      1,  1,  1,  1,  1,  1,  1,  1,
+      3,  2,  2,  2,  1,  1,  1,  1,
+      0,  0,  0,  0,  1,  1,  1,  1
     };
     cout << prefix << F("\tGrowing Dirt Veins: Pass ") << i + 1 << endl;
     for (xcoord_t x = -xLimit; x <= xLimit; ++x) {
@@ -279,7 +279,7 @@ void World::generateDirtVeins () {
         byte numTouching = block.isTouchingWide(x, y, Blocks::Generation::dirt);
         if (numTouching == 0)
           continue;
-        byte chance = chances[i][numTouching - 1];
+        byte chance = pgm_read_byte_far(chances + (i*8) + numTouching - 1);
         if (chance == 0)
           continue;
         if ((block.isTouching(x, y, Blocks::Generation::dirt) && (random() % chance) == 0) || block.isTouching(x, y, Blocks::Generation::dirt) >= 3)
@@ -536,12 +536,12 @@ void World::generateTrees () {
 #ifdef RENDER_WHILE_GENERATING
   screen.renderWorldOverview();
 #endif
-  uint8_t chances[] {10, 10, 10, 2}; //Chances for each pass. Chance of adding wood is chances[i]/10
+  static const PROGMEM byte chances[] {10, 10, 10, 2}; //Chances for each pass. Chance of adding wood is chances[i]/10
   for (int i = 0; i < 4; ++i) {
     cout << prefix << F("\tGrowing Trees: Pass ") << i << endl;
     for (xcoord_t x = -xLimit; x <= xLimit; ++x)
       for (ycoord_t y = safeDivide(worldHeight, 2) - 4; y <= yLimit; ++y)
-        if (block.get(x, y) == Blocks::air && block.get(x, y - 1) == Blocks::wood && (random() % 10 < chances[i]))
+        if (block.get(x, y) == Blocks::air && block.get(x, y - 1) == Blocks::wood && (random() % 10 < pgm_read_byte_far(chances + i)))
           block.set(x, y, Blocks::Generation::wood);
     for (xcoord_t x = -xLimit; x <= xLimit; ++x)
       for (ycoord_t y = 0; y <= yLimit; ++y)

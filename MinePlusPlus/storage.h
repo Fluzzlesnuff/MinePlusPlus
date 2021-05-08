@@ -12,7 +12,7 @@ class StorageSystem {
   public:
     void printTable ();
     void clearTable ();
-    void load (); //Loads a world from EEPROM into ram.
+    void load (uint8_t worldIndex); //Loads a world from EEPROM into ram.
     void save (); //Saves the world in RAM to EEPROM, overwriting any older saves.
 };
 extern StorageSystem storage;
