@@ -1,20 +1,21 @@
 //VERSION: storage development version
-#include "includes.h"
+//#include "includes.h"
 bool selectedGenerateButton = false;
 
 void setup() {
-  iostream.init(300);
-  cout << prefix << F("\n\nCommunication Channel(s) Initialized") << endl;
-  /*uint16_t table [8] {
+  //iostream.init(9600);
+  Serial.begin(9600);
+  delay(1000);
+  Serial.print("DEADBEEF");
+  /*cout << prefix << F("\n\nCommunication Channel(s) Initialized") << endl;
+  uint16_t table [8] {
     1100, 1200,
     32  , 500 ,
     2000, 4095,
     501 , 1000
-  };*/
-  //storage.printTable();
-  //cout << F("Free space: ") << storage.getFreeSpace() << endl;
-  while(1);
-/*
+  };
+  storage.printTable();
+  cout << F("Free space: ") << storage.getFreeSpace() << endl;
   world.setTickRate(10);
   
 #ifdef PRESET_SEED
@@ -30,11 +31,10 @@ void setup() {
   screen.renderBitmap(Bitmaps::UI::loadIcon, 16, 2, 31, 23);
   screen.renderBitmap(Bitmaps::UI::generateIcon, 16, 2, 79, 23);
   screen.renderBitmap(Bitmaps::UI::upArrow, 8, 1, 35, 40);
-#endif
-*/
+#endif*/
 }
 void loop() {
-  if (world.isRunning)
+  /*if (world.isRunning)
     worldLoop();
   else {
 #ifdef GENERATE_ON_START
@@ -66,10 +66,10 @@ void loop() {
         storage.load(0);
       }
     }
-  }
+  }*/
 }
 void worldLoop() {
-#ifdef COMMANDS_ENABLED
+/*#ifdef COMMANDS_ENABLED
   if (Command::runCommands())
     screen.renderWorld();
 #endif
@@ -108,5 +108,5 @@ void worldLoop() {
     storage.save();
     exit(0);
   }
-  screen.updateAnimations();
+  screen.updateAnimations();*/
 }
