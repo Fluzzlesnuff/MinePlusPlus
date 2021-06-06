@@ -1,29 +1,24 @@
 #include "includes.h"
 #include "storageLocations.h"
-void StorageSystem::printTable () {
-  using namespace EEPROMLocations;
-  cout << F("World Table:") << endl;
-  for (uint8_t i = worldTableStart; i < worldTableEnd; i += 4) {
-    if (readWord(i) == 0xff)
-      cout << F("Unset") << endl;
-    else
-      cout << readWord(i) << F("-") << readWord(i + 2) << endl;
-  }
+
+StorageSystem::StorageSystem () {
+  sortTable();
+  for (int i = 0; i < 4; ++i)
+    if (getWorldStart(i) == 0xffff) {
+      numWorlds = i;
+      break;
+    }
+  numWorlds = 4;
 }
-void StorageSystem::clearTable () {
-  using namespace EEPROMLocations;
-  for (uint8_t i = worldTableStart; i <= worldTableEnd; ++i)
-    EEPROM.update(i, 0xff);
-}
-void StorageSystem::load (uint8_t worldIndex) {
+void StorageSystem::load (uint8_t worldIndex) const {
 #ifdef SAVE_LOAD_LOGGING
   cout << prefix << F("Beginning World Loading") << endl;
 #endif
-  world.setWorldDimensions(WorldSize(EEPROM.read(EEPROMLocations::World::worldSize) >> 4));
+  world.setWorldDimensions(WorldSize(EEPROM.read(EEL::World::worldSize) >> 4));
   xLimit = (worldWidth - 1) / 2;
   yLimit = worldHeight - 1;
   block.createBlockDB(worldWidth, worldHeight);
-  uint16_t EEPROMAddress = EEPROMLocations::World::dataStart;
+  uint16_t EEPROMAddress = EEL::World::dataStart;
   uint16_t blockDBAddress = 0;
   while (true) {
     byte byteRead = EEPROM.read(EEPROMAddress);
@@ -62,27 +57,27 @@ void StorageSystem::load (uint8_t worldIndex) {
     }
     ++blockDBAddress;
   }
-  player.move(EEPROM.read(EEPROMLocations::World::playerX), EEPROM.read(EEPROMLocations::World::playerY));
+  player.move(EEPROM.read(EEL::World::playerX), EEPROM.read(EEL::World::playerY));
   world.start();
 #ifdef SAVE_LOAD_LOGGING
   cout << prefix << F("\tFinished") << endl;
 #endif
 }
-void StorageSystem::save () {
+void StorageSystem::save () const {
   uint16_t compressedSize = getCompressedSize();
   cout << F("Size: ") << compressedSize << endl;
-  uint8_t openSpace = findOpenSpace(compressedSize);
-  if (openSpace = 255) {
+  uint8_t openSpace = findFreeSpace(compressedSize);
+  if (openSpace == 255) {
     cout << F("Could not save; not enough available space.\n");
     return;
   }
-  
+
   //Actually save world
-  EEPROM.update(EEPROMLocations::World::worldSize, world.size << 4);
-  EEPROM.update(EEPROMLocations::World::playerX, lowByte(player.getCoords().x));
-  EEPROM.update(EEPROMLocations::World::playerY, player.getCoords().y);
+  EEPROM.update(EEL::World::worldSize, world.size << 4);
+  EEPROM.update(EEL::World::playerX, lowByte(player.getCoords().x));
+  EEPROM.update(EEL::World::playerY, player.getCoords().y);
   uint16_t numberFound = 0;
-  uint16_t EEPROMAddress = EEPROMLocations::World::dataStart;
+  uint16_t EEPROMAddress = EEL::World::dataStart;
   id_t currentBlockID = blockDB[0];
   uint16_t i;
   for (i = 0; i < worldWidth * worldHeight; ++i) {
@@ -145,14 +140,7 @@ void StorageSystem::save () {
   EEPROM.update(EEPROMAddress + 1, Storage::end);
 }
 
-void StorageSystem::writeWord (uint16_t address, word value) {
-  EEPROM.update(address, highByte(value));
-  EEPROM.update(address + 1, lowByte(value));
-}
-word StorageSystem::readWord (uint16_t address) {
-  return (EEPROM.read(address) * 256) + EEPROM.read(address + 1);
-}
-uint16_t StorageSystem::getCompressedSize () {
+uint16_t StorageSystem::getCompressedSize () const {
   uint16_t output = 0;
   uint16_t numberFound = 0;
   id_t currentBlockID = blockDB[0];
@@ -165,7 +153,7 @@ uint16_t StorageSystem::getCompressedSize () {
       } else if (numberFound < 256) {
         output += 3;
       } else {
-       output += 4;
+        output += 4;
       }
       currentBlockID = blockDB[i];
       numberFound = 1;
@@ -173,23 +161,47 @@ uint16_t StorageSystem::getCompressedSize () {
   }
   return output;
 }
-void StorageSystem::reshuffleWorlds (uint8_t index) {
-  
+void StorageSystem::reshuffleWorlds (uint8_t index) const {
+
 }
-uint8_t StorageSystem::findOpenSpace (uint16_t compressedSize) {
-  using namespace EEPROMLocations;
+uint16_t StorageSystem::getFreeSpace () const {
+  uint16_t freeSpace = getWorldStart(0) - EEL::dataStart - 1; //Space before first world
+  for (int index = 0; index < numWorlds - 1; ++index) {//Spaces between worlds
+    freeSpace += getWorldStart(index + 1) - getWorldEnd(index) - 1;
+  }
+  freeSpace += EEL::eepromEnd - getWorldEnd(numWorlds - 1); //Space between last world and end.
+  return freeSpace;
+}
+uint8_t StorageSystem::findFreeSpace (uint16_t compressedSize) const {
+  using namespace EEL;
   sortTable();
   if (readWord(worldTableStart) - dataStart >= compressedSize)
     return 0;
   for (uint8_t i = 1; i <= 3; i++)
-    if ((readWord(worldTableStart + (4*i)) - readWord(worldTableStart + (4*i) - 2)) > compressedSize)
+    if ((readWord(worldTableStart + (4 * i)) - readWord(worldTableStart + (4 * i) - 2)) > compressedSize)
       return i;
   if (eepromEnd - readWord(worldTableEnd - 1) >= compressedSize)
     return 4;
   return 255;
 }
-void StorageSystem::sortTable () {
-  using namespace EEPROMLocations;
+
+void StorageSystem::printTable () const {
+  using namespace EEL;
+  cout << F("World Table:") << endl;
+  for (uint8_t i = worldTableStart; i < worldTableEnd; i += 4) {
+    if (readWord(i) == 0xffff)
+      cout << F("Unset") << endl;
+    else
+      cout << readWord(i) << F("-") << readWord(i + 2) << endl;
+  }
+}
+void StorageSystem::clearTable () const {
+  using namespace EEL;
+  for (uint8_t i = worldTableStart; i <= worldTableEnd; ++i)
+    EEPROM.update(i, 0xff);
+}
+void StorageSystem::sortTable () const {
+  using namespace EEL;
   uint16_t table[10];
   for (uint8_t i = 0; i < 8; i += 2) {
     table[i] = readWord(worldTableStart + (i * 2));
@@ -204,6 +216,7 @@ void StorageSystem::sortTable () {
         smallestIndex = i;
       }
     //swap smallest unsorted into first unsorted index
+    cout << F("Swapping entry ") << firstUnsorted << F(" (") << table[firstUnsorted] << F("-") << table[firstUnsorted + 1] << F(") with entry ") << smallestIndex << F(" (") << table[smallestIndex] << F("-") << table[smallestIndex + 1] << endl;
     uint16_t temp = table[smallestIndex];
     table[smallestIndex] = table[firstUnsorted];
     table[firstUnsorted] = temp;
@@ -212,7 +225,27 @@ void StorageSystem::sortTable () {
     table[firstUnsorted + 1] = temp;
   }
   for (uint8_t i = 0; i < 8; ++i) {
-    writeWord((worldTableStart + (i*2)), table[i]);
+    cout << F("Writing entry ") << i << F(" (") << table[i] << F(") at addr.") << worldTableStart + (i * 2) << endl;
+    writeWord((worldTableStart + (i * 2)), table[i]);
   }
 }
-extern StorageSystem storage;
+void StorageSystem::makeTable (uint16_t* table) const {
+  for (uint8_t i = 0; i < 8; ++i)
+    writeWord(EEL::worldTableStart + (i * 2), table[i]);  
+}
+uint16_t StorageSystem::getWorldStart (uint8_t index) const {
+  return readWord(EEL::worldTableStart + index * 4);
+}
+uint16_t StorageSystem::getWorldEnd (uint8_t index) const {
+  return readWord(EEL::worldTableStart + index * 4 + 2);
+}
+
+void StorageSystem::writeWord (uint16_t address, word value) const {
+  EEPROM.update(address, highByte(value));
+  EEPROM.update(address + 1, lowByte(value));
+}
+word StorageSystem::readWord (uint16_t address) const {
+  return (EEPROM.read(address) * 256) + EEPROM.read(address + 1);
+}
+
+StorageSystem storage;

@@ -1,10 +1,20 @@
-//VERSION: development version
+//VERSION: storage development version
 #include "includes.h"
 bool selectedGenerateButton = false;
 
 void setup() {
-  iostream.init();
+  iostream.init(300);
   cout << prefix << F("\n\nCommunication Channel(s) Initialized") << endl;
+  /*uint16_t table [8] {
+    1100, 1200,
+    32  , 500 ,
+    2000, 4095,
+    501 , 1000
+  };*/
+  //storage.printTable();
+  //cout << F("Free space: ") << storage.getFreeSpace() << endl;
+  while(1);
+/*
   world.setTickRate(10);
   
 #ifdef PRESET_SEED
@@ -21,6 +31,7 @@ void setup() {
   screen.renderBitmap(Bitmaps::UI::generateIcon, 16, 2, 79, 23);
   screen.renderBitmap(Bitmaps::UI::upArrow, 8, 1, 35, 40);
 #endif
+*/
 }
 void loop() {
   if (world.isRunning)

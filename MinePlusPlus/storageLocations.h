@@ -1,4 +1,7 @@
-namespace EEPROMLocations {
+#ifndef storageLoc_h
+#define storageLoc_h
+
+namespace EEL {
   const uint16_t shutdown =         0x0000;
   const uint16_t worldTableStart =  0x0001;
   const uint16_t worldTableEnd =    0x0010;
@@ -22,3 +25,5 @@ namespace World {
   const uint16_t dataStart =      0x0008;
 }
 }
+
+#endif
